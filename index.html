@@ -640,7 +640,7 @@ function buildCharGrid(){
   }
 }
 
-(function init(){buildCharGrid();})();
+// init moved to bottom of script
 
 function selectChar(id){
   if(gameMode==='vs'){
@@ -1928,6 +1928,9 @@ function getActivePi(){
   if(myIdx >= 0 && myIdx < 5 && G.players?.[myIdx] && !G.players[myIdx].dead) return myIdx;
   return _origGetActivePi();
 }
+
+// ── init (after ALL functions defined) ──
+buildCharGrid();
 
 </script>
 <!-- Firebase SDK (loaded last so all game functions are ready first) -->
