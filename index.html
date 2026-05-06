@@ -524,7 +524,8 @@ const CHARACTERS=[
      pickTarget(pi,'Zizeus: เลือกเป้าหมาย',t=>{t.hp=Math.max(0,t.hp-2);addLog(`⚡ Zizeus! ${t.name} HP-2`,'dmg');checkDeath(t.i);renderAll();})}},
   {id:'pluto',name:'Pluto',emoji:'💀',color:'#9060d0',passive:'—',skillDesc:'จ่าย 2 MP → ทุกคนทิ้งการ์ด 1 ใบ',hasSkill:true,
    onSkill(pi){const p=G.players[pi];if(!spendMP(p,2)){addLog('MP ไม่พอ (2)');return;}
-     for(const q of G.players){if(q.dead||q.i===pi||q.isBot&&q.hand.length){if(q.isBot&&!q.dead&&q.i!==pi){const c=q.hand.splice(~~(Math.random()*q.hand.length),1)[0];G.discard.push(c);addLog(`${q.name}: ทิ้ง ${c.name}`);}}}
+     // Fix: added proper parentheses to avoid operator precedence bug; bots always discard if alive and have cards
+     for(const q of G.players){if(q.isBot&&!q.dead&&q.i!==pi&&q.hand.length){const c=q.hand.splice(~~(Math.random()*q.hand.length),1)[0];G.discard.push(c);addLog(`${q.name}: ทิ้ง ${c.name}`);}}
      // human players must pick — queue them
      G._plutoVictims=G.players.filter(q=>!q.dead&&q.i!==pi&&!q.isBot&&q.hand.length).map(q=>q.i);
      plutoNextVictim();}},
@@ -891,7 +892,16 @@ function checkWin(){
     else endGame('?','LEADER ตาย');
     return;
   }
-  if(btrs.every(b=>b.dead)&&wtch.dead)endGame('👑 LEADER & Guardian',`${ldr.name} และ ${grd?.name||''} ชนะ!`);
+  // Fix: LEADER+Guardian win when all Betrayers AND Watcher are dead
+  if(btrs.every(b=>b.dead)&&wtch.dead){
+    endGame('👑 LEADER & Guardian',`${ldr.name} และ ${grd&&!grd.dead?grd.name:'ทีม LEADER'} ชนะ!`);
+    return;
+  }
+  // Fix: Watcher wins if they are the only one alive (even if LEADER still lives - edge case)
+  const alive=G.players.filter(p=>!p.dead);
+  if(alive.length===1&&!wtch.dead){
+    endGame('⚫ Watcher',`${wtch.name} ชนะ! เหลืออยู่คนสุดท้าย`);
+  }
 }
 
 function endGame(winner,detail){
@@ -1127,17 +1137,21 @@ function playerDefend(atkI,defI,atkCard){
   if(hasDodge)opts.push({label:`🛡 หลบ (ทิ้ง ${SYM_EMOJI[dodgeSym]})`,fn:()=>{
     closeModal();const dc=def.hand.find(c=>c.sym===dodgeSym);
     def.hand=def.hand.filter(c=>c.id!==dc.id);G.discard.push(dc);
-    addLog(`${def.name}: หลบ! (ทิ้ง ${SYM_EMOJI[dc.sym]})`);after();}});
+    addLog(`${def.name}: หลบ! (ทิ้ง ${SYM_EMOJI[dc.sym]})`);
+    G._defendRequest=null; after();}});
   if(hasCounter)opts.push({label:'↩ สวนกลับ',fn:()=>{
     closeModal();const cc=def.hand.find(c=>c.effect==='counter');
     def.hand=def.hand.filter(c=>c.id!==cc.id);G.discard.push(cc);
     atk.hp=Math.max(0,atk.hp-1);addLog(`${def.name}: สวนกลับ! ${atk.name} HP-1`,'dmg');
-    showCardOverlay(def.name,cc,null);checkDeath(atkI);after();}});
-  opts.push({label:`💥 รับ (-${dmg} HP)`,fn:()=>{closeModal();applyHit(atkI,defI,atkCard);after();}});
+    showCardOverlay(def.name,cc,null);checkDeath(atkI);
+    G._defendRequest=null; after();}});
+  opts.push({label:`💥 รับ (-${dmg} HP)`,fn:()=>{closeModal();applyHit(atkI,defI,atkCard);
+    G._defendRequest=null; after();}});
   if(hasCancel)opts.push({label:'✖ ยกเลิก (การ์ดยกเลิก)',fn:()=>{
     closeModal();const cc=def.hand.find(c=>c.effect==='cancel');
     def.hand=def.hand.filter(c=>c.id!==cc.id);G.discard.push(cc);
-    addLog(`${def.name}: ยกเลิกการโจมตี!`,'imp');after();}});
+    addLog(`${def.name}: ยกเลิกการโจมตี!`,'imp');
+    G._defendRequest=null; after();}});
 
   showModal(`${atk.char.emoji} ${atk.name} โจมตีด้วย ${SYM_EMOJI[atkCard.sym]}`,
     `<div style="font-size:12px;margin-bottom:8px;">ATK ${atk.atk} − DEF ${def.def} = <b style="color:var(--red);">${dmg} HP</b><br><span style="color:var(--dim);font-size:10px;">หลบต้องมีการ์ด ${SYM_EMOJI[dodgeSym]}</span></div>`,opts);
@@ -1205,7 +1219,7 @@ function applyCardEffect(pi,card,tPi){
   switch(card.effect){
     case'draw2':drawCards(pi,2);break;
     case'heal1':{const t=tPi!==null?G.players[tPi]:p;t.hp=Math.min(t.maxHp,t.hp+1);addLog(`${t.name} HP+1`,'hl');break;}
-    case'healstrong':{p.hp=Math.min(p.maxHp,p.hp+1);if(Math.random()<0.5){p.hp=Math.min(p.maxHp,p.hp+1);addLog(`${p.name} ฮีลแรง! HP+2`,'hl');}else addLog(`${p.name} HP+1`,'hl');break;}
+    case'healstrong':{p.hp=Math.min(p.maxHp,p.hp+2);addLog(`${p.name} ฮีลแรง! HP+2`,'hl');break;}
     case'mp_black1':p.mpB=Math.min(3,p.mpB+1);addLog(`${p.name}: +1 MPดำ`);break;
     case'mp_white1':p.mpW=Math.min(3,p.mpW+1);addLog(`${p.name}: +1 MPขาว`);break;
     case'mp_black2':p.mpB=Math.min(3,p.mpB+2);addLog(`${p.name}: +2 MPดำ`);break;
@@ -1328,7 +1342,7 @@ function commitPlay(card,ti){
   showCardOverlay(p.name,card,()=>{applyCardEffect(pi,card,ti);renderAll();});
 }
 function installSelected(){
-  if(!isMyTurnToAct()&&!G.players[G.turn].isBot===false)return;
+  if(!isMyTurnToAct())return;
   const card=G.selectedCard;
   if(!card||card.type!=='equipment'){addLog('เลือกการ์ดอุปกรณ์ก่อน');return;}
   const pi=G.turn;const p=G.players[pi];
@@ -1943,30 +1957,6 @@ function _sanitizeGs(g){
   return g;
 }
 
-function olStartOnlineGame(gs, slots){
-  document.getElementById('online-lobby').classList.remove('show');
-  document.getElementById('title-screen').style.display='none';
-
-  let myPlayerIdx = 0;
-  if(gs.slotToPlayerIdx){
-    const val = gs.slotToPlayerIdx[String(OL.mySlot)];
-    myPlayerIdx = (val !== undefined && val !== null) ? Number(val) : 0;
-  }
-  OL.myPlayerIdx = myPlayerIdx;
-
-  G = _sanitizeGs(gs);
-  G.humanCount = Object.keys(slots).length;
-  renderAll();
-  addLog('=== เกม Online เริ่ม! ===','imp');
-
-  if(OL.isHost){
-    setInterval(()=>{
-      if(OL.isHost && OL.roomId && G.players && G.players.length > 0) olPushState();
-    }, 600);
-    beginTurn(0);
-  }
-}
-
 function olHydrateAndRender(gs){
   if(OL.isHost) return;
   G = _sanitizeGs(gs);
@@ -1988,6 +1978,7 @@ function olHydrateAndRender(gs){
   }
 }
 
+let _olPushInterval = null;
 function olStartOnlineGame(gs, slots){
   document.getElementById('online-lobby').classList.remove('show');
   document.getElementById('title-screen').style.display='none';
@@ -1999,32 +1990,20 @@ function olStartOnlineGame(gs, slots){
   }
   OL.myPlayerIdx = myPlayerIdx;
 
+  G = _sanitizeGs(gs);
+  G.humanCount = Object.keys(slots).length;
+
   if(OL.isHost){
-    // Host: set G directly and run the game
-    // Sanitize first
-    for(const p of gs.players){
-      p.equip = p.equip || {};
-      p.hand = p.hand || [];
-      p.char = CHARACTERS.find(c=>c.id===p.charId) || p.char;
-    }
-    gs.log = gs.log || [];
-    gs.discard = gs.discard || [];
-    gs._aphSel = gs._aphSel || [];
-    gs._deathQueue = gs._deathQueue || [];
-    gs._plutoVictims = gs._plutoVictims || [];
-    gs.skipCurse = gs.skipCurse || Array(5).fill(false);
-    gs.curseCard = gs.curseCard || Array(5).fill(null);
-    G = gs;
-    G.humanCount = Object.keys(slots).length;
     document.getElementById('title-screen').style.display='none';
-    // Push state every 500ms
-    setInterval(()=>{
+    // Fix: clear any existing interval before creating a new one to prevent leaks
+    if(_olPushInterval) clearInterval(_olPushInterval);
+    _olPushInterval = setInterval(()=>{
       if(OL.isHost && OL.roomId && G.players && G.players.length > 0) olPushState();
     }, 500);
     addLog('=== เกม Online เริ่ม! ===','imp');
+    renderAll();
     beginTurn(0);
   } else {
-    // Non-host: receive state from Firebase
     olHydrateAndRender(gs);
     addLog('=== เกม Online เริ่ม! ===','imp');
   }
