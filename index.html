@@ -5,11 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Card Battle Arena — Online</title>
 <!-- Firebase SDKs -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getDatabase, ref, set, get, onValue, update, remove, push, serverTimestamp }
-    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
-
+<!-- Firebase compat (works as global variables, no module needed) -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+<script>
   const firebaseConfig = {
     apiKey: "AIzaSyBLJsSYfDXGzol193ATwyjJW8St-pexCrI",
     authDomain: "game-5v5.firebaseapp.com",
@@ -19,12 +18,21 @@
     appId: "1:849852661177:web:4b671fce2cccb3949e4a68",
     databaseURL: "https://game-5v5-default-rtdb.asia-southeast1.firebasedatabase.app"
   };
+  firebase.initializeApp(firebaseConfig);
+  const _fbdb = firebase.database();
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getDatabase(app);
-
-  // ── expose to window so non-module scripts can call them ──
-  window._fb = { db, ref, set, get, onValue, update, remove, push, serverTimestamp };
+  // wrap compat API to match our usage
+  window._fb = {
+    db: _fbdb,
+    ref: (db, path) => db.ref(path),
+    set: (r, val) => r.set(val),
+    get: (r) => r.get(),
+    onValue: (r, cb) => { r.on('value', snap => cb(snap)); return () => r.off('value'); },
+    update: (r, val) => r.update(val),
+    remove: (r) => r.remove(),
+    push: (r, val) => r.push(val),
+    serverTimestamp: () => firebase.database.ServerValue.TIMESTAMP
+  };
   window._fbReady = true;
   document.dispatchEvent(new Event('fbReady'));
 </script>
