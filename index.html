@@ -1317,7 +1317,7 @@ function renderSeat(pi){
   const roleVis=isMe||p.role==='LEADER'||p.dead;
   const roleBadge=roleVis?`<span class="role-badge role-${p.role}" title="${p.role}">${p.role}</span>`:`<span class="role-badge role-hidden">?</span>`;
   const playerTypeBadge=p.isBot?`<span class="bot-badge">BOT</span>`:`<span class="human-badge">👤</span>`;
-  const eqHtml=Object.entries(p.equip).map(([sl,e])=>`<span class="equip-badge" data-desc="${e.desc||e.name}">${e.name}</span>`).join('');
+  const eqHtml=Object.entries(p.equip||{}).map(([sl,e])=>e?`<span class="equip-badge" data-desc="${e.desc||e.name}">${e.name}</span>`:'').join('');
   const mpRow=`<div class="mp-row"><span class="mp-sep">W</span>${[0,1,2].map(i=>`<div class="mp-dot ${i<p.mpW?'wf':'em'}"></div>`).join('')}<span class="mp-sep">B</span>${[0,1,2].map(i=>`<div class="mp-dot ${i<p.mpB?'bf':'em'}"></div>`).join('')}</div>`;
   const curseL=G.curseCard[pi]?`<div class="tag-sm curse-tag">☠ คำสาปรอ</div>`:'';
   const skipL=G.skipCurse[pi]?`<div class="tag-sm curse-tag">⏭ จะข้ามเทิร์น</div>`:'';
@@ -1861,14 +1861,24 @@ function olSubscribeGameState(rid){
 }
 
 function olHydrateAndRender(gs){
-  // Re-attach char objects from charId
+  // Sanitize players - Firebase strips empty objects/arrays
   for(const p of gs.players){
+    p.equip = p.equip || {};
+    p.hand = p.hand || [];
+    p.skipCurse = p.skipCurse || false;
+    // Re-attach char objects from charId
     if(!p.char || typeof p.char === 'string' || !p.char.passive){
       p.char = CHARACTERS.find(c=>c.id===p.charId) || p.char;
     }
   }
+  gs.skipCurse = gs.skipCurse || Array(5).fill(false);
+  gs.curseCard = gs.curseCard || Array(5).fill(null);
+  gs._aphSel = gs._aphSel || [];
+  gs._deathQueue = gs._deathQueue || [];
+  gs._plutoVictims = gs._plutoVictims || [];
+  gs.discard = gs.discard || [];
+  gs.deck = gs.deck || [];
   G = gs;
-  // Also hide title screen in case it's still showing
   document.getElementById('title-screen').style.display='none';
   document.getElementById('online-lobby').classList.remove('show');
   renderAll();
