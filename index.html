@@ -758,8 +758,9 @@ function beginTurn(pi){
   setPhase('draw');drawCards(pi,2+(p.char.extraDraw||0));
   setPhase('action');renderAll();
 
-  // multiplayer: show pass screen before each human's turn (not turn 0 which was shown at start)
-  if(!p.isBot&&gameMode!=='vs'&&!G.gameOver){
+  // multiplayer local: show pass screen before each human's turn
+  // Online mode: no pass screen needed - each player sees their own screen
+  if(!p.isBot&&gameMode!=='vs'&&!G.gameOver&&!OL.roomId){
     showPassScreen(pi,()=>{setPhase('action');renderAll();});
     return;
   }
@@ -1707,14 +1708,13 @@ function olSubscribeRoom(rid){
   const unsub = onValue(ref(db, `rooms/${rid}`), snap => {
     if(!snap.exists()){ olStatus('ห้องถูกปิด', 'var(--red)'); return; }
     const room = snap.val();
-    olRenderLobbyPlayers(room.slots||{});
-    if(room.status === 'picking'){
-      olEnterCharPick(room.slots||{});
+    if(room.status === 'lobby' || room.status === 'picking'){
+      olRenderLobbyPlayers(room.slots||{});
     }
-    // Only start game when gameState is fully populated with players
+    if(room.status === 'picking') olEnterCharPick(room.slots||{});
     if(room.status === 'playing' && room.gameState && room.gameState.players && room.gameState.players.length > 0){
       unsub(); OL.unsubRoom = null;
-      olStartOnlineGame(room.gameState, room.slots||{});
+      if(!OL.isHost) olStartOnlineGame(room.gameState, room.slots||{});
       olSubscribeGameState(rid);
     }
   });
@@ -1740,10 +1740,9 @@ function olRenderLobbyPlayers(slots){
   el.innerHTML = html;
 }
 
-// ── char picking phase ──
 function olEnterCharPick(slots){
   const pickWrap = document.getElementById('ol-char-pick');
-  if(pickWrap.style.display !== 'none') return; // already shown
+  if(pickWrap.style.display !== 'none') return;
   pickWrap.style.display = 'block';
   olStatus('เลือกตัวละครของคุณ!', 'var(--gold)');
   const takenChars = Object.values(slots).filter(s=>s.char).map(s=>s.char);
@@ -1773,7 +1772,6 @@ async function olPickChar(charId){
   } catch(e){ olStatus('บันทึกไม่ได้: '+e.message, 'var(--red)'); }
 }
 
-// ── host starts game ──
 async function olStartGame(){
   if(!OL.isHost){ olStatus('เฉพาะ Host เท่านั้น'); return; }
   const { db, ref, get, update } = fb();
@@ -1781,7 +1779,6 @@ async function olStartGame(){
   const room = snap.val();
   const slots = room.slots || {};
 
-  // move to picking phase first
   if(room.status === 'lobby'){
     await update(ref(db, `rooms/${OL.roomId}`), { status: 'picking' });
     olStatus('เลือกตัวละครก่อนเริ่มเกม', 'var(--gold)');
@@ -1789,99 +1786,64 @@ async function olStartGame(){
     return;
   }
 
-  // check all human slots have picked
   const humanSlots = Object.values(slots);
   if(humanSlots.some(s => !s.char)){
     olStatus('รอให้ทุกคนเลือกตัวละครก่อน', 'var(--red)'); return;
   }
 
   olStatus('กำลังสร้างเกม...', 'var(--gold)');
-  // Build initial game state
   const gs = olBuildInitialGameState(slots);
-  await update(ref(db, `rooms/${OL.roomId}`), { status: 'playing', gameState: gs });
+  // Host starts immediately without waiting for Firebase round-trip
+  olStartOnlineGame(gs, slots);
+  // Push serialized state for others
+  await update(ref(db, `rooms/${OL.roomId}`), { status: 'playing', gameState: olSerializeGs(G) });
 }
 
-function olBuildInitialGameState(slots){
-  const roleList = shuffle([...ROLES]);
-  const humanEntries = Object.entries(slots).sort((a,b)=>Number(a[0])-Number(b[0]));
-  const humanCount = humanEntries.length;
-  const botCount = 5 - humanCount;
-
-  const humanChars = humanEntries.map(([slot, s]) => CHARACTERS.find(c=>c.id===s.char));
-  const usedIds = humanChars.map(c=>c.id);
-  const botChars = shuffle(CHARACTERS.filter(c=>!usedIds.includes(c.id))).slice(0, botCount);
-  const chars = [...humanChars, ...botChars];
-
-  const humanNames = humanEntries.map(([,s])=>s.name);
-  const botNames = ['Bot A','Bot B','Bot C','Bot D'].slice(0, botCount);
-  const names = [...humanNames, ...botNames];
-
-  // slot mapping: slot 0 → player index 0, etc.
-  const slotToPlayerIdx = {};
-  humanEntries.forEach(([slot], idx) => { slotToPlayerIdx[String(slot)] = idx; });
-
-  const deck = makeDeck();
-  const players = [];
-  for(let i=0;i<5;i++){
-    const role=roleList[i], ch=chars[i];
-    const p={i,name:names[i],isBot:i>=humanCount,role,charId:ch.id,
-             hp:role==='LEADER'?8:7,maxHp:role==='LEADER'?8:7,
-             atk:1,def:0,range:1,mpW:0,mpB:0,
-             hand:[],equip:{},dead:false,
-             multiAtk:false,ignoreArmor:false,drawAfterAtk:false,_athBonus:0};
-    if(ch.onSetup)ch.onSetup(p);
-    players.push(p);
+function _sanitizeGs(g){
+  for(const p of g.players){
+    p.equip = p.equip || {};
+    p.hand = p.hand || [];
+    if(!p.char || typeof p.char !== 'object' || !p.char.id)
+      p.char = CHARACTERS.find(c=>c.id===p.charId) || p.char;
   }
-  for(let r=0;r<5;r++) for(let i=0;i<5;i++){const c=deck.pop();if(c)players[i].hand.push(c);}
-
-  return {
-    deck, discard:[], players,
-    turn:0, phase:'standby', ap:3,
-    attackUsed:false, selectedCard:null,
-    log:[], gameOver:false,
-    skipCurse:Array(5).fill(false),
-    curseCard:Array(5).fill(null),
-    _aphSel:[], _deathQueue:[], _plutoVictims:[],
-    humanCount, slotToPlayerIdx,
-    // whose turn it is to act (for multiplayer sync)
-    actionTurn: null
-  };
+  g.log = g.log || [];
+  g.discard = g.discard || [];
+  g.deck = g.deck || [];
+  g._aphSel = g._aphSel || [];
+  g._deathQueue = g._deathQueue || [];
+  g._plutoVictims = g._plutoVictims || [];
+  g.skipCurse = g.skipCurse || Array(5).fill(false);
+  g.curseCard = g.curseCard || Array(5).fill(null);
+  return g;
 }
 
-// ── subscribe to game state changes (non-host players) ──
-let _olGameSub = null;
-function olSubscribeGameState(rid){
-  const { db, ref, onValue } = fb();
-  _olGameSub = onValue(ref(db, `rooms/${rid}/gameState`), snap => {
-    if(!snap.exists()) return;
-    const gs = snap.val();
-    // Hydrate characters (they're stored as charId strings)
-    olHydrateAndRender(gs);
-  });
+function olStartOnlineGame(gs, slots){
+  document.getElementById('online-lobby').classList.remove('show');
+  document.getElementById('title-screen').style.display='none';
+
+  let myPlayerIdx = 0;
+  if(gs.slotToPlayerIdx){
+    const val = gs.slotToPlayerIdx[String(OL.mySlot)];
+    myPlayerIdx = (val !== undefined && val !== null) ? Number(val) : 0;
+  }
+  OL.myPlayerIdx = myPlayerIdx;
+
+  G = _sanitizeGs(gs);
+  G.humanCount = Object.keys(slots).length;
+  renderAll();
+  addLog('=== เกม Online เริ่ม! ===','imp');
+
+  if(OL.isHost){
+    setInterval(()=>{
+      if(OL.isHost && OL.roomId && G.players && G.players.length > 0) olPushState();
+    }, 600);
+    beginTurn(0);
+  }
 }
 
 function olHydrateAndRender(gs){
-  // Host drives the game - don't overwrite host's local state with Firebase data
   if(OL.isHost) return;
-
-  // Sanitize players - Firebase strips empty objects/arrays
-  for(const p of gs.players){
-    p.equip = p.equip || {};
-    p.hand = p.hand || [];
-    p.skipCurse = p.skipCurse || false;
-    if(!p.char || typeof p.char === 'string' || !p.char.passive){
-      p.char = CHARACTERS.find(c=>c.id===p.charId) || p.char;
-    }
-  }
-  gs.skipCurse = gs.skipCurse || Array(5).fill(false);
-  gs.curseCard = gs.curseCard || Array(5).fill(null);
-  gs._aphSel = gs._aphSel || [];
-  gs._deathQueue = gs._deathQueue || [];
-  gs._plutoVictims = gs._plutoVictims || [];
-  gs.discard = gs.discard || [];
-  gs.deck = gs.deck || [];
-  gs.log = gs.log || [];
-  G = gs;
+  G = _sanitizeGs(gs);
   document.getElementById('title-screen').style.display='none';
   document.getElementById('online-lobby').classList.remove('show');
   renderAll();
