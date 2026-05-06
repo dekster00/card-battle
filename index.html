@@ -819,10 +819,10 @@ function nextAlive(pi){
 function isCurrentHuman(){return!G.players[G.turn].isBot;}
 function isMyTurnToAct(){
   if(G.gameOver)return false;
-  // Online mode: only act on your own turn
   if(OL.roomId){
-    const myIdx = OL.myPlayerIdx ?? OL.mySlot ?? 0;
-    return G.turn === myIdx && G.phase==='action' && !G.players[G.turn].isBot;
+    // Online: only act when it's your player index's turn AND action phase
+    const myIdx = OL.myPlayerIdx ?? 0;
+    return G.turn === myIdx && G.phase==='action' && !G.players[G.turn]?.isBot;
   }
   return!G.players[G.turn].isBot&&G.phase==='action';
 }
@@ -1818,7 +1818,7 @@ function olBuildInitialGameState(slots){
 
   // slot mapping: slot 0 → player index 0, etc.
   const slotToPlayerIdx = {};
-  humanEntries.forEach(([slot], idx) => { slotToPlayerIdx[slot] = idx; });
+  humanEntries.forEach(([slot], idx) => { slotToPlayerIdx[String(slot)] = idx; });
 
   const deck = makeDeck();
   const players = [];
@@ -1888,12 +1888,21 @@ function olHydrateAndRender(gs){
 function olStartOnlineGame(gs, slots){
   document.getElementById('online-lobby').classList.remove('show');
   document.getElementById('title-screen').style.display='none';
-  const myPlayerIdx = gs.slotToPlayerIdx ? (gs.slotToPlayerIdx[String(OL.mySlot)] ?? gs.slotToPlayerIdx[OL.mySlot] ?? -1) : OL.mySlot;
+
+  // slotToPlayerIdx keys come back as strings from Firebase
+  let myPlayerIdx = 0;
+  if(gs.slotToPlayerIdx){
+    const val = gs.slotToPlayerIdx[String(OL.mySlot)];
+    myPlayerIdx = (val !== undefined && val !== null) ? Number(val) : 0;
+  }
   OL.myPlayerIdx = myPlayerIdx;
-  olHydrateAndRender(gs); // sets G = gs first
+
+  olHydrateAndRender(gs); // sets G = gs
   addLog('=== เกม Online เริ่ม! ===','imp');
+
   if(OL.isHost){
     G.humanCount = Object.keys(slots).length;
+    // Push state every 500ms
     setInterval(()=>{
       if(OL.isHost && OL.roomId && G.players && G.players.length > 0) olPushState();
     }, 500);
