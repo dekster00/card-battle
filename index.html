@@ -818,9 +818,12 @@ function nextAlive(pi){
 }
 function isCurrentHuman(){return!G.players[G.turn].isBot;}
 function isMyTurnToAct(){
-  // In vs mode: only player 0 is human
-  // In mp mode: the human whose index matches G.turn
   if(G.gameOver)return false;
+  // Online mode: only act on your own turn
+  if(OL.roomId){
+    const myIdx = OL.myPlayerIdx ?? OL.mySlot ?? 0;
+    return G.turn === myIdx && G.phase==='action' && !G.players[G.turn].isBot;
+  }
   return!G.players[G.turn].isBot&&G.phase==='action';
 }
 
@@ -1280,10 +1283,13 @@ function renderBoard(){
   });
 }
 function getActivePi(){
+  // Online mode: show yourself at bottom
+  if(OL.roomId){
+    const myIdx = OL.myPlayerIdx ?? OL.mySlot ?? 0;
+    if(myIdx >= 0 && myIdx < G.players.length && !G.players[myIdx].dead) return myIdx;
+  }
   if(G.humanCount===1)return 0;
-  // mp: show whichever human is current turn at bottom; if bot turn show last human
   if(!G.players[G.turn].isBot)return G.turn;
-  // bot's turn — find the last human who had a turn (just use human with smallest i that isn't dead)
   const humans=G.players.filter(p=>!p.isBot&&!p.dead);
   return humans.length?humans[0].i:0;
 }
@@ -1705,9 +1711,10 @@ function olSubscribeRoom(rid){
     if(room.status === 'picking'){
       olEnterCharPick(room.slots||{});
     }
-    if(room.status === 'playing' && room.gameState){
-      olStartOnlineGame(room.gameState, room.slots||{});
+    // Only start game when gameState is fully populated with players
+    if(room.status === 'playing' && room.gameState && room.gameState.players && room.gameState.players.length > 0){
       unsub(); OL.unsubRoom = null;
+      olStartOnlineGame(room.gameState, room.slots||{});
       olSubscribeGameState(rid);
     }
   });
@@ -1870,16 +1877,16 @@ function olHydrateAndRender(gs){
 function olStartOnlineGame(gs, slots){
   document.getElementById('online-lobby').classList.remove('show');
   document.getElementById('title-screen').style.display='none';
-  // figure out my player index from my slot
-  const myPlayerIdx = gs.slotToPlayerIdx ? (gs.slotToPlayerIdx[OL.mySlot] ?? -1) : OL.mySlot;
+  const myPlayerIdx = gs.slotToPlayerIdx ? (gs.slotToPlayerIdx[String(OL.mySlot)] ?? gs.slotToPlayerIdx[OL.mySlot] ?? -1) : OL.mySlot;
   OL.myPlayerIdx = myPlayerIdx;
   olHydrateAndRender(gs);
-
   addLog('=== เกม Online เริ่ม! ===','imp');
   if(OL.isHost){
-    // Host drives the game engine
     G.humanCount = Object.keys(slots).length;
-    // Override isMyTurnToAct for online
+    // Start periodic push every 500ms
+    setInterval(()=>{
+      if(OL.isHost && OL.roomId && G.players && G.players.length > 0) olPushState();
+    }, 500);
     beginTurn(0);
   }
 }
@@ -1902,32 +1909,15 @@ function olSerializeGs(gs){
   return s;
 }
 
-// ── patch renderAll to also push state when in online host mode ──
-const _origRenderAll = renderAll;
-function renderAll(){
-  _origRenderAll();
-  if(OL.isHost && OL.roomId && G.players) olPushState();
+// ── push game state to Firebase periodically when host (no renderAll override needed) ──
+let _olPushTimer = null;
+function olSchedulePush(){
+  if(!OL.isHost || !OL.roomId) return;
+  if(_olPushTimer) clearTimeout(_olPushTimer);
+  _olPushTimer = setTimeout(()=>{ olPushState(); }, 300);
 }
 
-// ── override isMyTurnToAct for online ──
-// In online mode: a slot's "my turn" = G.turn === myPlayerIdx
-const _origIsMyTurnToAct = isMyTurnToAct;
-function isMyTurnToAct(){
-  if(!OL.roomId) return _origIsMyTurnToAct();
-  if(G.gameOver) return false;
-  // All humans can see their own hand; but only act on their turn
-  const myIdx = OL.myPlayerIdx ?? OL.mySlot ?? 0;
-  return G.turn === myIdx && G.phase === 'action' && !G.players[G.turn]?.isBot;
-}
-
-// ── override getActivePi so each player sees themselves at bottom ──
-const _origGetActivePi = getActivePi;
-function getActivePi(){
-  if(!OL.roomId) return _origGetActivePi();
-  const myIdx = OL.myPlayerIdx ?? OL.mySlot ?? 0;
-  if(myIdx >= 0 && myIdx < 5 && G.players?.[myIdx] && !G.players[myIdx].dead) return myIdx;
-  return _origGetActivePi();
-}
+// ── override isMyTurnToAct and getActivePi handled at source above ──
 
 // ── init (after ALL functions defined) ──
 buildCharGrid();
