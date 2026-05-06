@@ -1878,6 +1878,7 @@ function olHydrateAndRender(gs){
   gs._plutoVictims = gs._plutoVictims || [];
   gs.discard = gs.discard || [];
   gs.deck = gs.deck || [];
+  gs.log = gs.log || [];
   G = gs;
   document.getElementById('title-screen').style.display='none';
   document.getElementById('online-lobby').classList.remove('show');
@@ -1889,11 +1890,10 @@ function olStartOnlineGame(gs, slots){
   document.getElementById('title-screen').style.display='none';
   const myPlayerIdx = gs.slotToPlayerIdx ? (gs.slotToPlayerIdx[String(OL.mySlot)] ?? gs.slotToPlayerIdx[OL.mySlot] ?? -1) : OL.mySlot;
   OL.myPlayerIdx = myPlayerIdx;
-  olHydrateAndRender(gs);
+  olHydrateAndRender(gs); // sets G = gs first
   addLog('=== เกม Online เริ่ม! ===','imp');
   if(OL.isHost){
     G.humanCount = Object.keys(slots).length;
-    // Start periodic push every 500ms
     setInterval(()=>{
       if(OL.isHost && OL.roomId && G.players && G.players.length > 0) olPushState();
     }, 500);
