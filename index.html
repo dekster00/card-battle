@@ -1861,12 +1861,14 @@ function olSubscribeGameState(rid){
 }
 
 function olHydrateAndRender(gs){
+  // Host drives the game - don't overwrite host's local state with Firebase data
+  if(OL.isHost) return;
+
   // Sanitize players - Firebase strips empty objects/arrays
   for(const p of gs.players){
     p.equip = p.equip || {};
     p.hand = p.hand || [];
     p.skipCurse = p.skipCurse || false;
-    // Re-attach char objects from charId
     if(!p.char || typeof p.char === 'string' || !p.char.passive){
       p.char = CHARACTERS.find(c=>c.id===p.charId) || p.char;
     }
@@ -1889,7 +1891,6 @@ function olStartOnlineGame(gs, slots){
   document.getElementById('online-lobby').classList.remove('show');
   document.getElementById('title-screen').style.display='none';
 
-  // slotToPlayerIdx keys come back as strings from Firebase
   let myPlayerIdx = 0;
   if(gs.slotToPlayerIdx){
     const val = gs.slotToPlayerIdx[String(OL.mySlot)];
@@ -1897,16 +1898,34 @@ function olStartOnlineGame(gs, slots){
   }
   OL.myPlayerIdx = myPlayerIdx;
 
-  olHydrateAndRender(gs); // sets G = gs
-  addLog('=== เกม Online เริ่ม! ===','imp');
-
   if(OL.isHost){
+    // Host: set G directly and run the game
+    // Sanitize first
+    for(const p of gs.players){
+      p.equip = p.equip || {};
+      p.hand = p.hand || [];
+      p.char = CHARACTERS.find(c=>c.id===p.charId) || p.char;
+    }
+    gs.log = gs.log || [];
+    gs.discard = gs.discard || [];
+    gs._aphSel = gs._aphSel || [];
+    gs._deathQueue = gs._deathQueue || [];
+    gs._plutoVictims = gs._plutoVictims || [];
+    gs.skipCurse = gs.skipCurse || Array(5).fill(false);
+    gs.curseCard = gs.curseCard || Array(5).fill(null);
+    G = gs;
     G.humanCount = Object.keys(slots).length;
+    document.getElementById('title-screen').style.display='none';
     // Push state every 500ms
     setInterval(()=>{
       if(OL.isHost && OL.roomId && G.players && G.players.length > 0) olPushState();
     }, 500);
+    addLog('=== เกม Online เริ่ม! ===','imp');
     beginTurn(0);
+  } else {
+    // Non-host: receive state from Firebase
+    olHydrateAndRender(gs);
+    addLog('=== เกม Online เริ่ม! ===','imp');
   }
 }
 
