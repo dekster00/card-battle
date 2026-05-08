@@ -19,39 +19,194 @@ h1,h2{font-family:'Cinzel',serif;}
 ::-webkit-scrollbar{width:4px;}::-webkit-scrollbar-track{background:var(--bg);}::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
 
 /* ── TITLE / SETUP ── */
-#title-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:20px;gap:10px;z-index:300;overflow-y:auto;}
-#title-screen h1{font-size:28px;color:var(--gold);letter-spacing:4px;text-shadow:0 0 24px rgba(200,168,80,.5);}
-.ts-sub{color:var(--dim);font-size:12px;text-align:center;}
-.ts-pick{color:var(--gold2);font-size:13px;font-family:'Cinzel',serif;}
+#title-screen{position:fixed;inset:0;background:var(--bg);display:flex;flex-direction:column;z-index:300;overflow:hidden;}
 
-/* mode select */
-.mode-row{display:flex;gap:12px;margin:4px 0;}
-.mode-btn{padding:8px 20px;border-radius:6px;border:2px solid var(--border);background:var(--bg2);color:var(--dim);cursor:pointer;font-family:'Sarabun',sans-serif;font-size:12px;transition:.2s;}
-.mode-btn:hover{border-color:var(--gold);color:var(--gold);}
-.mode-btn.active{border-color:var(--gold2);color:var(--gold2);background:rgba(200,168,80,.08);}
+/* mode-btn legacy (replaced by mode-card) */
 
-/* char grid */
-#char-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;max-width:920px;width:100%;transition:.2s;}
-.char-card{background:linear-gradient(160deg,#1a1a2e,#0d0d1a);border:2px solid var(--border);border-radius:12px;cursor:pointer;transition:.2s;text-align:center;position:relative;overflow:hidden;padding:0;}
-.char-card::before{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 50%,rgba(0,0,0,.9) 100%);z-index:1;pointer-events:none;}
-.char-card:hover{border-color:var(--gold);transform:translateY(-5px);box-shadow:0 8px 24px rgba(200,168,80,.3);}
-.char-card.selected{border-color:var(--gold2);box-shadow:0 0 22px rgba(200,168,80,.55);}
-.char-card.selected::after{content:'✓';position:absolute;top:6px;right:6px;background:var(--gold);color:#000;border-radius:50%;width:20px;height:20px;line-height:20px;font-size:12px;font-weight:bold;z-index:3;}
-.char-card.taken{opacity:.35;pointer-events:none;}
-.char-card .cav{width:100%;height:165px;display:flex;align-items:flex-start;justify-content:center;font-size:40px;overflow:hidden;background:var(--bg3);}
-.char-card .cav img{width:100%;height:100%;object-fit:cover;object-position:top center;image-rendering:auto;}
-.char-card .cav svg{width:80px;height:80px;margin-top:20px;}
-.char-card .cinfo{position:relative;z-index:2;padding:6px 6px 4px;margin-top:-30px;}
-.char-card .char-emoji{position:absolute;top:8px;left:8px;font-size:14px;z-index:3;background:rgba(0,0,0,.6);border-radius:6px;padding:2px 5px;backdrop-filter:blur(2px);}
-.char-card .cname{font-family:'Cinzel',serif;font-size:11px;color:var(--gold2);margin-bottom:2px;font-weight:600;}
-.char-card .cpass{font-size:8px;color:var(--dim);line-height:1.4;min-height:18px;}
-.char-card .cskill{font-size:8px;color:#70b0ff;margin-top:2px;line-height:1.3;}
-.char-card .taken-by{position:absolute;top:4px;right:4px;font-size:8px;background:rgba(0,0,0,.7);border-radius:3px;padding:1px 4px;color:var(--gold);z-index:3;}
+/* char-card CSS → see new styles below */
 
 
-.btn-start{padding:10px 36px;border-radius:6px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;font-family:'Cinzel',serif;font-size:14px;letter-spacing:1px;transition:.2s;margin-top:4px;}
-.btn-start:hover:not(:disabled){background:rgba(200,168,80,.1);}
-.btn-start:disabled{opacity:.3;cursor:default;}
+
+/* ══ BG OVERLAY ══ */
+.bg-overlay{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:radial-gradient(ellipse at 20% 50%,rgba(144,96,208,.08) 0%,transparent 60%),
+             radial-gradient(ellipse at 80% 30%,rgba(80,144,224,.06) 0%,transparent 50%),
+             radial-gradient(ellipse at 50% 80%,rgba(200,168,80,.04) 0%,transparent 40%);}
+.bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
+  background-size:40px 40px;}
+
+/* ══ SPLASH ══ */
+#splash{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(4,4,12,.97);backdrop-filter:blur(4px);cursor:pointer;transition:opacity .6s;}
+#splash.hide{opacity:0;pointer-events:none;}
+.splash-deco{position:absolute;inset:0;pointer-events:none;overflow:hidden;}
+.splash-deco::before{content:'⚔';position:absolute;top:10%;left:8%;font-size:80px;color:rgba(200,168,80,.04);transform:rotate(-15deg);}
+.splash-deco::after{content:'⚔';position:absolute;bottom:10%;right:8%;font-size:80px;color:rgba(200,168,80,.04);transform:rotate(15deg);}
+.splash-title{font-family:'Cinzel',serif;font-size:40px;font-weight:700;color:var(--gold);letter-spacing:6px;text-align:center;margin-bottom:8px;animation:splashPulse 3s ease-in-out infinite;}
+.splash-sub{font-size:13px;color:var(--dim);letter-spacing:2px;margin-bottom:48px;}
+.splash-line{width:160px;height:1px;background:linear-gradient(to right,transparent,rgba(200,168,80,.5),transparent);margin:20px 0;}
+.splash-click-box{border:1px solid rgba(200,168,80,.4);border-radius:8px;padding:12px 36px;font-family:'Cinzel',serif;font-size:16px;color:var(--gold2);letter-spacing:3px;animation:splashBlink 2s ease-in-out infinite;background:rgba(200,168,80,.05);}
+.splash-click-hint{font-size:10px;color:var(--dim);letter-spacing:1px;margin-top:8px;}
+@keyframes splashPulse{0%,100%{text-shadow:0 0 30px rgba(200,168,80,.3);}50%{text-shadow:0 0 60px rgba(200,168,80,.7);}}
+@keyframes splashBlink{0%,100%{opacity:1;border-color:rgba(200,168,80,.5);}50%{opacity:.5;border-color:rgba(200,168,80,.15);}}
+
+/* ══ MODE SELECT OVERLAY ══ */
+#mode-overlay{position:fixed;inset:0;z-index:900;display:none;flex-direction:column;align-items:center;justify-content:center;
+  background:rgba(4,4,12,.96);backdrop-filter:blur(6px);}
+#mode-overlay.show{display:flex;}
+.mode-title{font-family:'Cinzel',serif;font-size:22px;color:var(--gold);letter-spacing:4px;margin-bottom:6px;}
+.mode-sub{font-size:12px;color:var(--dim);margin-bottom:32px;letter-spacing:1px;}
+.mode-cards{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;padding:0 16px;}
+.mode-card{width:200px;padding:24px 20px;border-radius:12px;border:1.5px solid var(--border);background:var(--bg2);
+  cursor:pointer;text-align:center;transition:.2s;display:flex;flex-direction:column;align-items:center;gap:8px;}
+.mode-card:hover{border-color:var(--gold);transform:translateY(-4px);box-shadow:0 12px 32px rgba(0,0,0,.5);}
+.mode-card.active{border-color:var(--gold2);background:rgba(200,168,80,.06);}
+.mc-icon{font-size:36px;margin-bottom:4px;}
+.mc-title{font-family:'Cinzel',serif;font-size:14px;color:var(--white);}
+.mc-desc{font-size:11px;color:var(--dim);line-height:1.5;}
+.mc-badge{font-size:9px;padding:2px 8px;border-radius:3px;margin-top:4px;}
+.badge-vs{background:rgba(200,168,80,.12);color:var(--gold2);border:1px solid rgba(200,168,80,.3);}
+.badge-online{background:rgba(80,144,224,.12);color:var(--blue);border:1px solid rgba(80,144,224,.3);}
+.mode-confirm{margin-top:28px;padding:11px 40px;border-radius:7px;border:1px solid var(--gold);background:transparent;color:var(--gold);
+  cursor:pointer;font-family:'Cinzel',serif;font-size:14px;letter-spacing:2px;transition:.2s;}
+.mode-confirm:hover{background:rgba(200,168,80,.1);box-shadow:0 0 20px rgba(200,168,80,.2);}
+
+/* ══ RESOURCE BAR ══ */
+#resource-bar{background:rgba(13,13,26,.98);border-bottom:1px solid var(--border);height:45px;flex-shrink:0;
+  padding:0 16px;display:flex;align-items:center;gap:14px;position:relative;z-index:10;}
+.res-item{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;}
+.res-val{color:var(--white);}
+.res-cap{font-size:10px;color:var(--dim);}
+.res-sep{width:1px;height:20px;background:var(--border);}
+.topbar-mode{display:flex;align-items:center;gap:6px;padding:4px 10px;border-radius:5px;
+  background:rgba(200,168,80,.08);border:1px solid rgba(200,168,80,.25);font-size:11px;cursor:pointer;transition:.15s;margin-left:auto;}
+.topbar-mode:hover{border-color:var(--gold);}
+.tm-dot{width:7px;height:7px;border-radius:50%;}
+.tm-label{color:var(--gold2);font-weight:600;}
+.tm-change{color:var(--dim);font-size:9px;}
+
+/* ══ SIDEBAR ══ */
+.sidebar-label{font-size:9px;color:var(--dim);text-transform:uppercase;letter-spacing:2px;padding:4px 8px 2px;margin-top:6px;}
+.filter-btn{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;
+  border:none;background:transparent;color:var(--dim);cursor:pointer;
+  font-family:'Sarabun',sans-serif;font-size:12px;transition:.15s;text-align:left;width:100%;}
+.filter-btn:hover{background:rgba(255,255,255,.05);color:var(--white);}
+.filter-btn.active{background:rgba(200,168,80,.12);color:var(--gold2);}
+.filter-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.filter-count{margin-left:auto;font-size:10px;color:var(--dim);}
+.sort-row{display:flex;gap:4px;padding:0 4px;margin-top:6px;}
+.sort-chip{flex:1;padding:4px;border-radius:4px;border:1px solid var(--border);background:transparent;color:var(--dim);
+  cursor:pointer;font-family:'Sarabun',sans-serif;font-size:9px;transition:.15s;text-align:center;}
+.sort-chip.active{border-color:var(--gold);color:var(--gold);}
+
+/* ══ CONTENT HEADER ══ */
+#cs-content-header h2{font-family:'Cinzel',serif;}
+.sel-info{margin-left:auto;font-size:11px;color:var(--dim);}
+.sel-info span{color:var(--gold2);font-weight:600;}
+
+/* ══ CHAR CARD (new design) ══ */
+#char-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.char-card{position:relative;border-radius:10px;border:1.5px solid var(--border);background:var(--bg2);
+  cursor:pointer;overflow:hidden;transition:transform .2s,border-color .2s,box-shadow .2s;
+  aspect-ratio:3/4.2;display:flex;flex-direction:column;}
+.char-card:hover{transform:translateY(-4px) scale(1.01);border-color:rgba(200,168,80,.5);
+  box-shadow:0 8px 24px rgba(0,0,0,.5);z-index:2;}
+.char-card.selected{border-color:var(--gold2)!important;
+  box-shadow:0 0 20px rgba(200,168,80,.4),0 0 40px rgba(200,168,80,.15);}
+.char-card.taken{opacity:.3;pointer-events:none;}
+/* role tints */
+.char-card.role-attacker{border-color:rgba(224,85,85,.4);}
+.char-card.role-tank{border-color:rgba(80,144,224,.4);}
+.char-card.role-utility{border-color:rgba(144,96,208,.4);}
+.char-card.role-support{border-color:rgba(80,200,120,.4);}
+.char-card.role-attacker::before,.char-card.role-tank::before,.char-card.role-utility::before,.char-card.role-support::before{
+  content:'';position:absolute;inset:0;pointer-events:none;z-index:0;}
+.char-card.role-attacker::before{background:linear-gradient(180deg,rgba(224,85,85,.08) 0%,transparent 45%);}
+.char-card.role-tank::before{background:linear-gradient(180deg,rgba(80,144,224,.08) 0%,transparent 45%);}
+.char-card.role-utility::before{background:linear-gradient(180deg,rgba(144,96,208,.08) 0%,transparent 45%);}
+.char-card.role-support::before{background:linear-gradient(180deg,rgba(80,200,120,.08) 0%,transparent 45%);}
+/* card art */
+.card-art{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:60px;}
+.card-art .svg-wrap{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
+.card-art::after{content:'';position:absolute;bottom:0;left:0;right:0;height:55%;
+  background:linear-gradient(to top,rgba(10,10,18,.98) 0%,rgba(10,10,18,.6) 60%,transparent 100%);
+  pointer-events:none;z-index:1;}
+.card-top{position:absolute;top:0;left:0;right:0;padding:5px;display:flex;
+  align-items:flex-start;justify-content:space-between;z-index:5;}
+/* role badge (char-select style) */
+#char-grid .role-badge,#ol-char-grid .role-badge{font-family:'Cinzel',serif;font-size:8px;font-weight:700;padding:2px 5px;border-radius:3px;letter-spacing:.5px;}
+#char-grid .rb-attacker,#ol-char-grid .rb-attacker{background:rgba(224,85,85,.2);color:#ff8888;border:1px solid rgba(224,85,85,.45);}
+#char-grid .rb-tank,#ol-char-grid .rb-tank{background:rgba(80,144,224,.2);color:#88b8ff;border:1px solid rgba(80,144,224,.45);}
+#char-grid .rb-utility,#ol-char-grid .rb-utility{background:rgba(144,96,208,.2);color:#c090f0;border:1px solid rgba(144,96,208,.45);}
+#char-grid .rb-support,#ol-char-grid .rb-support{background:rgba(80,200,120,.2);color:#88e0a8;border:1px solid rgba(80,200,120,.45);}
+.faction-icon{font-size:14px;background:rgba(0,0,0,.6);border-radius:4px;padding:2px 4px;backdrop-filter:blur(4px);}
+/* card info */
+.card-info{position:absolute;bottom:0;left:0;right:0;padding:6px 7px 7px;z-index:3;}
+.card-stars{font-size:8px;color:var(--gold);margin-bottom:2px;letter-spacing:1px;}
+.card-name{font-family:'Cinzel',serif;font-size:10px;font-weight:600;color:var(--white);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
+.card-faction-tag{font-size:8px;font-weight:500;padding:1px 5px;border-radius:2px;display:inline-block;margin-bottom:3px;}
+.ft-olympus{background:rgba(224,192,96,.15);color:#e0c060;}
+.ft-underworld{background:rgba(144,96,208,.15);color:#b080e0;}
+.ft-chaos{background:rgba(224,80,80,.15);color:#e07070;}
+.ft-nature{background:rgba(80,200,120,.15);color:#70d090;}
+.card-skill{font-size:7.5px;color:var(--dim);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.level-badge{position:absolute;bottom:6px;right:6px;z-index:6;background:rgba(0,0,0,.8);
+  border:1px solid rgba(200,168,80,.4);border-radius:3px;font-size:9px;font-weight:700;color:var(--gold2);padding:1px 4px;}
+.check-mark{position:absolute;top:5px;right:5px;display:none;z-index:10;width:18px;height:18px;
+  border-radius:50%;background:var(--gold2);color:#000;font-size:10px;font-weight:700;
+  align-items:center;justify-content:center;}
+.char-card.selected .check-mark{display:flex;}
+.char-card.selected .role-badge{display:none;}
+
+/* ══ BOTTOM BAR preview ══ */
+.preview-art{width:42px;height:56px;border-radius:6px;overflow:hidden;border:1px solid var(--border);
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--bg3);}
+.preview-info{flex:1;min-width:0;}
+.preview-name{font-family:'Cinzel',serif;font-size:13px;color:var(--gold2);margin-bottom:2px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.preview-passive{font-size:10px;color:var(--blue);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.preview-skill{font-size:10px;color:var(--dim);line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.preview-none{color:var(--dim);font-size:12px;}
+.stat-pills{display:flex;gap:5px;align-items:center;flex-shrink:0;}
+.stat-pill{display:flex;flex-direction:column;align-items:center;background:var(--bg3);
+  border:1px solid var(--border);border-radius:5px;padding:4px 8px;min-width:40px;}
+.sp-label{font-size:8px;color:var(--dim);}
+.sp-val{font-size:13px;font-weight:700;}
+.sp-hp{color:#e04040;}.sp-atk{color:#e08050;}.sp-rng{color:#50c878;}
+
+/* ══ CHAR TOOLTIP ══ */
+#char-tooltip{position:fixed;z-index:200;background:rgba(10,10,20,.97);border:1px solid var(--gold);
+  border-radius:8px;padding:10px 12px;max-width:210px;pointer-events:none;display:none;
+  font-size:11px;line-height:1.6;box-shadow:0 8px 24px rgba(0,0,0,.6);}
+#char-tooltip h3{font-family:'Cinzel',serif;font-size:12px;color:var(--gold2);margin-bottom:4px;}
+.tp-row{display:flex;gap:4px;margin-bottom:4px;flex-wrap:wrap;align-items:center;}
+.tp-passive{color:var(--blue);font-size:10px;}
+.tp-skill{color:var(--purple);font-size:10px;}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(12px);}to{opacity:1;transform:translateY(0);}}
+.char-card{animation:fadeInUp .3s ease both;}
+/* online char pick compact */
+#ol-char-grid .char-card{aspect-ratio:auto;min-height:90px;}
+#ol-char-grid .card-art{min-height:65px;}
+
+/* ══ LAYOUT RULES FOR CHAR SELECT SCREEN ══ */
+#cs-screen{position:relative;z-index:5;display:flex;flex:1;overflow:hidden;min-height:0;}
+#cs-sidebar{width:160px;background:rgba(13,13,26,.9);border-right:1px solid var(--border);
+  display:flex;flex-direction:column;padding:12px 8px;gap:4px;flex-shrink:0;overflow-y:auto;}
+#cs-content{flex:1;display:flex;flex-direction:column;overflow:hidden;}
+#cs-content-header{padding:12px 16px 8px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+#cs-content-header h2{font-size:15px;color:var(--gold);letter-spacing:2px;}
+#cs-char-grid-wrap{flex:1;overflow-y:auto;padding:12px 12px 100px;}
+#cs-bottom-bar{position:absolute;bottom:0;left:160px;right:0;
+  background:rgba(7,7,15,.97);border-top:1px solid var(--border);
+  padding:10px 16px;display:flex;align-items:center;gap:14px;z-index:20;
+  backdrop-filter:blur(8px);}
+#cs-sel-preview{display:flex;align-items:center;gap:10px;flex:1;min-width:0;}
+.btn-start{padding:10px 28px;border-radius:7px;border:1px solid var(--gold);background:transparent;color:var(--gold);cursor:pointer;font-family:'Cinzel',serif;font-size:13px;letter-spacing:1px;transition:.2s;flex-shrink:0;}
+.btn-start:hover:not(:disabled){background:rgba(200,168,80,.12);box-shadow:0 0 20px rgba(200,168,80,.2);}
+.btn-start:disabled{opacity:.25;cursor:default;}
 
 /* ── ONLINE LOBBY ── */
 #online-lobby{display:none;position:fixed;inset:0;background:var(--bg);z-index:500;
@@ -302,15 +457,14 @@ h1,h2{font-family:'Cinzel',serif;}
   .cpo-card-name{font-size:15px;}
   #banner-atk{font-size:13px;padding:10px 16px;}
 
-  /* title screen */
-  #title-screen h1{font-size:22px;}
-  #char-grid{grid-template-columns:repeat(2,1fr)!important;}
-  .char-card .cav{width:44px;height:44px;}
-  .char-card .cname{font-size:10px;}
-  .char-card .cskill{font-size:7px;}
-  .mode-row{flex-direction:column;width:100%;max-width:300px;}
-  .mode-btn{text-align:center;}
-  .btn-start{width:200px;text-align:center;}
+  /* char select screen mobile */
+  #cs-sidebar{width:110px;}
+  #char-grid{grid-template-columns:repeat(3,1fr);gap:6px;}
+  #cs-bottom-bar{left:110px;}
+  #cs-char-grid-wrap{padding-bottom:90px;}
+  .stat-pills{display:none;}
+  .mode-cards{flex-direction:column;}
+  .mode-card{width:260px;}
 
   /* death overlay */
   .death-inner{padding:20px 24px;}
@@ -320,8 +474,12 @@ h1,h2{font-family:'Cinzel',serif;}
   #win-screen h1{font-size:20px;}
 }
 
+@media (max-width: 440px) {
+  #cs-sidebar{display:none;}
+  #char-grid{grid-template-columns:repeat(3,1fr);}
+  #cs-bottom-bar{left:0;}
+}
 @media (max-width: 380px) {
-  #char-grid{grid-template-columns:repeat(2,1fr)!important;}
   .card{width:56px;height:80px;}
   .my-stat-box .msv{font-size:13px;}
 }
@@ -340,21 +498,128 @@ h1,h2{font-family:'Cinzel',serif;}
 </head>
 <body>
 
-<!-- TITLE / SETUP -->
-<div id="title-screen">
-  <h1>⚔ CARD BATTLE ⚔</h1>
-  <p class="ts-sub">เกมการ์ดต่อสู้ · ระบบ Role ซ่อนเร้น</p>
+<!-- BG decorations (char select) -->
+<div class="bg-overlay"></div>
+<div class="bg-grid"></div>
 
-  <!-- mode select -->
-  <div class="mode-row">
-    <button class="mode-btn active" id="mode-vs">👤 1 คน vs บอท 4</button>
-    <button class="mode-btn" id="mode-online" onclick="openOnlineLobby()" style="border-color:#5090e0;color:#5090e0;">🌐 Online</button>
+<!-- ══ SPLASH ══ -->
+<div id="splash" onclick="closeSplash()">
+  <div class="splash-deco"></div>
+  <h1 class="splash-title">⚔ CARD BATTLE ⚔</h1>
+  <p class="splash-sub">เกมการ์ดต่อสู้ · ระบบ Role ซ่อนเร้น</p>
+  <div class="splash-line"></div>
+  <div class="splash-click-box">CLICK TO START</div>
+  <div class="splash-click-hint">แตะหน้าจอเพื่อเริ่ม</div>
+</div>
+
+<!-- ══ MODE SELECT OVERLAY ══ -->
+<div id="mode-overlay">
+  <div class="mode-title">⚔ เลือกโหมดการเล่น</div>
+  <p class="mode-sub">เลือกโหมดก่อนเลือกตัวละคร</p>
+  <div class="mode-cards">
+    <div class="mode-card active" id="mc-vs" onclick="pickMode('vs')">
+      <div class="mc-icon">👤</div>
+      <div class="mc-title">Solo vs Bot</div>
+      <div class="mc-desc">เล่นคนเดียวสู้กับ Bot 4 ตัว<br>เหมาะสำหรับฝึกทักษะ</div>
+      <div class="mc-badge badge-vs">1 คน vs บอท 4</div>
+    </div>
+    <div class="mode-card" id="mc-online" onclick="pickMode('online')">
+      <div class="mc-icon">🌐</div>
+      <div class="mc-title">Online</div>
+      <div class="mc-desc">เล่นกับผู้เล่นจริง 2–5 คน<br>บอทเติมช่องที่ว่าง</div>
+      <div class="mc-badge badge-online">🟢 Multiplayer</div>
+    </div>
+  </div>
+  <button class="mode-confirm" onclick="confirmMode()">เลือกตัวละคร ▶</button>
+</div>
+
+<!-- TITLE / SETUP = char select screen -->
+<div id="title-screen">
+  <!-- RESOURCE BAR -->
+  <div id="resource-bar">
+    <div class="res-item">⚡ <span class="res-val">356,000</span></div>
+    <div class="res-sep"></div>
+    <div class="res-item">💎 <span class="res-val">150</span><span class="res-cap">/300</span></div>
+    <div class="res-sep"></div>
+    <div class="res-item">🎫 <span class="res-val">30</span></div>
+    <div class="topbar-mode" onclick="reopenModeSelect()">
+      <span class="tm-dot" id="tm-dot" style="background:#c8a850;"></span>
+      <span class="tm-label" id="tm-label">Solo vs Bot</span>
+      <span class="tm-change">เปลี่ยน</span>
+    </div>
   </div>
 
-  <p class="ts-pick" id="pick-label">— เลือกตัวละครของคุณ —</p>
-  <div id="char-grid"></div>
-  <button class="btn-start" id="btn-start" onclick="startGame()" disabled>▶ เริ่มเกม</button>
+  <!-- SCREEN -->
+  <div id="cs-screen">
+    <!-- SIDEBAR -->
+    <div id="cs-sidebar">
+      <span class="sidebar-label">กรอง</span>
+      <button class="filter-btn active" onclick="csSetFilter('all',this)">
+        <span class="filter-dot" style="background:#6060a0"></span>ทั้งหมด<span class="filter-count">10</span>
+      </button>
+      <span class="sidebar-label">Faction</span>
+      <button class="filter-btn" onclick="csSetFilter('olympus',this)">
+        <span class="filter-dot" style="background:#e0c060"></span>Olympus<span class="filter-count">5</span>
+      </button>
+      <button class="filter-btn" onclick="csSetFilter('underworld',this)">
+        <span class="filter-dot" style="background:#9060d0"></span>Underworld<span class="filter-count">2</span>
+      </button>
+      <button class="filter-btn" onclick="csSetFilter('chaos',this)">
+        <span class="filter-dot" style="background:#e05050"></span>Chaos<span class="filter-count">2</span>
+      </button>
+      <button class="filter-btn" onclick="csSetFilter('nature',this)">
+        <span class="filter-dot" style="background:#50c878"></span>Nature<span class="filter-count">1</span>
+      </button>
+      <span class="sidebar-label">Role</span>
+      <button class="filter-btn" onclick="csSetFilter('attacker',this)">
+        <span class="filter-dot" style="background:#e05555"></span>Attacker<span class="filter-count">4</span>
+      </button>
+      <button class="filter-btn" onclick="csSetFilter('tank',this)">
+        <span class="filter-dot" style="background:#5090e0"></span>Tank<span class="filter-count">1</span>
+      </button>
+      <button class="filter-btn" onclick="csSetFilter('utility',this)">
+        <span class="filter-dot" style="background:#9060d0"></span>Utility<span class="filter-count">3</span>
+      </button>
+      <button class="filter-btn" onclick="csSetFilter('support',this)">
+        <span class="filter-dot" style="background:#50c878"></span>Support<span class="filter-count">2</span>
+      </button>
+      <span class="sidebar-label">เรียง</span>
+      <div class="sort-row">
+        <button class="sort-chip active" onclick="csSetSort('level',this)">Lv.</button>
+        <button class="sort-chip" onclick="csSetSort('role',this)">Role</button>
+        <button class="sort-chip" onclick="csSetSort('name',this)">A–Z</button>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="cs-content">
+      <div id="cs-content-header">
+        <h2>เลือกตัวละคร</h2>
+        <div class="sel-info">เลือกแล้ว: <span id="sel-count">0</span> / 1</div>
+      </div>
+      <div id="cs-char-grid-wrap">
+        <div id="char-grid"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- BOTTOM BAR -->
+  <div id="cs-bottom-bar">
+    <div id="cs-sel-preview">
+      <div class="preview-art" id="preview-art"></div>
+      <div class="preview-info" id="preview-info">
+        <div class="preview-none">— เลือกตัวละครของคุณ —</div>
+      </div>
+    </div>
+    <div class="stat-pills" id="stat-pills" style="display:none;">
+      <div class="stat-pill"><span class="sp-label">HP</span><span class="sp-val sp-hp" id="sp-hp">7</span></div>
+      <div class="stat-pill"><span class="sp-label">ATK</span><span class="sp-val sp-atk" id="sp-atk">1</span></div>
+      <div class="stat-pill"><span class="sp-label">ระยะ</span><span class="sp-val sp-rng" id="sp-rng">1</span></div>
+    </div>
+    <button class="btn-start" id="btn-start" onclick="startGameFromCS()" disabled>▶ เริ่มเกม</button>
+  </div>
 </div>
+<div id="char-tooltip"></div>
 
 <!-- ONLINE LOBBY -->
 <div id="online-lobby">
@@ -377,7 +642,7 @@ h1,h2{font-family:'Cinzel',serif;}
     <div id="lobby-players"></div>
     <div id="ol-char-pick" style="display:none;">
       <p style="font-size:11px;color:var(--gold2);margin-bottom:6px;">เลือกตัวละครของคุณ:</p>
-      <div id="ol-char-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px;"></div>
+      <div id="ol-char-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:260px;overflow-y:auto;"></div>
     </div>
     <button class="lobby-btn" id="ol-start-btn" style="display:none;" onclick="olStartGame()">▶ เริ่มเกม (Host)</button>
     <button class="lobby-btn sec" onclick="olLeave()">✖ ยกเลิก</button>
@@ -538,21 +803,60 @@ function shuffle(a){for(let i=a.length-1;i>0;i--){const j=~~(Math.random()*(i+1)
 let G={};
 let selectedCharId=null;
 
+/* ══ CHARACTER SELECT SYSTEM ══ */
+const FACTION_ICON={olympus:'⚜️',underworld:'💠',chaos:'🔥',nature:'🌿'};
+const CHAR_DATA={
+  zizeus:   {faction:'olympus',   factionLabel:'Olympus',   role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:2,range:1},
+  pluto:    {faction:'underworld',factionLabel:'Underworld',role:'utility', roleLabel:'Utility', stars:4,level:28,hp:7,atk:1,range:1},
+  hades:    {faction:'underworld',factionLabel:'Underworld',role:'attacker',roleLabel:'Attacker',stars:4,level:30,hp:8,atk:2,range:1},
+  arez:     {faction:'chaos',     factionLabel:'Chaos',     role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:2,range:1},
+  hermes:   {faction:'olympus',   factionLabel:'Olympus',   role:'utility', roleLabel:'Utility', stars:3,level:24,hp:7,atk:1,range:1},
+  aphrodite:{faction:'olympus',   factionLabel:'Olympus',   role:'support', roleLabel:'Support', stars:4,level:26,hp:7,atk:1,range:1},
+  hephaestus:{faction:'olympus',  factionLabel:'Olympus',   role:'utility', roleLabel:'Utility', stars:3,level:22,hp:7,atk:1,range:1},
+  athena:   {faction:'olympus',   factionLabel:'Olympus',   role:'tank',    roleLabel:'Tank',    stars:4,level:30,hp:9,atk:1,range:1},
+  artemis:  {faction:'nature',    factionLabel:'Nature',    role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:1,range:4},
+  apollonius:{faction:'chaos',    factionLabel:'Chaos',     role:'support', roleLabel:'Support', stars:3,level:20,hp:7,atk:1,range:1}
+};
+function starsStr(n){return'★'.repeat(n)+'☆'.repeat(5-n);}
+
+let csCurrentFilter='all', csCurrentSort='level';
+
+function csGetList(){
+  const roles=['attacker','tank','utility','support'];
+  const facs=['olympus','underworld','chaos','nature'];
+  let list=[...CHARACTERS].map(ch=>({...ch,...(CHAR_DATA[ch.id]||{})}));
+  if(roles.includes(csCurrentFilter)) list=list.filter(c=>c.role===csCurrentFilter);
+  else if(facs.includes(csCurrentFilter)) list=list.filter(c=>c.faction===csCurrentFilter);
+  if(csCurrentSort==='level') list.sort((a,b)=>(b.level||0)-(a.level||0));
+  else if(csCurrentSort==='role'){const O={attacker:0,tank:1,utility:2,support:3};list.sort((a,b)=>(O[a.role]||0)-(O[b.role]||0));}
+  else list.sort((a,b)=>a.name.localeCompare(b.name));
+  return list;
+}
+
 function buildCharGrid(){
   const grid=document.getElementById('char-grid');
-  grid.innerHTML=CHARACTERS.map(ch=>{
-    const hasImg=CHAR_IMAGES&&CHAR_IMAGES[ch.id];
-    return`<div class="char-card" id="cc-${ch.id}" onclick="selectChar('${ch.id}')">
-      <div class="char-emoji">${ch.emoji}</div>
-      <div class="cav" style="background:${ch.color}22;">${charSVG(ch.id,hasImg?160:56)}</div>
-      <div class="cinfo">
-        <div class="cname">${ch.name}</div>
-        <div class="cpass">${ch.passive!=='—'?ch.passive:'&nbsp;'}</div>
-        <div class="cskill">${ch.skillDesc}</div>
+  const list=csGetList();
+  grid.innerHTML=list.map((ch,i)=>{
+    const d=CHAR_DATA[ch.id]||{};
+    return`<div class="char-card role-${d.role||''} ${selectedCharId===ch.id?'selected':''}"
+         id="cc-${ch.id}" onclick="selectChar('${ch.id}')"
+         onmouseenter="showCharTip(event,'${ch.id}')" onmouseleave="hideCharTip()"
+         style="animation-delay:${i*.03}s">
+      <div class="check-mark">✓</div>
+      <div class="card-art"><div class="svg-wrap">${charSVG(ch.id,90)}</div></div>
+      <div class="card-top">
+        <span class="role-badge rb-${d.role||''}">${d.roleLabel||''}</span>
+        <span class="faction-icon">${FACTION_ICON[d.faction]||ch.emoji}</span>
+      </div>
+      <div class="level-badge">Lv.${d.level||'?'}</div>
+      <div class="card-info">
+        <div class="card-stars">${starsStr(d.stars||3)}</div>
+        <div class="card-name">${ch.name}</div>
+        <div><span class="card-faction-tag ft-${d.faction||''}">${d.factionLabel||''}</span></div>
+        <div class="card-skill">${ch.skillDesc}</div>
       </div>
     </div>`;
   }).join('');
-  if(selectedCharId)document.getElementById('cc-'+selectedCharId)?.classList.add('selected');
 }
 
 function selectChar(id){
@@ -560,12 +864,94 @@ function selectChar(id){
   document.querySelectorAll('.char-card').forEach(el=>el.classList.remove('selected'));
   document.getElementById('cc-'+id)?.classList.add('selected');
   document.getElementById('btn-start').disabled=false;
+  document.getElementById('sel-count').textContent='1';
+  const ch=CHARACTERS.find(c=>c.id===id); if(!ch) return;
+  const d=CHAR_DATA[id]||{};
+  document.getElementById('preview-art').innerHTML=charSVG(ch.id,42);
+  document.getElementById('preview-info').innerHTML=`
+    <div class="preview-name">${ch.name}</div>
+    ${ch.passive&&ch.passive!=='—'?`<div class="preview-passive">★ ${ch.passive}</div>`:''}
+    <div class="preview-skill">${ch.skillDesc}</div>`;
+  document.getElementById('stat-pills').style.display='flex';
+  document.getElementById('sp-hp').textContent=d.hp||7;
+  document.getElementById('sp-atk').textContent=d.atk||1;
+  document.getElementById('sp-rng').textContent=d.range||1;
+}
+
+function csSetFilter(f,btn){
+  csCurrentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); buildCharGrid();
+}
+function csSetSort(s,btn){
+  csCurrentSort=s;
+  document.querySelectorAll('.sort-chip').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active'); buildCharGrid();
+}
+
+/* Char Tooltip */
+const ROLE_C={attacker:'#ff8888',tank:'#88b8ff',utility:'#c090f0',support:'#88e0a8'};
+function showCharTip(e,id){
+  const ch=CHARACTERS.find(c=>c.id===id); if(!ch) return;
+  const d=CHAR_DATA[id]||{};
+  const tip=document.getElementById('char-tooltip');
+  if(!tip) return;
+  tip.innerHTML=`<h3>${ch.emoji} ${ch.name}</h3>
+    <div class="tp-row">
+      <span class="card-faction-tag ft-${d.faction||''}">${d.factionLabel||''}</span>
+      <span style="font-size:9px;color:${ROLE_C[d.role]||'#fff'}">${d.roleLabel||''}</span>
+    </div>
+    <div>Lv.${d.level||'?'} · HP ${d.hp||7} · ATK ${d.atk||1} · ระยะ ${d.range||1}</div>
+    ${ch.passive&&ch.passive!=='—'?`<div class="tp-passive">Passive: ${ch.passive}</div>`:''}
+    <div class="tp-skill">Skill: ${ch.skillDesc}</div>`;
+  tip.style.display='block'; moveCharTip(e);
+}
+function hideCharTip(){const t=document.getElementById('char-tooltip');if(t)t.style.display='none';}
+document.addEventListener('mousemove',e=>{const t=document.getElementById('char-tooltip');if(t&&t.style.display==='block')moveCharTip(e);});
+function moveCharTip(e){
+  const t=document.getElementById('char-tooltip'); if(!t) return;
+  let x=e.clientX+14,y=e.clientY+14;
+  if(x+220>window.innerWidth)x=e.clientX-226;
+  if(y+170>window.innerHeight)y=e.clientY-170;
+  t.style.left=x+'px';t.style.top=y+'px';
+}
+
+/* Splash / Mode Select */
+function closeSplash(){
+  const s=document.getElementById('splash');
+  s.classList.add('hide');
+  setTimeout(()=>{s.style.display='none';document.getElementById('mode-overlay').classList.add('show');},600);
+}
+let csCurrentMode='vs';
+function pickMode(m){
+  csCurrentMode=m;
+  document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('active'));
+  document.getElementById('mc-'+m).classList.add('active');
+}
+function confirmMode(){
+  document.getElementById('mode-overlay').classList.remove('show');
+  const dot=document.getElementById('tm-dot'),lbl=document.getElementById('tm-label');
+  if(csCurrentMode==='online'){dot.style.background='#5090e0';lbl.textContent='🌐 Online';}
+  else{dot.style.background='#c8a850';lbl.textContent='Solo vs Bot';}
+  // If online mode selected, open lobby right away
+  if(csCurrentMode==='online') openOnlineLobby();
+}
+function reopenModeSelect(){document.getElementById('mode-overlay').classList.add('show');}
+
+function startGameFromCS(){
+  if(!selectedCharId) return;
+  if(csCurrentMode==='online'){
+    openOnlineLobby();
+    return;
+  }
+  startGame();
 }
 
 /* ═══ START GAME ═══ */
 function startGame(){
   if(!selectedCharId)return;
   document.getElementById('title-screen').style.display='none';
+  document.getElementById('splash').style.display='none';
   const roleList=shuffle([...ROLES]);
   const humanChar=CHARACTERS.find(c=>c.id===selectedCharId);
   const botChars=shuffle(CHARACTERS.filter(c=>c.id!==selectedCharId)).slice(0,4);
@@ -620,10 +1006,12 @@ function beginTurn(pi){
   if(G.skipCurse[pi]){
     G.skipCurse[pi]=false;setPhase('draw');drawCards(pi,2+(p.char.extraDraw||0));
     addLog(`${p.name}: ถูกข้ามเทิร์น!`);setPhase('end');
+    olSchedulePush(); // push กรณี skip turn ด้วย
     setTimeout(()=>endPhase(pi),p.isBot?600:800);return;
   }
   setPhase('draw');drawCards(pi,2+(p.char.extraDraw||0));
   setPhase('action');renderAll();
+  olSchedulePush(); // push state ทันทีเมื่อเริ่มเทิร์นใหม่
 
   if(p.isBot)setTimeout(()=>botTurn(pi),800);
 }
@@ -634,6 +1022,7 @@ function endPhase(pi){
   if(p.char.id==='athena'){p._athBonus=0;recalcStats(pi);}
   while(p.hand.length>7){const c=p.hand.splice(~~(Math.random()*p.hand.length),1)[0];G.discard.push(c);if(!p.isBot)addLog(`${p.name} ทิ้ง ${c.name} (เกิน7)`);}
   renderAll();
+  olSchedulePush(); // push state ให้ non-host รู้ว่า end phase แล้ว
   setTimeout(()=>nextTurn(),p.isBot?550:400);
 }
 
@@ -870,11 +1259,40 @@ function playerDefend(atkI,defI,atkCard){
   // Online mode: if defender is a human player on another device, they handle it themselves
   // Host pushes state; defender's screen will show modal via their own renderAll
   if(OL.roomId && OL.isHost && !def.isBot){
-    // Push state with a defend_request flag so defender's client shows modal
-    G._defendRequest = { atkI, defI, atkCardId: atkCard.id };
-    olPushState();
-    // Also show modal on host if host IS the defender
-    if(defI === OL.myPlayerIdx) _showDefendModal(atkI,defI,atkCard,after);
+    if(defI === OL.myPlayerIdx){
+      // Host IS the defender — show modal directly
+      _showDefendModal(atkI,defI,atkCard,after);
+    } else {
+      // Non-host is the defender — push state and wait for them to push result back
+      G._defendRequest = { atkI, defI, atkCardId: atkCard.id };
+      olPushState();
+      // Poll Firebase until _defendRequest is cleared by non-host
+      const { db, ref, onValue } = fb();
+      const gsRef = ref(db, `rooms/${OL.roomId}/gameState`);
+      const unsub = onValue(gsRef, snap => {
+        if(!snap.exists()) return;
+        const gs = snap.val();
+        if(!gs._defendRequest) {
+          // Non-host has resolved the defend — sync state and continue
+          unsub();
+          // Merge result back into G (hand, hp changes)
+          if(gs.players) {
+            for(let i=0;i<gs.players.length;i++){
+              if(!G.players[i]) continue;
+              G.players[i].hp = gs.players[i].hp;
+              G.players[i].dead = gs.players[i].dead;
+              // restore hand (non-host may have spent a card)
+              const ch = CHARACTERS.find(c=>c.id===gs.players[i].charId);
+              if(ch) G.players[i].char = ch;
+              G.players[i].hand = gs.players[i].hand || G.players[i].hand;
+            }
+            G.discard = gs.discard || G.discard;
+          }
+          G._defendRequest = null;
+          after();
+        }
+      });
+    }
     return;
   }
   // Non-host defender sees modal from _defendRequest in their renderAll
@@ -1532,6 +1950,7 @@ function olLeave(){
   }
   OL = { roomId:null, myUid:null, mySlot:null, isHost:false, unsubRoom:null, charPicked:null, playerName:'' };
   document.getElementById('online-lobby').classList.remove('show');
+  document.getElementById('title-screen').style.display='flex';
   document.getElementById('ol-join-wrap').style.display='none';
   document.getElementById('lobby-room-id').style.display='none';
   document.getElementById('ol-char-pick').style.display='none';
@@ -1660,17 +2079,27 @@ function olRenderLobbyPlayers(slots){
 
 function olEnterCharPick(slots){
   const pickWrap = document.getElementById('ol-char-pick');
-  if(pickWrap.style.display !== 'none') return;
+  if(pickWrap.dataset.built === '1') return;
+  pickWrap.dataset.built = '1';
   pickWrap.style.display = 'block';
   olStatus('เลือกตัวละครของคุณ!', 'var(--gold)');
   const takenChars = Object.values(slots).filter(s=>s.char).map(s=>s.char);
   const grid = document.getElementById('ol-char-grid');
   grid.innerHTML = CHARACTERS.map(ch => {
     const taken = takenChars.includes(ch.id);
-    return `<div class="char-card ${taken?'taken':''}" onclick="olPickChar('${ch.id}')" id="olcc-${ch.id}"
-      style="${taken?'opacity:.4;pointer-events:none;':'cursor:pointer;'}">
-      <div class="cav" style="background:${ch.color}22;border-color:${ch.color}66;padding:0;">${charSVG(ch.id,46)}</div>
-      <div class="cname">${ch.name}</div>
+    const d = CHAR_DATA[ch.id]||{};
+    const clickAttr = taken ? '' : `onclick="olPickChar('${ch.id}')"`;
+    return `<div class="char-card role-${d.role||''} ${taken?'taken':''}" ${clickAttr} id="olcc-${ch.id}">
+      <div class="check-mark">✓</div>
+      <div class="card-art"><div class="svg-wrap">${charSVG(ch.id,70)}</div></div>
+      <div class="card-top">
+        <span class="role-badge rb-${d.role||''}">${d.roleLabel||''}</span>
+        <span class="faction-icon">${FACTION_ICON[d.faction]||ch.emoji}</span>
+      </div>
+      <div class="card-info">
+        <div class="card-name">${ch.name}</div>
+        <div class="card-skill">${ch.skillDesc}</div>
+      </div>
     </div>`;
   }).join('');
 }
@@ -1749,7 +2178,8 @@ function olHydrateAndRender(gs){
                     G.players[atkI].hand.find(c=>c.id===atkCardId);
     if(atkCard){
       _showDefendModal(atkI, defI, atkCard, ()=>{
-        // Non-host: push defend result back to Firebase
+        // Non-host: clear defendRequest and push result back to Firebase so host can continue
+        G._defendRequest = null;
         olPushState();
       });
     }
