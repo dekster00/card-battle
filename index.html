@@ -361,7 +361,7 @@ h1,h2{font-family:'Cinzel',serif;}
 .card:hover{transform:translateY(-10px) scale(1.08)!important;box-shadow:0 12px 28px rgba(200,168,80,.35);z-index:50!important;}
 .card.sel{box-shadow:0 0 16px rgba(200,168,80,.7),0 0 32px rgba(200,168,80,.3);z-index:50!important;transform:translateY(-12px) scale(1.1)!important;}
 /* card frame overlay */
-.card-frame{position:absolute;inset:0;width:100%;height:100%;background-image:url('https://raw.githubusercontent.com/dekster00/card-battle/main/assets/Card-fame.png');background-size:100% 100%;background-repeat:no-repeat;z-index:4;pointer-events:none;}
+.card-frame{position:absolute;inset:0;width:100%;height:100%;background-size:100% 100%;background-repeat:no-repeat;z-index:4;pointer-events:none;}
 /* sym corner */
 .card-sym-corner{position:absolute;top:3px;right:3px;z-index:5;width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:none;border-radius:4px;}
 .card-sym-corner img{width:16px!important;height:16px!important;object-fit:contain;}
@@ -1299,42 +1299,47 @@ const CHARACTERS=[
 ];
 
 /* ═══ DECK ═══ */
+/* ══ CARD IMAGE URLs ══ */
+const CARD_BASE='https://raw.githubusercontent.com/dekster00/card-battle/main/assets/Card/';
+const CARD_PICS_BASE='https://raw.githubusercontent.com/dekster00/card-battle/main/assets/Card/cards%20pics/';
+function cardFrameUrl(color){return CARD_BASE+color+'.png';}
+function cardPicUrl(no){return CARD_PICS_BASE+no+'.png';}
 function makeDeck(){
   const cards=[];let id=0;
   function add(n,def){for(let i=0;i<n;i++)cards.push({id:id++,sym:SYM[~~(Math.random()*3)],num:~~(Math.random()*7)+1,...def});}
-  add(4,{name:'การ์ดทำลาย',type:'action',ap:1,effect:'destroy'});
-  add(4,{name:'การ์ดขโมย',type:'action',ap:1,effect:'steal'});
-  add(4,{name:'การ์ดข้ามเทิร์น',type:'curse',ap:1,effect:'skipturn'});
-  add(6,{name:'จั่วสองใบ',type:'action',ap:0,effect:'draw2'});
-  add(3,{name:'การ์ดยา',type:'action',ap:0,effect:'heal1'});
-  add(3,{name:'ฮีลแรง',type:'action',ap:0,effect:'healstrong'});
-  add(4,{name:'การ์ดยกเลิก',type:'action',ap:0,effect:'cancel'});
-  add(2,{name:'ตีวงกว้าง🔨',type:'action',ap:1,effect:'aoe_hammer'});
-  add(2,{name:'ตีวงกว้าง✂️',type:'action',ap:1,effect:'aoe_scissors'});
-  add(2,{name:'ตีวงกว้าง📄',type:'action',ap:1,effect:'aoe_paper'});
-  add(4,{name:'การ์ดแบ่งปัน',type:'action',ap:0,effect:'share'});
-  add(6,{name:'การ์ดท้าดวล',type:'action',ap:1,effect:'duel'});
-  add(2,{name:'การ์ดคำสาป',type:'curse',ap:1,effect:'curse'});
-  add(4,{name:'สวนกลับ',type:'action',ap:0,effect:'counter'});
-  add(2,{name:'ดาบ',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:3},desc:'ATK+3'});
-  add(2,{name:'ธนู',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,range:2,multiAtk:true},desc:'ATK+1 ระยะ+2 Multi-Atk'});
-  add(2,{name:'หอก',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,range:1,ignoreArmor:true},desc:'ATK+1 ระยะ+1 ทะลุเกราะ'});
-  add(2,{name:'ทวน',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:2,multiAtk:true},desc:'ATK+2 Multi-Atk'});
-  add(2,{name:'ไม้เบสบอล',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,drawAfterAtk:true},desc:'ATK+1 โจมตีแล้วจั่ว 1'});
-  add(2,{name:'ผ้าคลุมฮีโร่',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{},armorType:'cape',desc:'เปิดการ์ด: กระดาษ→สะท้อน'});
-  add(2,{name:'เสื้อหนา',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{},armorType:'jacket',desc:'เปิดการ์ด: กรรไกร→บล็อก'});
-  add(2,{name:'โล่ไวเบเนียม',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{def:1},armorType:'shield',desc:'DEF+1'});
-  add(2,{name:'สร้อยคอ',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'necklace',desc:'Skill: -1HP→จั่ว 2'});
-  add(2,{name:'กระเป๋า',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'bag',desc:'Skill: -1MP→จั่ว 1'});
-  add(2,{name:'เครื่องชาร์จไฟ',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'charger',desc:'Standby: +1 MP ดำอัตโนมัติ'});
-  add(2,{name:'นาฬิกา',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'watch',desc:'Skill: -2MP→จั่ว 3'});
-  add(2,{name:'หมาน้อย',type:'equipment',ap:0,slot:'pet',effect:'equip',skill:'dog',desc:'Skill: -3MP ดำ→เป้า HP-1'});
-  add(2,{name:'แมวน้อย',type:'equipment',ap:0,slot:'pet',effect:'equip',skill:'cat',desc:'Skill: -2MP ขาว→เป้า HP+1'});
-  add(6,{name:'BLACK',type:'action',ap:1,effect:'mp_black1'});
-  add(6,{name:'WHITE',type:'action',ap:1,effect:'mp_white1'});
-  add(4,{name:'SUPER BLACK',type:'action',ap:1,effect:'mp_black2'});
-  add(4,{name:'SUPER WHITE',type:'action',ap:1,effect:'mp_white2'});
-  add(6,{name:'MORE ACTION',type:'action',ap:0,effect:'ap_plus1'});
+  add(4,{name:'การ์ดทำลาย',   type:'action',   ap:1,effect:'destroy',    no:1, color:'A'});
+  add(4,{name:'การ์ดขโมย',    type:'action',   ap:1,effect:'steal',       no:2, color:'A'});
+  add(4,{name:'การ์ดข้ามเทิร์น',type:'curse',  ap:1,effect:'skipturn',   no:3, color:'E'});
+  add(6,{name:'จั่วสองใบ',    type:'action',   ap:0,effect:'draw2',       no:4, color:'B'});
+  add(3,{name:'การ์ดยา',      type:'action',   ap:0,effect:'heal1',       no:5, color:'B'});
+  add(3,{name:'ฮีลแรง',       type:'action',   ap:0,effect:'healstrong',  no:6, color:'B'});
+  add(4,{name:'การ์ดยกเลิก',  type:'action',   ap:0,effect:'cancel',      no:7, color:'B'});
+  add(2,{name:'ตีวงกว้าง🔨',  type:'action',   ap:1,effect:'aoe_hammer',  no:8, color:'A'});
+  add(2,{name:'ตีวงกว้าง✂️', type:'action',   ap:1,effect:'aoe_scissors',no:9, color:'A'});
+  add(2,{name:'ตีวงกว้าง📄',  type:'action',   ap:1,effect:'aoe_paper',   no:10,color:'A'});
+  add(4,{name:'การ์ดแบ่งปัน', type:'action',   ap:0,effect:'share',       no:11,color:'B'});
+  add(6,{name:'การ์ดท้าดวล',  type:'action',   ap:1,effect:'duel',        no:12,color:'A'});
+  add(2,{name:'การ์ดคำสาป',   type:'curse',    ap:1,effect:'curse',       no:13,color:'E'});
+  add(4,{name:'สวนกลับ',      type:'action',   ap:0,effect:'counter',     no:14,color:'B'});
+  add(2,{name:'ดาบ',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:3},desc:'ATK+3',no:15,color:'C'});
+  add(2,{name:'ธนู',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,range:2,multiAtk:true},desc:'ATK+1 ระยะ+2 Multi-Atk',no:16,color:'C'});
+  add(2,{name:'หอก',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,range:1,ignoreArmor:true},desc:'ATK+1 ระยะ+1 ทะลุเกราะ',no:17,color:'C'});
+  add(2,{name:'ทวน',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:2,multiAtk:true},desc:'ATK+2 Multi-Atk',no:18,color:'C'});
+  add(2,{name:'ไม้เบสบอล',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,drawAfterAtk:true},desc:'ATK+1 โจมตีแล้วจั่ว 1',no:19,color:'C'});
+  add(2,{name:'ผ้าคลุมฮีโร่',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{},armorType:'cape',desc:'เปิดการ์ด: กระดาษ→สะท้อน',no:20,color:'C'});
+  add(2,{name:'เสื้อหนา',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{},armorType:'jacket',desc:'เปิดการ์ด: กรรไกร→บล็อก',no:21,color:'C'});
+  add(2,{name:'โล่ไวเบเนียม',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{def:1},armorType:'shield',desc:'DEF+1',no:22,color:'C'});
+  add(2,{name:'สร้อยคอ',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'necklace',desc:'Skill: -1HP→จั่ว 2',no:23,color:'C'});
+  add(2,{name:'กระเป๋า',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'bag',desc:'Skill: -1MP→จั่ว 1',no:24,color:'C'});
+  add(2,{name:'เครื่องชาร์จไฟ',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'charger',desc:'Standby: +1 MP ดำอัตโนมัติ',no:25,color:'C'});
+  add(2,{name:'นาฬิกา',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'watch',desc:'Skill: -2MP→จั่ว 3',no:26,color:'C'});
+  add(2,{name:'หมาน้อย',type:'equipment',ap:0,slot:'pet',effect:'equip',skill:'dog',desc:'Skill: -3MP ดำ→เป้า HP-1',no:27,color:'C'});
+  add(2,{name:'แมวน้อย',type:'equipment',ap:0,slot:'pet',effect:'equip',skill:'cat',desc:'Skill: -2MP ขาว→เป้า HP+1',no:28,color:'C'});
+  add(6,{name:'BLACK',      type:'action',ap:1,effect:'mp_black1',no:29,color:'A'});
+  add(6,{name:'WHITE',      type:'action',ap:1,effect:'mp_white1',no:30,color:'A'});
+  add(4,{name:'SUPER BLACK',type:'action',ap:1,effect:'mp_black2',no:31,color:'A'});
+  add(4,{name:'SUPER WHITE',type:'action',ap:1,effect:'mp_white2',no:32,color:'A'});
+  add(6,{name:'MORE ACTION',type:'action',ap:0,effect:'ap_plus1', no:33,color:'B'});
   return shuffle(cards);
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=~~(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -1523,9 +1528,11 @@ function startGame(){
 
   for(let i=0;i<5;i++){
     const role=roleList[i],ch=chars[i];
+    const cd=CHAR_DATA[ch.id]||{};
+    const baseHp=(role==='LEADER'?cd.hp+1:cd.hp)||7;
     const p={i,name:names[i],isBot:i>0,role,char:ch,
-             hp:role==='LEADER'?8:7,maxHp:role==='LEADER'?8:7,
-             atk:1,def:0,range:1,mpW:0,mpB:0,
+             hp:baseHp,maxHp:baseHp,
+             atk:cd.atk||1,def:0,range:cd.range||1,mpW:0,mpB:0,
              hand:[],equip:{},dead:false,
              multiAtk:false,ignoreArmor:false,drawAfterAtk:false,_athBonus:0};
     if(ch.onSetup)ch.onSetup(p);
@@ -1567,9 +1574,9 @@ function beginTurn(pi){
     if(G.gameOver)return;
   }
   if(G.skipCurse[pi]){
-    G.skipCurse[pi]=false;setPhase('draw');drawCards(pi,2+(p.char.extraDraw||0));
+    G.skipCurse[pi]=false;
     addLog(`${p.name}: ถูกข้ามเทิร์น!`);setPhase('end');
-    olSchedulePush(); // push กรณี skip turn ด้วย
+    olSchedulePush();
     setTimeout(()=>endPhase(pi),p.isBot?600:800);return;
   }
   setPhase('draw');drawCards(pi,2+(p.char.extraDraw||0));
@@ -1675,14 +1682,20 @@ function checkWin(){
   const btrs=G.players.filter(p=>p.role==='Betrayer');
   const wtch=G.players.find(p=>p.role==='Watcher');
   const grd=G.players.find(p=>p.role==='Guardian');
+  if(!ldr) return;
   if(ldr.dead){
     const alive=G.players.filter(p=>!p.dead);
-    if(!wtch.dead&&alive.length===1)endGame('⚫ Watcher',`${wtch.name} ชนะ! เหลืออยู่คนสุดท้าย`);
+    if(wtch&&!wtch.dead&&alive.length===1)endGame('⚫ Watcher',`${wtch.name} ชนะ! เหลืออยู่คนสุดท้าย`);
     else if(btrs.some(b=>!b.dead))endGame('🔴 Betrayer','Betrayer กำจัด LEADER สำเร็จ!');
-    else endGame('?','LEADER ตาย');
+    else endGame('❓','LEADER ตาย แต่ไม่มีผู้ชนะชัดเจน');
     return;
   }
-  if(btrs.every(b=>b.dead)&&wtch.dead)endGame('👑 LEADER & Guardian',`${ldr.name} และ ${grd?.name||''} ชนะ!`);
+  // LEADER alive: check if all threats eliminated
+  const allEnemiesDead=btrs.every(b=>b.dead)&&(!wtch||wtch.dead);
+  if(allEnemiesDead){
+    const grdAlive=grd&&!grd.dead;
+    endGame('👑 LEADER & Guardian',`${ldr.name}${grdAlive?' และ '+grd.name:''} ชนะ!`);
+  }
 }
 
 function endGame(winner,detail){
@@ -1809,7 +1822,8 @@ function playerDefend(atkI,defI,atkCard){
     if(G.gameOver)return;
     renderAll();
     if(!G.players[atkI].isBot){setPhase('action');renderAll();}
-    else endPhase(atkI);
+    else if(!G.players[atkI].dead){endPhase(atkI);}
+    else{setTimeout(()=>nextTurn(),400);}
   }
 
   // check armor first
@@ -2151,14 +2165,6 @@ function renderAll(){
   const cp=G.players[G.turn];
   document.getElementById('turn-info').textContent=cp?`เทิร์น: ${cp.char.emoji} ${cp.name}`:'';
   document.getElementById('deck-count').textContent=`กอง: ${G.deck.length} | ทิ้ง: ${G.discard.length}`;
-}
-function renderBoard(){
-  const board=document.getElementById('board');
-  board.innerHTML=buildBoardHtml();
-  board.querySelectorAll('.equip-badge').forEach(el=>{
-    el.addEventListener('mouseenter',e=>showTip(e,el.dataset.desc));
-    el.addEventListener('mouseleave',hideTip);
-  });
 }
 function getActivePi(){
   // Online mode: show yourself at bottom
@@ -2526,14 +2532,22 @@ function charSVG(id, size=56){
 function renderCardEl(card){
   const isSel=G.selectedCard?.id===card.id;
   const ap=card.ap>0?`<div class="apc">${card.ap}AP</div>`:'';
-  const showArt=card.charArt;
   const symHtml=`<div class="card-sym-corner">${SYM_IMG[card.sym]}</div>`;
-  const artHtml=showArt?`<div class="card-art-inner">${charSVG(showArt,36)}</div>`:`<div class="card-art-inner card-art-bg sym-bg-${card.sym}"></div>`;
+  // Card pic (art) from cards pics folder
+  const picUrl=card.no?cardPicUrl(card.no):'';
+  const artHtml=picUrl
+    ?`<div class="card-art-inner"><img src="${picUrl}" style="width:100%;height:100%;object-fit:cover;object-position:center top;" onerror="this.parentNode.classList.add('no-pic');this.remove();"></div>`
+    :`<div class="card-art-inner card-art-bg sym-bg-${card.sym}"></div>`;
+  // Frame overlay from Card/A.png B.png etc.
+  const frameUrl=card.color?cardFrameUrl(card.color):'';
+  const frameHtml=frameUrl
+    ?`<div class="card-frame" style="background-image:url('${frameUrl}');background-size:100% 100%;background-repeat:no-repeat;"></div>`
+    :`<div class="card-frame"></div>`;
   return`<div class="card ${isSel?'sel':''}" data-id="${card.id}">
     ${ap}
     ${artHtml}
     ${symHtml}
-    <div class="card-frame"></div>
+    ${frameHtml}
     <div class="card-bottom">
       <div class="cname">${card.name}</div>
       <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
