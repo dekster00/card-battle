@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
 <title>Card Battle Arena — Online</title>
 <!-- Firebase SDKs -->
 <!-- Firebase loaded at bottom of body -->
@@ -25,6 +27,24 @@ h1,h2{font-family:'Cinzel',serif;}
 
 /* char-card CSS → see new styles below */
 
+/* ══ LANDSCAPE LOCK ══ */
+@media screen and (orientation: portrait) {
+  #rotate-msg{display:flex!important;}
+}
+#rotate-msg{
+  display:none;position:fixed;inset:0;z-index:9999;
+  background:rgba(4,4,12,.98);flex-direction:column;align-items:center;justify-content:center;gap:16px;
+}
+.rotate-icon{font-size:64px;animation:rotatePhone 1.5s ease-in-out infinite;}
+.rotate-text{font-family:'Cinzel',serif;font-size:16px;color:var(--gold);letter-spacing:3px;}
+.rotate-sub{font-size:12px;color:var(--dim);}
+@keyframes rotatePhone{
+  0%{transform:rotate(0deg);}
+  40%{transform:rotate(90deg);}
+  60%{transform:rotate(90deg);}
+  100%{transform:rotate(0deg);}
+}
+
 
 
 /* ══ BG OVERLAY ══ */
@@ -32,10 +52,27 @@ h1,h2{font-family:'Cinzel',serif;}
   background:radial-gradient(ellipse at 20% 50%,rgba(144,96,208,.08) 0%,transparent 60%),
              radial-gradient(ellipse at 80% 30%,rgba(80,144,224,.06) 0%,transparent 50%),
              radial-gradient(ellipse at 50% 80%,rgba(200,168,80,.04) 0%,transparent 40%);}
+
+/* ══ BATTLE GROUND BACKGROUND ══ */
+#app::before{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:url('https://raw.githubusercontent.com/dekster00/card-battle/main/assets/battle-ground.png');
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  opacity:.45;
+}
+
+/* ══ CHAR SELECT BACKGROUND ══ */
+#title-screen::before{
+  content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
+  background-image:url('https://raw.githubusercontent.com/dekster00/card-battle/main/assets/Gemini_Generated_Image_gzdcvgzdcvgzdcvg.png');
+  background-size:cover;background-position:center;background-repeat:no-repeat;
+  opacity:.35;
+}
 .bg-grid{position:fixed;inset:0;z-index:0;pointer-events:none;
   background-image:linear-gradient(rgba(255,255,255,.015) 1px,transparent 1px),
     linear-gradient(90deg,rgba(255,255,255,.015) 1px,transparent 1px);
   background-size:40px 40px;}
+#particle-canvas{position:fixed;inset:0;z-index:1;pointer-events:none;}
 
 /* ══ SPLASH ══ */
 #splash{position:fixed;inset:0;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -121,14 +158,20 @@ h1,h2{font-family:'Cinzel',serif;}
 .char-card.role-tank{border-color:rgba(80,144,224,.4);}
 .char-card.role-utility{border-color:rgba(144,96,208,.4);}
 .char-card.role-support{border-color:rgba(80,200,120,.4);}
-.char-card.role-attacker::before,.char-card.role-tank::before,.char-card.role-utility::before,.char-card.role-support::before{
+/* faction background tints — override role tints */
+.char-card.faction-olympus{border-color:rgba(255,50,50,.55);box-shadow:0 0 12px rgba(255,50,50,.15);}
+.char-card.faction-underworld{border-color:rgba(32,192,64,.55);box-shadow:0 0 12px rgba(32,192,64,.15);}
+.char-card.faction-chaos{border-color:rgba(240,220,30,.55);box-shadow:0 0 12px rgba(240,220,30,.15);}
+.char-card.faction-nature{border-color:rgba(30,170,240,.55);box-shadow:0 0 12px rgba(30,170,240,.15);}
+.char-card.faction-olympus::before,.char-card.faction-underworld::before,.char-card.faction-chaos::before,.char-card.faction-nature::before{
   content:'';position:absolute;inset:0;pointer-events:none;z-index:0;}
-.char-card.role-attacker::before{background:linear-gradient(180deg,rgba(224,85,85,.08) 0%,transparent 45%);}
-.char-card.role-tank::before{background:linear-gradient(180deg,rgba(80,144,224,.08) 0%,transparent 45%);}
-.char-card.role-utility::before{background:linear-gradient(180deg,rgba(144,96,208,.08) 0%,transparent 45%);}
-.char-card.role-support::before{background:linear-gradient(180deg,rgba(80,200,120,.08) 0%,transparent 45%);}
+.char-card.faction-olympus::before{background:linear-gradient(180deg,rgba(255,50,50,.13) 0%,transparent 55%);}
+.char-card.faction-underworld::before{background:linear-gradient(180deg,rgba(32,192,64,.13) 0%,transparent 55%);}
+.char-card.faction-chaos::before{background:linear-gradient(180deg,rgba(240,220,30,.13) 0%,transparent 55%);}
+.char-card.faction-nature::before{background:linear-gradient(180deg,rgba(30,170,240,.13) 0%,transparent 55%);}
 /* card art */
-.card-art{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:60px;}
+.card-art{flex:1;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;min-height:80px;}
+.card-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block;}
 .card-art .svg-wrap{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
 .card-art::after{content:'';position:absolute;bottom:0;left:0;right:0;height:55%;
   background:linear-gradient(to top,rgba(10,10,18,.98) 0%,rgba(10,10,18,.6) 60%,transparent 100%);
@@ -144,14 +187,14 @@ h1,h2{font-family:'Cinzel',serif;}
 .faction-icon{font-size:14px;background:rgba(0,0,0,.6);border-radius:4px;padding:2px 4px;backdrop-filter:blur(4px);}
 /* card info */
 .card-info{position:absolute;bottom:0;left:0;right:0;padding:6px 7px 7px;z-index:3;}
-.card-stars{font-size:8px;color:var(--gold);margin-bottom:2px;letter-spacing:1px;}
+.card-stars{font-size:10px;color:var(--gold);margin-bottom:2px;letter-spacing:1px;}
 .card-name{font-family:'Cinzel',serif;font-size:10px;font-weight:600;color:var(--white);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:2px;}
 .card-faction-tag{font-size:8px;font-weight:500;padding:1px 5px;border-radius:2px;display:inline-block;margin-bottom:3px;}
-.ft-olympus{background:rgba(224,192,96,.15);color:#e0c060;}
-.ft-underworld{background:rgba(144,96,208,.15);color:#b080e0;}
-.ft-chaos{background:rgba(224,80,80,.15);color:#e07070;}
-.ft-nature{background:rgba(80,200,120,.15);color:#70d090;}
+.ft-olympus{background:rgba(255,32,32,.18);color:#ff5050;}
+.ft-underworld{background:rgba(32,192,64,.18);color:#30d060;}
+.ft-chaos{background:rgba(240,224,32,.18);color:#d0c020;}
+.ft-nature{background:rgba(32,176,240,.18);color:#40b8f8;}
 .card-skill{font-size:7.5px;color:var(--dim);line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .level-badge{position:absolute;bottom:6px;right:6px;z-index:6;background:rgba(0,0,0,.8);
   border:1px solid rgba(200,168,80,.4);border-radius:3px;font-size:9px;font-weight:700;color:var(--gold2);padding:1px 4px;}
@@ -237,13 +280,13 @@ h1,h2{font-family:'Cinzel',serif;}
 .online-mode-notice{font-size:10px;color:var(--dim);text-align:center;}
 
 /* ── MAIN APP ── */
-#app{display:flex;flex-direction:column;height:100vh;}
-#header{background:var(--bg2);border-bottom:1px solid var(--border);padding:5px 12px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:10;background:transparent;} /* overridden by new layout */
+#header{background:linear-gradient(90deg,#2a1880 0%,#1a0f60 50%,#2a1880 100%);border-bottom:2px solid rgba(180,130,255,.8);padding:0 12px;height:36px;display:flex;align-items:center;gap:10px;flex-shrink:0;box-shadow:0 3px 16px rgba(100,50,255,.7),inset 0 1px 0 rgba(255,255,255,.15);position:relative;z-index:20;}
 #header h1{font-size:15px;color:var(--gold);letter-spacing:2px;}
 #phase-tag{background:var(--panel);border:1px solid var(--border);border-radius:4px;padding:2px 8px;font-size:10px;color:var(--dim);}
 #turn-info{margin-left:auto;font-size:12px;color:var(--gold2);}
 #deck-count{font-size:11px;color:var(--dim);}
-#main{display:flex;flex:1;overflow:hidden;}
+#main{display:flex;flex:1;overflow:hidden;flex-direction:column;align-items:center;}
 #board{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:8px 8px 110px;gap:6px;overflow-y:auto;}
 .player-row{display:flex;align-items:stretch;gap:6px;width:100%;max-width:960px;}
 .player-seat{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:7px 9px;flex:1;min-width:0;transition:border-color .2s,box-shadow .2s;}
@@ -293,10 +336,10 @@ h1,h2{font-family:'Cinzel',serif;}
 #center-lbl{flex:1;text-align:center;font-size:11px;color:var(--dim);}
 
 /* action panel */
-#action-panel{width:168px;background:var(--bg2);border-left:1px solid var(--border);padding:8px;display:flex;flex-direction:column;gap:5px;overflow-y:auto;flex-shrink:0;}
+#action-panel{display:none;}
 #action-panel h2{font-size:12px;color:var(--gold);border-bottom:1px solid var(--border);padding-bottom:4px;}
-.ap-pips{display:flex;align-items:center;gap:3px;margin-bottom:2px;}
-.ap-pip{width:9px;height:9px;border-radius:50%;background:var(--gold);}.ap-pip.used{background:var(--bg3);border:1px solid var(--border);}
+
+.ap-pip.used{background:var(--bg3);border:1px solid var(--border);}
 .btn{width:100%;padding:5px 7px;border-radius:4px;border:1px solid var(--border);background:var(--panel);color:var(--white);cursor:pointer;font-family:'Sarabun',sans-serif;font-size:11px;transition:.15s;text-align:left;}
 .btn:hover:not(:disabled){border-color:var(--gold);color:var(--gold);}.btn:disabled{opacity:.35;cursor:default;}
 .btn.primary{border-color:var(--gold);color:var(--gold);}.btn.danger{border-color:var(--red);color:var(--red);}.btn.green{border-color:var(--green);color:var(--green);}
@@ -306,15 +349,37 @@ h1,h2{font-family:'Cinzel',serif;}
 .log-e.imp{color:var(--gold);}.log-e.dmg{color:var(--red);}.log-e.hl{color:var(--green);}
 
 /* hand */
-#hand-wrap{position:fixed;bottom:0;left:0;right:168px;background:var(--bg2);border-top:1px solid var(--border);padding:6px 10px;z-index:50;}
-#hand-lbl{font-size:10px;color:var(--dim);margin-bottom:4px;}
-#hand{display:flex;gap:5px;flex-wrap:wrap;min-height:86px;}
+#hand-wrap-old{display:none;}
+
+
+/* Fan layout applied via JS */
 
 /* card */
-.card{width:58px;height:84px;border-radius:5px;border:1px solid var(--border);background:var(--bg3);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:4px;transition:transform .15s,border-color .15s,box-shadow .15s;position:relative;user-select:none;}
-.card:hover{transform:translateY(-4px);border-color:var(--gold);}
+.card{width:74px;height:104px;border-radius:6px;border:none;background:none!important;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0;transition:transform .15s,box-shadow .15s;position:relative;user-select:none;overflow:hidden;flex-shrink:0;}
+/* clip content inside card but let frame bleed slightly */
+.card-bottom{border-radius:0 0 6px 6px;}
+.card:hover{transform:translateY(-10px) scale(1.08)!important;box-shadow:0 12px 28px rgba(200,168,80,.35);z-index:50!important;}
+.card.sel{box-shadow:0 0 16px rgba(200,168,80,.7),0 0 32px rgba(200,168,80,.3);z-index:50!important;transform:translateY(-12px) scale(1.1)!important;}
+/* card frame overlay */
+.card-frame{position:absolute;inset:0;width:100%;height:100%;background-image:url('https://raw.githubusercontent.com/dekster00/card-battle/main/assets/Card-fame.png');background-size:100% 100%;background-repeat:no-repeat;z-index:4;pointer-events:none;}
+/* sym corner */
+.card-sym-corner{position:absolute;top:3px;right:3px;z-index:5;width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:none;border-radius:4px;}
+.card-sym-corner img{width:16px!important;height:16px!important;object-fit:contain;}
+/* art inside card */
+.card-art-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:1;background:transparent;}
+.card-art-inner img{width:100%;height:100%;object-fit:cover;object-position:top;}
+.card-art-bg{width:100%;height:100%;}
+.sym-bg-hammer{background:transparent;}
+.sym-bg-scissors{background:transparent;}
+.sym-bg-paper{background:transparent;}
+/* card bottom info */
+.card-bottom{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:2px 4px 3px;background:linear-gradient(transparent,rgba(0,0,0,.85) 40%);display:flex;flex-direction:column;gap:1px;}
 .card.sel{border-color:var(--gold2);transform:translateY(-8px);box-shadow:0 4px 12px rgba(200,168,80,.4);}
 .card .sym{font-size:17px;}.sym-hammer{color:#e08030;}.sym-scissors{color:#5080e0;}.sym-paper{color:#50c060;}
+/* sym images */
+.sym img{width:32px!important;height:32px!important;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 0 4px rgba(255,255,255,.3));}
+.cpo-card-sym img{width:36px!important;height:36px!important;}
+.card .sym img{width:28px!important;height:28px!important;}
 .card .cname{font-size:7px;text-align:center;color:var(--dim);line-height:1.2;}
 .card .cnum{font-size:10px;font-weight:600;color:var(--gold);}
 .card .ctype{font-size:6px;padding:1px 3px;border-radius:2px;}
@@ -399,7 +464,7 @@ h1,h2{font-family:'Cinzel',serif;}
     flex-shrink:0;overflow-y:visible;
   }
   #action-panel h2{display:none;}
-  #action-panel .ap-pips{order:-1;width:100%;margin-bottom:2px;}
+  #action-panel 
   .log-wrap{display:none;}
   .btn{padding:7px 4px;font-size:10px;min-width:0;}
   #btn-atk{order:1;flex:1 1 30%;}
@@ -437,8 +502,8 @@ h1,h2{font-family:'Cinzel',serif;}
   #center-lbl{font-size:10px;}
 
   /* hand area — bigger cards for touch */
-  #hand-wrap{right:0;padding:5px 8px;}
-  #hand-lbl{font-size:10px;}
+  
+  
   .card{width:64px;height:92px;}
   .card .sym{font-size:20px;}
   .card .cname{font-size:8px;}
@@ -494,13 +559,380 @@ h1,h2{font-family:'Cinzel',serif;}
   .equip-badge:hover{border-color:var(--border);color:var(--white);}
   .equip-badge:active{border-color:var(--gold);color:var(--gold);}
 }
+
+/* ════════════════════════════════
+   NEW GAME LAYOUT CSS
+   ════════════════════════════════ */
+
+/* App container */
+#app{display:flex;flex-direction:column;height:100vh;overflow:hidden;position:relative;z-index:10;background:transparent;}
+
+/* Header bar */
+#header{background:rgba(58,42,138,.65);padding:0 12px;height:36px;display:flex;align-items:center;gap:10px;flex-shrink:0;}
+#turn-banner{font-family:'Cinzel',serif;font-size:16px;font-weight:700;color:#fff;letter-spacing:2px;}
+#phase-tag{font-size:10px;color:rgba(255,255,255,.7);background:rgba(0,0,0,.3);padding:2px 7px;border-radius:3px;}
+#turn-info{font-size:10px;color:rgba(255,255,255,.6);flex:1;}
+#deck-count{font-size:11px;color:rgba(255,255,255,.7);}
+#btn-settings{margin-left:auto;background:rgba(255,255,255,.15);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;}
+
+/* Main area */
+#main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
+
+/* Bot seats top */
+#bot-area{display:flex;gap:6px;padding:5px 8px;background:rgba(10,10,22,.45);flex-shrink:0;justify-content:center;border-bottom:1px solid rgba(255,255,255,.08);}
+
+/* Center area */
+
+#center-piles{display:flex;align-items:center;gap:16px;}
+#log-panel{display:none;position:absolute;right:8px;top:8px;width:200px;max-height:150px;overflow-y:auto;background:rgba(10,10,20,.9);border:1px solid var(--border);border-radius:6px;padding:6px;font-size:10px;}
+#log-panel.show{display:block;}
+
+/* Bottom area */
+
+
+/* ── LEFT PANEL ── */
+
+
+#equip-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+
+
+
+
+
+
+
+
+#char-avatar img{width:100%;height:100%;object-fit:cover;object-position:top;}
+
+
+
+
+
+#ap-pips-wrap{margin-top:2px;}
+
+
+
+
+
+/* ── CENTER HAND ── */
+
+
+
+#hand::-webkit-scrollbar{display:none;}
+
+/* ── RIGHT PANEL (diamond buttons) ── */
+
+
+
+.ab-mid{margin:0;}
+
+
+
+
+.ab-btn:hover:not(:disabled){filter:brightness(1.2);transform:rotate(45deg) scale(1.08);}
+
+.ab-end {background:linear-gradient(135deg,#e8c840,#c8a820);color:#000;}
+.ab-atk {background:linear-gradient(135deg,#3dba6d,#2a9a55);color:#fff;}
+
+
+
+/* ── BOT SEATS ── */
+
+
+
+
+
+
+
+
+
+/* Card in hand - reset fan, simple row */
+.card{width:54px;height:80px;border-radius:6px;border:none;background:#000;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0;transition:transform .15s,box-shadow .15s;position:relative;user-select:none;overflow:visible;flex-shrink:0;}
+.card:hover{transform:translateY(-8px);box-shadow:0 10px 24px rgba(200,168,80,.3);z-index:10;}
+.card.sel{transform:translateY(-10px);box-shadow:0 0 16px rgba(200,168,80,.6);z-index:10;}
+
+/* mp-row-wrap inside avatar */
+#mp-row-wrap .mp-row{display:flex;align-items:center;gap:2px;margin-top:2px;}
+#mp-row-wrap .mp-dot{width:6px;height:6px;border-radius:50%;border:1px solid rgba(255,255,255,.3);}
+#mp-row-wrap .mp-dot.wf{background:#fff;}
+#mp-row-wrap .mp-dot.bf{background:#333;border-color:#666;}
+#mp-row-wrap .mp-dot.em{background:transparent;}
+#mp-row-wrap .mp-sep{font-size:7px;color:var(--dim);}
+
+/* Force transparent bg on all card children except frame */
+.card > *:not(.card-frame) {
+  background-color: transparent !important;
+}
+.card .apc { background: rgba(0,0,0,0.7) !important; }
+.card-bottom { background: linear-gradient(transparent, rgba(0,0,0,.8) 50%) !important; }
+
+/* ════ NEW GAME LAYOUT CSS ════ */
+
+
+/* LEFT */
+
+
+#char-avatar-wrap:active{border-color:var(--gold);}
+
+
+
+
+
+
+
+
+
+
+
+/* CENTER */
+
+
+
+
+
+
+
+#hand::-webkit-scrollbar{display:none;}
+
+/* RIGHT */
+
+
+
+
+
+
+
+
+.ab-atk,.ab-play,
+
+/* Drag clone */
+.card.dragging{opacity:.35;}
+.drag-clone-el{position:fixed;z-index:9999;pointer-events:none;transform:rotate(-6deg) scale(1.08);box-shadow:0 12px 32px rgba(0,0,0,.7);transition:none;width:54px;height:80px;}
+
+/* Bot area override */
+#bot-area{display:flex;gap:6px;padding:5px 8px;background:rgba(10,10,22,.45);flex-shrink:0;justify-content:center;border-bottom:1px solid rgba(255,255,255,.08);width:100%;}
+
+
+
+
+
+
+
+
+
+
+/* center-area with drop zone */
+#center-area{width:400px;max-width:400px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;overflow:hidden;padding:4px;background:transparent;margin:0 auto;}
+#drop-zone{width:60%;max-width:360px;height:110px;border-radius:14px;border:2px dashed rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:.25s;cursor:default;background:rgba(255,255,255,.02);flex-shrink:0;}
+#drop-zone.drag-active{
+  border-color:#50e080;background:rgba(80,224,128,.1);
+  box-shadow:0 0 24px rgba(80,224,128,.2);
+}
+#drop-zone.drag-equip{
+  border-color:#5090e0;background:rgba(80,144,224,.1);
+  box-shadow:0 0 24px rgba(80,144,224,.2);
+}
+#drop-zone-hint{font-size:12px;color:rgba(255,255,255,.2);letter-spacing:1px;text-align:center;pointer-events:none;line-height:1.6;}
+#drop-zone.drag-active #drop-zone-hint{color:rgba(80,224,128,.9);}
+#drop-zone.drag-equip #drop-zone-hint{color:rgba(80,144,224,.9);}
+#center-piles{display:flex;align-items:center;gap:16px;}
+
+/* ════ LAYOUT OVERRIDES ════ */
+
+/* BOTTOM AREA */
+
+
+/* ── LEFT PANEL ── */
+
+
+/* Equip 2x2 top */
+
+
+
+
+
+
+
+
+/* Avatar below equip */
+#char-avatar-wrap-old{display:none;}
+
+
+
+
+
+/* Char stats */
+
+
+
+
+#hp-bar{height:100%;background:linear-gradient(90deg,#e04040,#ff6060);border-radius:3px;transition:width .3s;}
+
+
+
+
+/* ── CENTER HAND ── */
+
+
+
+#hand::-webkit-scrollbar{display:none;}
+
+/* ── RIGHT PANEL ── */
+
+
+
+
+
+
+
+.ab-end {background:linear-gradient(135deg,#f0d050,#c8a820);color:#000;}
+.ab-atk {background:linear-gradient(135deg,#42c674,#2a9a55);color:#fff;}
+
+
+/* ── BOT SEAT REDESIGN ── */
+.bot-seat{background:rgba(15,15,30,.55);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:5px 8px;flex:1;max-width:240px;display:flex;flex-direction:column;gap:3px;position:relative;overflow:visible;}
+.bot-seat.active-turn{border-color:var(--gold);box-shadow:0 0 12px rgba(200,168,80,.25);}
+.bot-seat.dead{opacity:.35;filter:grayscale(1);}
+
+
+
+
+/* HP row: icon left overlapping bar right */
+.bot-hp-row{position:relative;display:flex;align-items:center;height:76px;margin-top:15px;}
+.bot-icon-wrap{position:relative;z-index:2;flex-shrink:0;width:73px;height:72px;margin-right:-12px;margin-top:-30px;overflow:hidden;border-radius:4px;}
+.bot-icon-img{width:100%;height:100%;object-fit:cover;object-position:top center;display:block;}
+.bot-icon-svg{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
+
+
+
+
+/* Player HP bar wrap - same style */
+
+
+
+/* Player HP row - icon + bar same as bot */
+
+
+#player-icon-wrap img{width:100%;height:100%;object-fit:contain;display:block;}
+
+
+
+
+
+/* ════ BOTTOM LAYOUT FINAL ════ */
+#bottom-area{display:flex;align-items:stretch;flex-shrink:0;height:200px;background:rgba(8,8,18,.5);border-top:1px solid rgba(255,255,255,.08);width:100%;}
+
+/* LEFT */
+#left-panel{width:140px;flex-shrink:0;display:flex;flex-direction:column;gap:3px;padding:5px;border-right:1px solid rgba(255,255,255,.08);background:rgba(10,10,22,.45);overflow:visible;}
+#equip-col{display:grid;grid-template-columns:45px 45px;gap:4px;width:94px;flex-shrink:0;}
+.eq-slot{border:1.5px dashed rgba(255,255,255,.22);border-radius:8px;width:45px;height:45px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:.15s;background:rgba(255,255,255,.03);}
+.eq-slot:hover{border-color:var(--gold);}
+.eq-slot.has-item{border-color:rgba(200,168,80,.55);border-style:solid;}
+.eq-slot.drag-over{border-color:#50e080!important;background:rgba(80,224,128,.15)!important;}
+.eq-label{font-size:8px;color:var(--dim);}
+.eq-item{font-size:8px;color:var(--gold2);text-align:center;}
+#player-hp-row{position:relative;display:flex;align-items:center;height:111px;margin-top:-10px;overflow:visible;width:94px;}
+#player-icon-wrap{position:relative;z-index:2;flex-shrink:0;width:108px;height:107px;margin-right:-12px;margin-top:-25px;cursor:pointer;border-radius:6px;overflow:hidden;}
+#player-icon-wrap:active{border-color:var(--gold);}
+#char-avatar{width:100%;height:100%;}
+#char-avatar img,#char-avatar svg{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
+#skill-hint{display:none;}
+#char-info-col{display:none;}
+#hp-bar-wrap{width:220px;height:118px;overflow:hidden;position:relative;z-index:1;flex-shrink:0;margin-left:-77px;margin-top:51px;}
+#hp-bar-wrap img{width:100%;height:100%;object-fit:fill;display:block;}
+/* Player name/role overlaid on HP bar */
+#char-name-lbl{position:absolute;bottom:46px;left:95px;font-family:'Cinzel',serif;font-size:10px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap;pointer-events:none;z-index:5;}
+#char-role-lbl{position:absolute;bottom:62px;left:95px;font-size:8px;font-weight:600;color:var(--gold2);text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none;z-index:5;}
+#char-info-col{display:flex;flex-direction:column;gap:2px;flex:1;padding:2px 0;min-height:0;}
+#char-name-lbl{font-size:9px;color:var(--gold2);font-family:'Cinzel',serif;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+#char-role-lbl{font-size:8px;color:var(--dim);}
+.ap-pips{display:flex;gap:3px;}
+.ap-pip{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);}
+.ap-pip.full{background:var(--gold);border-color:var(--gold2);}
+
+/* CENTER - hand */
+#center-hand-panel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 4px;overflow:hidden;padding-left:49px;padding-top:60px;}
+#hand-wrap{width:100%;display:flex;flex-direction:column;align-items:center;padding:0 4px 4px;overflow:hidden;position:relative;flex-shrink:0;}
+#hand-lbl{font-size:8px;color:var(--dim);margin-bottom:3px;text-align:center;}
+#hand-scroll{width:100%;overflow-x:auto;overflow-y:visible;scrollbar-width:none;display:flex;justify-content:center;}
+#hand-scroll::-webkit-scrollbar{display:none;}
+#hand{display:inline-flex;gap:8px;align-items:flex-end;flex-wrap:nowrap;padding:4px 0;min-height:110px;}
+
+/* DECK fixed to far right */
+#deck-fixed{position:fixed;right:8px;bottom:5px;z-index:50;display:flex;align-items:center;justify-content:center;}
+
+/* END fixed top-right */
+#end-fixed{position:fixed;right:-7px;bottom:165px;z-index:50;display:flex;align-items:center;justify-content:center;}
+
+/* RIGHT - buttons only */
+#right-panel{width:80px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-right:4px;border-left:1px solid rgba(255,255,255,.1);background:transparent;}
+#action-btns{display:flex;flex-direction:column;align-items:flex-end;gap:8px;width:100%;}
+.ab-row{display:flex;gap:6px;justify-content:center;}
+.ab-btn{width:62px;height:50px;border:none;border-radius:8px;cursor:pointer;
+  font-family:'Cinzel',serif;font-weight:700;font-size:11px;transition:.15s;
+  transform:rotate(45deg);display:flex;align-items:center;justify-content:center;}
+.ab-btn span{transform:rotate(-45deg);display:block;text-align:center;}
+.ab-btn:disabled{opacity:.3;cursor:default;}
+.ab-btn:active:not(:disabled){transform:rotate(45deg) scale(.9);}
+.ab-end{background:linear-gradient(135deg,#f0d050,#c8a820);color:#000;box-shadow:0 4px 12px rgba(240,208,80,.3);}
+.ab-atk{background:linear-gradient(135deg,#42c674,#2a9a55);color:#fff;box-shadow:0 4px 12px rgba(66,198,116,.3);}
+.ab-draw{background:linear-gradient(135deg,#42c674,#2a9a55);color:#fff;box-shadow:0 4px 12px rgba(66,198,116,.3);}
+
+/* Bot HP bar overlays */
+.bot-hp-bar{width:167px;height:76px;overflow:hidden;position:relative;z-index:1;flex-shrink:0;margin-left:-52px;margin-top:15px;}
+.bot-hp-img{width:100%;height:100%;object-fit:fill;display:block;}
+.bot-bar-name{position:absolute;bottom:46px;left:58px;font-family:'Cinzel',serif;font-size:10px;font-weight:700;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.9);white-space:nowrap;pointer-events:none;}
+.bot-bar-role{position:absolute;bottom:64px;left:58px;font-size:8px;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none;}
+.bot-bar-cards{position:absolute;top:14px;right:16px;font-size:9px;color:rgba(255,255,255,.8);text-shadow:0 1px 3px rgba(0,0,0,.9);pointer-events:none;}
+/* remove old bot-header, bot-stats */
+.bot-header{display:none;}
+.bot-stats{display:none;}
+
+/* Attack target highlight */
+.bot-seat.atk-target{border-color:#e04040!important;box-shadow:0 0 16px rgba(224,64,64,.4)!important;}
+
+/* Sword icon overlay on bot-icon-wrap */
+.sword-icon{position:absolute;top:10px;left:170px;width:54px;height:54px;cursor:pointer;z-index:20;animation:swordPulse .8s ease-in-out infinite;display:flex;align-items:center;justify-content:center;}
+@keyframes swordPulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(224,64,64,.5);}
+  50%{box-shadow:0 0 0 8px rgba(224,64,64,0);}
+}
+.bot-icon-wrap{position:relative;z-index:2;flex-shrink:0;width:73px;height:72px;margin-right:-12px;margin-top:-30px;overflow:hidden;border-radius:4px;}
+
+/* Mana dots on HP bar */
+.bot-mana-row{position:absolute;bottom:25px;left:65px;display:flex;gap:4px;align-items:center;z-index:10;pointer-events:none;}
+.mana-dot{width:8px;height:8px;flex-shrink:0;}
+.mana-dot img{width:100%;height:100%;object-fit:contain;display:block;}
+
+/* Bot stat tooltip */
+#bot-tooltip{
+  position:fixed;z-index:500;background:rgba(10,10,20,.96);
+  border:1px solid var(--gold);border-radius:8px;padding:8px 12px;
+  font-size:11px;line-height:1.7;pointer-events:none;display:none;
+  box-shadow:0 4px 16px rgba(0,0,0,.6);min-width:120px;
+}
+#bot-tooltip .tt-name{font-family:'Cinzel',serif;font-size:12px;color:var(--gold2);margin-bottom:4px;}
+#bot-tooltip .tt-stat{color:var(--dim);}
+#bot-tooltip .tt-val{color:var(--white);font-weight:600;}
+
+#player-mana-row{position:absolute;bottom:10px;left:100px;display:flex;gap:4px;align-items:center;z-index:10;pointer-events:none;}
+#player-mana-row .mana-dot{width:10px;height:10px;flex-shrink:0;}
+#player-mana-row .mana-dot img{width:100%;height:100%;object-fit:contain;display:block;}
 </style>
 </head>
 <body>
+<!-- ROTATE MESSAGE -->
+<div id="rotate-msg">
+  <div class="rotate-icon">📱</div>
+  <div class="rotate-text">กรุณาหมุนหน้าจอ</div>
+  <div class="rotate-sub">Please rotate your device to landscape</div>
+</div>
 
 <!-- BG decorations (char select) -->
 <div class="bg-overlay"></div>
 <div class="bg-grid"></div>
+<canvas id="particle-canvas"></canvas>
 
 <!-- ══ SPLASH ══ -->
 <div id="splash" onclick="closeSplash()">
@@ -537,11 +969,11 @@ h1,h2{font-family:'Cinzel',serif;}
 <div id="title-screen">
   <!-- RESOURCE BAR -->
   <div id="resource-bar">
-    <div class="res-item">⚡ <span class="res-val">356,000</span></div>
-    <div class="res-sep"></div>
-    <div class="res-item">💎 <span class="res-val">150</span><span class="res-cap">/300</span></div>
-    <div class="res-sep"></div>
-    <div class="res-item">🎫 <span class="res-val">30</span></div>
+    <div class="res-item" style="display:none;"><span class="res-val">356,000</span></div>
+    <div class="res-sep" style="display:none;"></div>
+    <div class="res-item" style="display:none;"><span class="res-val">150</span><span class="res-cap">/300</span></div>
+    <div class="res-sep" style="display:none;"></div>
+    <div class="res-item" style="display:none;"><span class="res-val">30</span></div>
     <div class="topbar-mode" onclick="reopenModeSelect()">
       <span class="tm-dot" id="tm-dot" style="background:#c8a850;"></span>
       <span class="tm-label" id="tm-label">Solo vs Bot</span>
@@ -559,16 +991,16 @@ h1,h2{font-family:'Cinzel',serif;}
       </button>
       <span class="sidebar-label">Faction</span>
       <button class="filter-btn" onclick="csSetFilter('olympus',this)">
-        <span class="filter-dot" style="background:#e0c060"></span>Olympus<span class="filter-count">5</span>
+        <span class="filter-dot" style="background:#ff2020"></span>🔴 Pyrewing<span class="filter-count">3</span>
       </button>
       <button class="filter-btn" onclick="csSetFilter('underworld',this)">
-        <span class="filter-dot" style="background:#9060d0"></span>Underworld<span class="filter-count">2</span>
+        <span class="filter-dot" style="background:#20c040"></span>🟢 Verdrath<span class="filter-count">3</span>
       </button>
       <button class="filter-btn" onclick="csSetFilter('chaos',this)">
-        <span class="filter-dot" style="background:#e05050"></span>Chaos<span class="filter-count">2</span>
+        <span class="filter-dot" style="background:#f0e020"></span>🟡 Aurelion<span class="filter-count">2</span>
       </button>
       <button class="filter-btn" onclick="csSetFilter('nature',this)">
-        <span class="filter-dot" style="background:#50c878"></span>Nature<span class="filter-count">1</span>
+        <span class="filter-dot" style="background:#20b0f0"></span>🔵 Zephyrwing<span class="filter-count">2</span>
       </button>
       <span class="sidebar-label">Role</span>
       <button class="filter-btn" onclick="csSetFilter('attacker',this)">
@@ -585,8 +1017,7 @@ h1,h2{font-family:'Cinzel',serif;}
       </button>
       <span class="sidebar-label">เรียง</span>
       <div class="sort-row">
-        <button class="sort-chip active" onclick="csSetSort('level',this)">Lv.</button>
-        <button class="sort-chip" onclick="csSetSort('role',this)">Role</button>
+        <button class="sort-chip active" onclick="csSetSort('role',this)">Role</button>
         <button class="sort-chip" onclick="csSetSort('name',this)">A–Z</button>
       </div>
     </div>
@@ -620,6 +1051,7 @@ h1,h2{font-family:'Cinzel',serif;}
   </div>
 </div>
 <div id="char-tooltip"></div>
+<div id="bot-tooltip"></div>
 
 <!-- ONLINE LOBBY -->
 <div id="online-lobby">
@@ -652,34 +1084,101 @@ h1,h2{font-family:'Cinzel',serif;}
 
 <!-- MAIN APP -->
 <div id="app">
+  <!-- TOP BAR -->
   <div id="header">
-    <h1>⚔ CARD BATTLE</h1>
+    <div id="turn-banner">TURN <span id="turn-num">1</span></div>
     <div id="phase-tag">—</div>
     <div id="turn-info">รอเริ่มเกม</div>
-    <div id="deck-count">กอง: 0</div>
+    <div id="deck-count">🂠 <span id="deck-num">0</span></div>
+    <button id="btn-back" onclick="goBack()" title="กลับหน้าเลือกตัวละคร" style="margin-left:4px;padding:3px 10px;border-radius:4px;border:1px solid rgba(200,168,80,.4);background:rgba(200,168,80,.08);color:var(--gold2);cursor:pointer;font-size:11px;font-family:'Sarabun',sans-serif;">◀ Back</button>
+    <button id="btn-settings" onclick="document.getElementById('log-panel').classList.toggle('show')">⚙</button>
   </div>
-  <div id="main">
-    <div id="board"></div>
-    <div id="action-panel">
-      <h2>การกระทำ</h2>
-      <div class="ap-pips" id="ap-disp"></div>
-      <button class="btn primary" id="btn-atk"    onclick="startAttack()">⚔ โจมตี (1 AP)</button>
-      <button class="btn"         id="btn-draw"   onclick="drawAction()">🂠 จั่วการ์ด (1 AP)</button>
-      <button class="btn"         id="btn-play"   onclick="playSelected()">▶ เล่นการ์ด</button>
-      <button class="btn"         id="btn-inst"   onclick="installSelected()">⚙ ติดตั้ง (0 AP)</button>
-      <button class="btn green"   id="btn-cskill" onclick="useCharSkill()">✨ Char Skill</button>
-      <button class="btn"         id="btn-iskill" onclick="useItemSkill()">💎 Item Skill</button>
-      <button class="btn danger"  id="btn-end"    onclick="endTurn()">⏩ จบเทิร์น</button>
-      <div style="border-top:1px solid var(--border);margin:2px 0;"></div>
-      <div class="log-wrap"><div id="log"></div></div>
-    </div>
-  </div>
-</div>
 
-<div id="hand-wrap">
-  <div id="hand-lbl">มือของคุณ — คลิกเพื่อเลือก</div>
-  <div id="hand"></div>
-</div>
+  <!-- GAME AREA -->
+  <div id="main">
+    <!-- BOT SEATS (top) -->
+    <div id="bot-area"></div>
+
+    <!-- CENTER (field/log) -->
+    <div id="center-area">
+        <!-- DROP ZONE — drag card here to play -->
+        <div id="drop-zone">
+          <div id="drop-zone-hint" onclick="if(G.selectedCard){playSelected()}">🃏 ลากการ์ดมาที่นี่เพื่อเล่น</div>
+        </div>
+        <div id="center-piles">
+          <div id="deck-pile"><span>🂠</span><small id="deck-pile-num">0</small></div>
+          <div id="center-lbl">⚔</div>
+          <div id="disc-pile"><small>ทิ้ง</small><small id="disc-num">0</small></div>
+        </div>
+
+        <div id="log-panel"><div id="log"></div></div>
+      </div>
+
+    <!-- BOTTOM GAME ROW -->
+    <div id="bottom-area">
+
+      <!-- LEFT: equip 2x2 + avatar/stat -->
+      <div id="left-panel">
+        <div id="equip-col">
+          <div class="eq-slot" id="eq-weapon" onclick="eqSlotClick('weapon')"><span class="eq-label">weapon</span><div class="eq-item" id="eq-weapon-item"></div></div>
+          <div class="eq-slot" id="eq-armor"  onclick="eqSlotClick('armor')"><span class="eq-label">armor</span><div class="eq-item" id="eq-armor-item"></div></div>
+          <div class="eq-slot" id="eq-charm"  onclick="eqSlotClick('charm')"><span class="eq-label">cham</span><div class="eq-item" id="eq-charm-item"></div></div>
+          <div class="eq-slot" id="eq-pet"    onclick="eqSlotClick('pet')"><span class="eq-label">Pet</span><div class="eq-item" id="eq-pet-item"></div></div>
+        </div>
+        <div id="player-hp-row">
+          <div id="player-icon-wrap" onclick="useCharSkill()" title="Skill">
+            <div id="char-avatar"></div>
+            
+          </div>
+          <div id="hp-bar-wrap">
+            <div id="char-name-lbl"></div>
+            <div id="char-role-lbl"></div>
+          </div>
+          <div id="player-mana-row"></div>
+        </div>
+        <div id="char-info-col">
+          <div id="char-name-lbl"></div>
+          <div id="char-role-lbl"></div>
+          <div id="ap-pips-wrap"><div class="ap-pips" id="ap-disp"></div></div>
+          <div id="mp-row-wrap"></div>
+        </div>
+      </div>
+
+      <!-- CENTER: hand cards -->
+      <div id="center-hand-panel">
+        <div id="hand-wrap">
+          <div id="hand-lbl">คุณ — มือของคุณ (แตะเพื่อเลือก)</div>
+          <div id="hand-scroll"><div id="hand"></div></div>
+        </div>
+      </div>
+
+      <!-- RIGHT: action buttons + deck -->
+      <div id="right-panel">
+        <div id="action-btns">
+          <button style="display:none" id="btn-atk"   onclick="startAttack()">Attack</button>
+          <button style="display:none" id="btn-play"   onclick="playSelected()">Play</button>
+          <button style="display:none" id="btn-inst"   onclick="installSelected()">Install</button>
+          <button style="display:none" id="btn-cskill" onclick="useCharSkill()">Skill</button>
+          <button style="display:none" id="btn-iskill" onclick="useItemSkill()">Item</button>
+        </div>
+      </div>
+
+      <!-- END button: fixed far right top -->
+      <div id="end-fixed">
+        <button class="ab-btn ab-end" id="btn-end" onclick="endTurn()" style="background:transparent;border:none;box-shadow:none;padding:0;width:80px;height:80px;">
+          <img src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/END.png" style="width:100%;height:100%;object-fit:contain;transform:rotate(-45deg);" onerror="this.style.display='none';this.nextSibling.style.display='block'">
+          <span style="display:none;transform:rotate(-45deg);font-family:'Cinzel',serif;font-weight:700;font-size:11px;">END</span>
+        </button>
+      </div>
+
+      <!-- DECK: fixed far right -->
+      <div id="deck-fixed">
+        <div id="deck-btn" onclick="onDeckClick()" style="cursor:pointer;width:110px;height:110px;display:flex;align-items:center;justify-content:center;">
+          <img id="deck-img" src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/CARDS%20ASSET/deck.png" style="width:100%;height:100%;object-fit:contain;" onerror="this.src=''">
+        </div>
+      </div>
+
+    </div>
 
 <!-- modals / overlays -->
 <div id="modal-wrap"><div id="modal">
@@ -716,46 +1215,87 @@ h1,h2{font-family:'Cinzel',serif;}
 </div>
 
 <script>
-const CHAR_IMAGES = {};
+function goBack(){
+  if(confirm('กลับไปหน้าเลือกตัวละครใช่ไหม? ความคืบหน้าในเกมจะหายไป')){
+    document.getElementById('app').style.display='none';
+    document.getElementById('title-screen').style.display='flex';
+    G=null;
+  }
+}
+
+/* ══ SOUND SYSTEM ══ */
+const SFX_BASE='https://raw.githubusercontent.com/dekster00/card-battle/main/assets/sound/';
+const _sfxCache={};
+function playSound(name){
+  try{
+    if(!_sfxCache[name]){_sfxCache[name]=new Audio(SFX_BASE+name);}
+    const s=_sfxCache[name].cloneNode();
+    s.volume=0.7;
+    s.play().catch(()=>{});
+  }catch(e){}
+}
+const ICON_IMAGES = {
+  'zizeus': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/3.png', 'pluto': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/4.png', 'hades': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/10.png', 'arez': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/6.png', 'hermes': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/2.png', 'aphrodite': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/5.png', 'hephaestus': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/8.png', 'athena': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/9.png', 'artemis': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/7.png', 'apollonius': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/1.png'
+};
+const HP_BAR_IMAGES = Array.from({length:11}, (_,i) => `https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/HP%20Bar/${i}.png`);
+const CHAR_IMAGES = {
+  'zizeus': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/3.png',
+  'pluto': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/4.png',
+  'hades': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/10.png',
+  'arez': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/6.png',
+  'hermes': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/2.png',
+  'aphrodite': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/5.png',
+  'hephaestus': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/8.png',
+  'athena': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/9.png',
+  'artemis': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/7.png',
+  'apollonius': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/1.png'
+};
 
 /* ═══ CONSTANTS ═══ */
 const ROLES=['LEADER','Guardian','Betrayer','Betrayer','Watcher'];
 const SYM=['hammer','scissors','paper'];
+const SYM_IMG={
+  hammer:`<img src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/rock.png" style="width:28px;height:28px;object-fit:contain;vertical-align:middle;image-rendering:auto;">`,
+  scissors:`<img src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/scissor.png" style="width:28px;height:28px;object-fit:contain;vertical-align:middle;image-rendering:auto;">`,
+  paper:`<img src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/paper.png" style="width:28px;height:28px;object-fit:contain;vertical-align:middle;image-rendering:auto;">`
+};
 const SYM_EMOJI={hammer:'🔨',scissors:'✂️',paper:'📄'};
+// Override SYM_EMOJI to use images where possible
+const SYM_EMOJI_ORIG={...SYM_EMOJI};
 const DODGE_SYM={hammer:'paper',scissors:'hammer',paper:'scissors'};
 const ROLE_COLOR={LEADER:'#c090e0',Guardian:'#70b0f0',Betrayer:'#f08080',Watcher:'#90d070'};
 
 /* ═══ CHARACTERS ═══ */
 const CHARACTERS=[
-  {id:'zizeus',name:'Zizeus',emoji:'⚡',color:'#d4a020',passive:'—',skillDesc:'จ่าย 3 MP → เลือก 1 คน HP-2',hasSkill:true,
+  {id:'zizeus',name:'Nesta',emoji:'⚡',color:'#d4a020',passive:'—',skillDesc:'จ่าย 3 MP → เลือก 1 คน HP-2',hasSkill:true,
    onSkill(pi){const p=G.players[pi];if(!spendMP(p,3)){addLog('MP ไม่พอ (3)');return;}
      pickTarget(pi,'Zizeus: เลือกเป้าหมาย',t=>{t.hp=Math.max(0,t.hp-2);addLog(`⚡ Zizeus! ${t.name} HP-2`,'dmg');checkDeath(t.i);renderAll();})}},
-  {id:'pluto',name:'Pluto',emoji:'💀',color:'#9060d0',passive:'—',skillDesc:'จ่าย 2 MP → ทุกคนทิ้งการ์ด 1 ใบ',hasSkill:true,
+  {id:'pluto',name:'Jannis',emoji:'💀',color:'#9060d0',passive:'—',skillDesc:'จ่าย 2 MP → ทุกคนทิ้งการ์ด 1 ใบ',hasSkill:true,
    onSkill(pi){const p=G.players[pi];if(!spendMP(p,2)){addLog('MP ไม่พอ (2)');return;}
      for(const q of G.players){if(q.dead||q.i===pi||q.isBot&&q.hand.length){if(q.isBot&&!q.dead&&q.i!==pi){const c=q.hand.splice(~~(Math.random()*q.hand.length),1)[0];G.discard.push(c);addLog(`${q.name}: ทิ้ง ${c.name}`);}}}
      // human players must pick — queue them
      G._plutoVictims=G.players.filter(q=>!q.dead&&q.i!==pi&&!q.isBot&&q.hand.length).map(q=>q.i);
      plutoNextVictim();}},
-  {id:'hades',name:'Hades',emoji:'🌑',color:'#5050a0',passive:'—',skillDesc:'เสีย 1 HP → จั่ว 2 ใบ',hasSkill:true,
+  {id:'hades',name:'Zeni',emoji:'🌑',color:'#5050a0',passive:'—',skillDesc:'เสีย 1 HP → จั่ว 2 ใบ',hasSkill:true,
    onSkill(pi){const p=G.players[pi];if(p.hp<=1){addLog('HP ไม่พอ');return;}p.hp--;drawCards(pi,2);addLog(`🌑 Hades: HP-1 → จั่ว 2 ใบ`,'dmg');renderAll();}},
-  {id:'arez',name:'Arez',emoji:'⚔️',color:'#e05050',passive:'Multi-Atk: โจมตีได้ไม่จำกัดครั้ง',skillDesc:'(Passive) Multi-Atk',hasSkill:false,
+  {id:'arez',name:'Sun Woo',emoji:'⚔️',color:'#e05050',passive:'Multi-Atk: โจมตีได้ไม่จำกัดครั้ง',skillDesc:'(Passive) Multi-Atk',hasSkill:false,
    onSetup(p){p.multiAtk=true;}},
-  {id:'hermes',name:'Hermes',emoji:'🪶',color:'#40d090',passive:'—',skillDesc:'จ่าย 1 MP → ทำลายอุปกรณ์เป้าหมาย',hasSkill:true,
+  {id:'hermes',name:'Ren',emoji:'🪶',color:'#40d090',passive:'—',skillDesc:'จ่าย 1 MP → ทำลายอุปกรณ์เป้าหมาย',hasSkill:true,
    onSkill(pi){const p=G.players[pi];if(!spendMP(p,1)){addLog('MP ไม่พอ');return;}
      const ts=G.players.filter(q=>!q.dead&&q.i!==pi&&Object.keys(q.equip).length>0);
      if(!ts.length){addLog('ไม่มีเป้าหมายที่มีอุปกรณ์');return;}
      showModal('Hermes: เลือกเป้าหมาย',ts.map(t=>`<button class="btn" onclick="hermesDestroy(${t.i})">${t.char.emoji} ${t.name}</button>`).join(''),[{label:'ยกเลิก',fn:closeModal}]);}},
-  {id:'aphrodite',name:'Aphrodite',emoji:'💕',color:'#e050a0',passive:'—',skillDesc:'จ่าย 2 MP → เลือก 2 คนท้าดวล',hasSkill:true,
+  {id:'aphrodite',name:'Hana',emoji:'💕',color:'#e050a0',passive:'—',skillDesc:'จ่าย 2 MP → เลือก 2 คนท้าดวล',hasSkill:true,
    onSkill(pi){const p=G.players[pi];if(!spendMP(p,2)){addLog('MP ไม่พอ');return;}
      const ts=G.players.filter(q=>!q.dead&&q.i!==pi);if(ts.length<2){addLog('ผู้เล่นไม่พอ');return;}
      G._aphSel=[];
      showModal('Aphrodite Skill','<div style="margin-bottom:6px;font-size:11px;color:var(--dim);">เลือก 2 คน</div>'+ts.map(t=>`<button class="btn" id="aph${t.i}" onclick="aphToggle(${t.i})">${t.char.emoji} ${t.name}</button>`).join(''),[{label:'ยืนยัน',fn:aphConfirm},{label:'ยกเลิก',fn:closeModal}]);}},
-  {id:'hephaestus',name:'Hephaestus',emoji:'🔥',color:'#e07030',passive:'ติดตั้งอุปกรณ์ → จั่ว +1',skillDesc:'(Passive) Equip→Draw 1',hasSkill:false,
+  {id:'hephaestus',name:'Bradford',emoji:'🔥',color:'#e07030',passive:'ติดตั้งอุปกรณ์ → จั่ว +1',skillDesc:'(Passive) Equip→Draw 1',hasSkill:false,
    onEquip(pi){drawCards(pi,1);}},
-  {id:'athena',name:'Athena',emoji:'🦉',color:'#6090e0',passive:'ติดตั้งอุปกรณ์ → ATK+1 ชั่วคราว',skillDesc:'(Passive) Equip→ATK+1 till End',hasSkill:false,
+  {id:'athena',name:'Kuromi',emoji:'🦉',color:'#6090e0',passive:'ติดตั้งอุปกรณ์ → ATK+1 ชั่วคราว',skillDesc:'(Passive) Equip→ATK+1 till End',hasSkill:false,
    onEquip(pi){G.players[pi]._athBonus=(G.players[pi]._athBonus||0)+1;recalcStats(pi);}},
-  {id:'artemis',name:'Artemis',emoji:'🏹',color:'#50c050',passive:'ระยะโจมตีเริ่มต้น +3',skillDesc:'(Passive) ระยะ +3',hasSkill:false,onSetup(p){p.range+=3;}},
-  {id:'apollonius',name:'Apollonius',emoji:'☀️',color:'#f0d040',passive:'Draw Phase: จั่ว 3 ใบแทน 2',skillDesc:'(Passive) จั่ว 3/เทิร์น',hasSkill:false,extraDraw:1}
+  {id:'artemis',name:'XENOZE',emoji:'🏹',color:'#50c050',passive:'ระยะโจมตีเริ่มต้น +3',skillDesc:'(Passive) ระยะ +3',hasSkill:false,onSetup(p){p.range+=3;}},
+  {id:'apollonius',name:'Kim Han',emoji:'☀️',color:'#f0d040',passive:'Draw Phase: จั่ว 3 ใบแทน 2',skillDesc:'(Passive) จั่ว 3/เทิร์น',hasSkill:false,extraDraw:1}
 ];
 
 /* ═══ DECK ═══ */
@@ -804,22 +1344,22 @@ let G={};
 let selectedCharId=null;
 
 /* ══ CHARACTER SELECT SYSTEM ══ */
-const FACTION_ICON={olympus:'⚜️',underworld:'💠',chaos:'🔥',nature:'🌿'};
+const FACTION_ICON={olympus:'🔴',underworld:'🟢',chaos:'🟡',nature:'🔵'};
 const CHAR_DATA={
-  zizeus:   {faction:'olympus',   factionLabel:'Olympus',   role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:2,range:1},
-  pluto:    {faction:'underworld',factionLabel:'Underworld',role:'utility', roleLabel:'Utility', stars:4,level:28,hp:7,atk:1,range:1},
-  hades:    {faction:'underworld',factionLabel:'Underworld',role:'attacker',roleLabel:'Attacker',stars:4,level:30,hp:8,atk:2,range:1},
-  arez:     {faction:'chaos',     factionLabel:'Chaos',     role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:2,range:1},
-  hermes:   {faction:'olympus',   factionLabel:'Olympus',   role:'utility', roleLabel:'Utility', stars:3,level:24,hp:7,atk:1,range:1},
-  aphrodite:{faction:'olympus',   factionLabel:'Olympus',   role:'support', roleLabel:'Support', stars:4,level:26,hp:7,atk:1,range:1},
-  hephaestus:{faction:'olympus',  factionLabel:'Olympus',   role:'utility', roleLabel:'Utility', stars:3,level:22,hp:7,atk:1,range:1},
-  athena:   {faction:'olympus',   factionLabel:'Olympus',   role:'tank',    roleLabel:'Tank',    stars:4,level:30,hp:9,atk:1,range:1},
-  artemis:  {faction:'nature',    factionLabel:'Nature',    role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:1,range:4},
-  apollonius:{faction:'chaos',    factionLabel:'Chaos',     role:'support', roleLabel:'Support', stars:3,level:20,hp:7,atk:1,range:1}
+  zizeus:   {faction:'olympus',   factionLabel:'Pyrewing',   role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:2,range:1},
+  pluto:    {faction:'nature',    factionLabel:'Zephyrwing', role:'utility', roleLabel:'Utility', stars:4,level:28,hp:7,atk:1,range:1},
+  hades:    {faction:'olympus',   factionLabel:'Pyrewing',   role:'attacker',roleLabel:'Attacker',stars:4,level:30,hp:8,atk:2,range:1},
+  arez:     {faction:'underworld',factionLabel:'Verdrath',   role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:2,range:1},
+  hermes:   {faction:'underworld',factionLabel:'Verdrath',   role:'utility', roleLabel:'Utility', stars:3,level:24,hp:7,atk:1,range:1},
+  aphrodite:{faction:'olympus',   factionLabel:'Pyrewing',   role:'support', roleLabel:'Support', stars:4,level:26,hp:7,atk:1,range:1},
+  hephaestus:{faction:'nature',   factionLabel:'Zephyrwing', role:'utility', roleLabel:'Utility', stars:3,level:22,hp:7,atk:1,range:1},
+  athena:   {faction:'chaos',     factionLabel:'Aurelion',   role:'tank',    roleLabel:'Tank',    stars:4,level:30,hp:9,atk:1,range:1},
+  artemis:  {faction:'chaos',     factionLabel:'Aurelion',   role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:1,range:4},
+  apollonius:{faction:'underworld',factionLabel:'Verdrath',  role:'support', roleLabel:'Support', stars:3,level:20,hp:7,atk:1,range:1}
 };
-function starsStr(n){return'★'.repeat(n)+'☆'.repeat(5-n);}
+function starsStr(n){return'★★★★★';}
 
-let csCurrentFilter='all', csCurrentSort='level';
+let csCurrentFilter='all', csCurrentSort='role';
 
 function csGetList(){
   const roles=['attacker','tank','utility','support'];
@@ -838,17 +1378,16 @@ function buildCharGrid(){
   const list=csGetList();
   grid.innerHTML=list.map((ch,i)=>{
     const d=CHAR_DATA[ch.id]||{};
-    return`<div class="char-card role-${d.role||''} ${selectedCharId===ch.id?'selected':''}"
+    return`<div class="char-card role-${d.role||''} faction-${d.faction||''} ${selectedCharId===ch.id?'selected':''}"
          id="cc-${ch.id}" onclick="selectChar('${ch.id}')"
          onmouseenter="showCharTip(event,'${ch.id}')" onmouseleave="hideCharTip()"
          style="animation-delay:${i*.03}s">
       <div class="check-mark">✓</div>
-      <div class="card-art"><div class="svg-wrap">${charSVG(ch.id,90)}</div></div>
+      <div class="card-art">${CHAR_IMAGES&&CHAR_IMAGES[ch.id]?`<img src="${CHAR_IMAGES[ch.id]}" style="width:100%;height:100%;object-fit:cover;object-position:top center;">`:`<div class="svg-wrap">${charSVG(ch.id,90)}</div>`}</div>
       <div class="card-top">
         <span class="role-badge rb-${d.role||''}">${d.roleLabel||''}</span>
         <span class="faction-icon">${FACTION_ICON[d.faction]||ch.emoji}</span>
       </div>
-      <div class="level-badge">Lv.${d.level||'?'}</div>
       <div class="card-info">
         <div class="card-stars">${starsStr(d.stars||3)}</div>
         <div class="card-name">${ch.name}</div>
@@ -867,7 +1406,10 @@ function selectChar(id){
   document.getElementById('sel-count').textContent='1';
   const ch=CHARACTERS.find(c=>c.id===id); if(!ch) return;
   const d=CHAR_DATA[id]||{};
-  document.getElementById('preview-art').innerHTML=charSVG(ch.id,42);
+  const _iconUrl=ICON_IMAGES[ch.id];
+  document.getElementById('preview-art').innerHTML=_iconUrl
+    ? `<img src="${_iconUrl}" style="width:100%;height:100%;object-fit:cover;object-position:top;">`
+    : charSVG(ch.id,42);
   document.getElementById('preview-info').innerHTML=`
     <div class="preview-name">${ch.name}</div>
     ${ch.passive&&ch.passive!=='—'?`<div class="preview-passive">★ ${ch.passive}</div>`:''}
@@ -901,7 +1443,7 @@ function showCharTip(e,id){
       <span class="card-faction-tag ft-${d.faction||''}">${d.factionLabel||''}</span>
       <span style="font-size:9px;color:${ROLE_C[d.role]||'#fff'}">${d.roleLabel||''}</span>
     </div>
-    <div>Lv.${d.level||'?'} · HP ${d.hp||7} · ATK ${d.atk||1} · ระยะ ${d.range||1}</div>
+    <div>HP ${d.hp||7} · ATK ${d.atk||1} · ระยะ ${d.range||1}</div>
     ${ch.passive&&ch.passive!=='—'?`<div class="tp-passive">Passive: ${ch.passive}</div>`:''}
     <div class="tp-skill">Skill: ${ch.skillDesc}</div>`;
   tip.style.display='block'; moveCharTip(e);
@@ -950,8 +1492,23 @@ function startGameFromCS(){
 /* ═══ START GAME ═══ */
 function startGame(){
   if(!selectedCharId)return;
-  document.getElementById('title-screen').style.display='none';
-  document.getElementById('splash').style.display='none';
+  // Show START-BG transition
+  const startBg=document.createElement('div');
+  startBg.id='start-bg-overlay';
+  startBg.style.cssText='position:fixed;inset:0;z-index:9999;background:#000 url("https://raw.githubusercontent.com/dekster00/card-battle/main/assets/START-BG.png") center/cover no-repeat;transition:opacity 1s ease;opacity:0;';
+  document.body.appendChild(startBg);
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ startBg.style.opacity='1'; }));
+  setTimeout(()=>{
+    document.getElementById('title-screen').style.display='none';
+    document.getElementById('splash').style.display='none';
+    if(window._stopParticles) window._stopParticles();
+    window._dragInited=false;
+    const bgOv=document.querySelector('.bg-overlay');
+    const bgGr=document.querySelector('.bg-grid');
+    const bgCv=document.getElementById('particle-canvas');
+    if(bgOv) bgOv.style.display='none';
+    if(bgGr) bgGr.style.display='none';
+    if(bgCv) bgCv.style.display='none';
   const roleList=shuffle([...ROLES]);
   const humanChar=CHARACTERS.find(c=>c.id===selectedCharId);
   const botChars=shuffle(CHARACTERS.filter(c=>c.id!==selectedCharId)).slice(0,4);
@@ -979,7 +1536,13 @@ function startGame(){
   addLog('=== เกมเริ่ม! ===','imp');
   const ldr=G.players.find(p=>p.role==='LEADER');
   addLog(`👑 LEADER: ${ldr.name} [${ldr.char.name}]`,'imp');
-  renderAll();setTimeout(()=>beginTurn(0),400);
+  renderAll();
+  // Fade out START-BG then begin
+  setTimeout(()=>{
+    startBg.style.opacity='0';
+    setTimeout(()=>{startBg.remove();beginTurn(0);},1000);
+  },1200);
+  },100); // end of startBg timeout
 }
 
 /* ═══ TURN ENGINE ═══ */
@@ -1173,7 +1736,7 @@ function showCardOverlay(playerName,card,cb){
   el.innerHTML=`
     ${artHtml}
     <div class="cpo-player">${playerName} เล่นการ์ด</div>
-    <div class="cpo-card-sym sym-${card.sym}">${SYM_EMOJI[card.sym]}</div>
+    <div class="cpo-card-sym sym-${card.sym}">${SYM_IMG[card.sym]}</div>
     <div class="cpo-card-name">${card.name}</div>
     <div class="cpo-card-type">${typeLabel}${card.ap>0?' · '+card.ap+' AP':''}</div>`;
   document.getElementById('card-play-overlay').classList.add('show');
@@ -1200,7 +1763,7 @@ function atkPickCard(cid){
   closeModal();
   const nb=getNeighbors(pi);
   showModal('เลือกเป้าหมาย',
-    `<div style="margin-bottom:8px;">โจมตีด้วย <span style="font-size:20px;">${SYM_EMOJI[card.sym]}</span> · หลบต้องมี ${SYM_EMOJI[DODGE_SYM[card.sym]]}</div>`+
+    `<div style="margin-bottom:8px;">โจมตีด้วย ${SYM_IMG[card.sym]} · หลบต้องมี ${SYM_IMG[DODGE_SYM[card.sym]]}</div>`+
     nb.map(ni=>`<button class="btn" onclick="doAttack(${pi},${ni},${cid})">${G.players[ni].char.emoji} ${G.players[ni].name} HP:${G.players[ni].hp}</button>`).join(''),
     [{label:'ยกเลิก',fn:closeModal}]);
 }
@@ -1218,7 +1781,7 @@ function doAttack(atkI,defI,cid){
 }
 function showAtkBanner(atk,def,card){
   const b=document.getElementById('banner-atk');
-  b.innerHTML=`${atk.char.emoji} <b>${atk.name}</b> ⚔️ ${SYM_EMOJI[card.sym]} <b>${card.name}</b><br><span style="font-size:12px;color:var(--dim);">→ ${def.char.emoji} ${def.name}</span>`;
+  b.innerHTML=`${atk.char.emoji} <b>${atk.name}</b> ⚔️ ${SYM_IMG[card.sym]} <b>${card.name}</b><br><span style="font-size:12px;color:var(--dim);">→ ${def.char.emoji} ${def.name}</span>`;
   b.classList.add('show');
   // Show card in center for 2 seconds
   const cl=document.getElementById('center-lbl');
@@ -1307,7 +1870,7 @@ function _showDefendModal(atkI,defI,atkCard,after){
   const hasCancel=def.hand.some(c=>c.effect==='cancel');
   const dmg=Math.max(1,atk.atk-(atk.ignoreArmor?0:def.def));
   const opts=[];
-  if(hasDodge)opts.push({label:`🛡 หลบ (ทิ้ง ${SYM_EMOJI[dodgeSym]})`,fn:()=>{
+  if(hasDodge)opts.push({label:`🛡 หลบ (ทิ้ง ${SYM_IMG[dodgeSym]})`,fn:()=>{
     closeModal();const dc=def.hand.find(c=>c.sym===dodgeSym);
     def.hand=def.hand.filter(c=>c.id!==dc.id);G.discard.push(dc);
     addLog(`${def.name}: หลบ! (ทิ้ง ${SYM_EMOJI[dc.sym]})`);
@@ -1326,8 +1889,8 @@ function _showDefendModal(atkI,defI,atkCard,after){
     def.hand=def.hand.filter(c=>c.id!==cc.id);G.discard.push(cc);
     addLog(`${def.name}: ยกเลิกการโจมตี!`,'imp');
     G._defendRequest=null; if(after)after();}});
-  showModal(`${atk.char.emoji} ${atk.name} โจมตีด้วย ${SYM_EMOJI[atkCard.sym]}`,
-    `<div style="font-size:12px;margin-bottom:8px;">ATK ${atk.atk} − DEF ${def.def} = <b style="color:var(--red);">${dmg} HP</b><br><span style="color:var(--dim);font-size:10px;">หลบต้องมีการ์ด ${SYM_EMOJI[dodgeSym]}</span></div>`,opts);
+  showModal(`${atk.char.emoji} ${atk.name} โจมตีด้วย ${SYM_IMG[atkCard.sym]}`,
+    `<div style="font-size:12px;margin-bottom:8px;">ATK ${atk.atk} − DEF ${def.def} = <b style="color:var(--red);">${dmg} HP</b><br><span style="color:var(--dim);font-size:10px;">หลบต้องมีการ์ด ${SYM_IMG[dodgeSym]}</span></div>`,opts);
 }
 function botDefend(atkI,defI,atkCard){
   const atk=G.players[atkI],def=G.players[defI];
@@ -1362,6 +1925,7 @@ function applyHit(atkI,defI,atkCard){
   let dmg=atk.atk;if(!atk.ignoreArmor)dmg=Math.max(1,dmg-def.def);
   def.hp=Math.max(0,def.hp-dmg);
   addLog(`${def.name}: -${dmg} HP (เหลือ ${def.hp})`,'dmg');
+  playSound('attack-hit.mp3');
   if(atk.drawAfterAtk)drawCards(atkI,1);
   checkDeath(defI);
 }
@@ -1508,7 +2072,7 @@ function plutoToss(cid){
 function drawAction(){
   if(!isMyTurnToAct())return;
   if(G.ap<1){addLog('AP ไม่พอ');return;}
-  G.ap--;drawCards(G.turn,1);renderAll();
+  G.ap--;drawCards(G.turn,1);playSound('card draw.mp3');renderAll();
 }
 function playSelected(){
   if(!isMyTurnToAct())return;
@@ -1608,18 +2172,151 @@ function getActivePi(){
   return humans.length?humans[0].i:0;
 }
 function buildBoardHtml(){
+  // Not used for main layout anymore - kept for compat
+  return '';
+}
+function renderBoard(){
+  if(!G||!G.players||!G.players.length) return;
   const activePi=getActivePi();
   const topPis=G.players.map(p=>p.i).filter(i=>i!==activePi);
-  let html='<div class="player-row">';
-  for(const i of topPis)html+=renderSeat(i);
-  html+='</div>';
-  html+=`<div class="player-row" style="justify-content:center;">
-    <div id="deck-pile"><span>🂠</span><small>${G.deck.length}ใบ</small></div>
-    <div id="center-lbl">⚔ กองกลาง</div>
-    <div id="disc-pile"><small>ทิ้ง</small><small>${G.discard.length}</small></div>
+
+  // Render bot seats
+  const botArea=document.getElementById('bot-area');
+  if(botArea){
+    botArea.innerHTML=topPis.map(i=>renderBotSeat(i)).join('');
+  }
+
+  // Render center piles
+  const dn=document.getElementById('deck-pile-num');
+  const disc=document.getElementById('disc-num');
+  if(dn) dn.textContent=G.deck.length;
+  if(disc) disc.textContent=G.discard.length;
+
+  // Render my character avatar + stats
+  renderMyAvatar(activePi);
+  renderEquipSlots(activePi);
+
+  // Update turn number
+  const tn=document.getElementById('turn-num');
+  if(tn) tn.textContent=G.turn+1||1;
+}
+
+function renderBotSeat(pi){
+  if(!G||!G.players||!G.players[pi]) return '';
+  const p=G.players[pi];
+  const active=G.turn===pi&&!G.gameOver;
+  const roleVis=p.role==='LEADER'||p.dead;
+  const roleTxt=roleVis?p.role:'?';
+  const roleCol={LEADER:'#c090e0',Guardian:'#70b0f0',Betrayer:'#f08080',Watcher:'#f0c040',hidden:'#666'};
+  const col=roleVis?roleCol[p.role]||'#888':roleCol.hidden;
+  const hpIdx2=Math.max(0,Math.min(10,Math.round(p.hp/p.maxHp*10)));
+  const isTarget=_atkTarget===pi;
+  const manaDots=[0,1,2,3,4,5].map(i=>
+    `<div class="mana-dot"><img src="${i<(p.mpW||0)?'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/mana.png':'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/no%20mana.png'}" onerror="this.style.opacity='.3'"></div>`
+  ).join('');
+  const swordHtml=isTarget?`<div class="sword-icon" onclick="event.stopPropagation();onSwordClick(${pi})">
+    <img src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/battle-Act01.png"
+      style="width:48px;height:48px;object-fit:contain;filter:drop-shadow(0 0 8px rgba(255,80,80,.9));"
+      onerror="this.style.display='none';this.nextSibling.style.display='block'">
+    <span style="display:none;font-size:32px;">⚔️</span>
+  </div>`:'';
+  return`<div class="bot-seat ${active?'active-turn':''} ${p.dead?'dead':''} ${isTarget?'atk-target':''}"
+    id="bot-seat-${pi}"
+    onclick="onBotSeatClick(${pi})"
+    onmouseenter="showBotTip(event,${pi})"
+    onmouseleave="hideBotTip()"
+    ontouchstart="_botTipTimer=setTimeout(()=>showBotTip(event,${pi}),600)"
+    ontouchend="hideBotTip()"
+    ontouchmove="hideBotTip()">
+    <div class="bot-hp-row">
+      <div class="bot-icon-wrap">
+        ${ICON_IMAGES[p.char.id]?`<img src="${ICON_IMAGES[p.char.id]}" class="bot-icon-img" style="${p.char.id==='hephaestus'?'transform:scale(0.88);transform-origin:bottom center;':''}">`:`<div class="bot-icon-svg">${charSVG(p.char.id,44)}</div>`}
+      </div>
+      <div class="bot-hp-bar">
+        <img src="${HP_BAR_IMAGES[hpIdx2]}" class="bot-hp-img">
+        <div class="bot-bar-name">${p.name}</div>
+        <div class="bot-bar-role" style="color:${col};">${roleTxt}</div>
+        <div class="bot-bar-cards">🂠${p.hand.length}</div>
+        <div class="bot-mana-row">${manaDots}</div>
+      </div>
+      ${swordHtml}
+    </div>
   </div>`;
-  html+='<div class="player-row">'+renderSeat(activePi)+'</div>';
-  return html;
+}
+
+
+function renderMyAvatar(pi){
+  if(!G||!G.players) return;
+  const p=G.players[pi];
+  if(!p) return;
+  const active=G.turn===pi&&!G.gameOver;
+  const hpPct=Math.max(0,Math.min(100,p.hp/p.maxHp*100));
+
+  // Avatar: use ICON image
+  const av=document.getElementById('char-avatar');
+  if(av){
+    const iconUrl=ICON_IMAGES[p.char.id];
+    av.innerHTML=iconUrl
+      ? '<img src="'+iconUrl+'" style="width:100%;height:100%;object-fit:cover;object-position:top;">'
+      : charSVG(p.char.id,74);
+  }
+  // HP bar image - same as bot
+  const hpWrap=document.getElementById('hp-bar-wrap');
+  if(hpWrap){
+    const hpIdx=Math.max(0,Math.min(10,Math.round(p.hp/p.maxHp*10)));
+    hpWrap.innerHTML=`<img src="${HP_BAR_IMAGES[hpIdx]}" style="width:100%;height:100%;object-fit:fill;display:block;">`;
+  }
+
+  // Name + role
+  const nl=document.getElementById('char-name-lbl');
+  if(nl) nl.textContent=p.char.name;
+  const rl=document.getElementById('char-role-lbl');
+  if(rl) rl.textContent=p.role;
+
+  // HP bar
+  const hb=document.getElementById('hp-bar');
+  if(hb) hb.style.width=hpPct+'%';
+
+  // Player mana dots
+  const pmana=document.getElementById('player-mana-row');
+  if(pmana){
+    const MBASE='https://raw.githubusercontent.com/dekster00/card-battle/main/assets/';
+    pmana.innerHTML=[0,1,2,3,4,5].map(i=>
+      `<div class="mana-dot"><img src="${i<(p.mpW||0)?MBASE+'mana.png':MBASE+'no%20mana.png'}"></div>`
+    ).join('');
+  }
+  // AP pips
+  const apEl=document.getElementById('ap-disp');
+  if(apEl){
+    const curAP=active?G.ap:3;
+    apEl.innerHTML=Array.from({length:3},(_,i)=>`<div class="ap-pip ${i<curAP?'full':''}"></div>`).join('');
+  }
+
+  // MP row
+  const mpEl=document.getElementById('mp-row-wrap');
+  if(mpEl){
+    mpEl.innerHTML=`<div class="mp-row"><span class="mp-sep">W</span>${[0,1,2].map(i=>`<div class="mp-dot ${i<p.mpW?'wf':'em'}"></div>`).join('')}<span class="mp-sep">B</span>${[0,1,2].map(i=>`<div class="mp-dot ${i<p.mpB?'bf':'em'}"></div>`).join('')}</div>`;
+  }
+}
+
+function renderEquipSlots(pi){
+  if(!G||!G.players) return;
+  const p=G.players[pi];
+  if(!p) return;
+  ['weapon','armor','charm','pet'].forEach(sl=>{
+    const el=document.getElementById('eq-'+sl+'-item');
+    if(!el) return;
+    const e=p.equip?.[sl];
+    el.textContent=e?e.name:'';
+    el.parentElement.title=e?e.desc||e.name:'';
+  });
+}
+
+function eqSlotClick(sl){
+  const activePi=getActivePi();
+  const p=G.players[activePi];
+  if(!p||!p.equip?.[sl]) return;
+  showTip(null, p.equip[sl].desc||p.equip[sl].name);
 }
 function renderSeat(pi){
   const p=G.players[pi];
@@ -1670,6 +2367,8 @@ function renderSeat(pi){
 function renderHand(){
   if(!G.players)return;
   const el=document.getElementById('hand');if(!el)return;
+  // Update board (avatar, bots, equip)
+  renderBoard();
 
   // Online mode: always show MY cards regardless of whose turn it is
   if(OL.roomId){
@@ -1710,7 +2409,11 @@ function renderHand(){
 /* ═══ CHARACTER SVG ART ═══ */
 function charSVG(id, size=56){
   if(CHAR_IMAGES && CHAR_IMAGES[id]){
-    return `<img src="${CHAR_IMAGES[id]}" style="width:${size}px;height:${Math.round(size*1.35)}px;object-fit:contain;image-rendering:pixelated;" alt="${id}">`;
+    const isCard = size >= 70; // called from buildCharGrid (90) vs small uses
+    if(isCard){
+      return `<img src="${CHAR_IMAGES[id]}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top center;display:block;" alt="${id}" loading="lazy">`;
+    }
+    return `<img src="${CHAR_IMAGES[id]}" style="width:${size}px;height:${Math.round(size*1.4)}px;object-fit:cover;object-position:top center;" alt="${id}" loading="lazy">`;
   }
   const s=size, h=s/2;
   const arts={
@@ -1823,10 +2526,22 @@ function charSVG(id, size=56){
 function renderCardEl(card){
   const isSel=G.selectedCard?.id===card.id;
   const ap=card.ap>0?`<div class="apc">${card.ap}AP</div>`:'';
-  // Show char art for equipment cards or special action cards
   const showArt=card.charArt;
-  const artHtml=showArt?`<div style="width:32px;height:32px;overflow:hidden;">${charSVG(showArt,32)}</div>`:`<div class="sym sym-${card.sym}">${SYM_EMOJI[card.sym]}</div>`;
-  return`<div class="card ${isSel?'sel':''}" data-id="${card.id}">${ap}${artHtml}<div class="cname">${card.name}</div><div style="display:flex;align-items:center;justify-content:space-between;width:100%;"><div class="cnum">${card.num}</div><div class="ctype type-${card.type}">${card.type==='equipment'?'⚙':card.type==='curse'?'☠':'▶'}</div></div></div>`;
+  const symHtml=`<div class="card-sym-corner">${SYM_IMG[card.sym]}</div>`;
+  const artHtml=showArt?`<div class="card-art-inner">${charSVG(showArt,36)}</div>`:`<div class="card-art-inner card-art-bg sym-bg-${card.sym}"></div>`;
+  return`<div class="card ${isSel?'sel':''}" data-id="${card.id}">
+    ${ap}
+    ${artHtml}
+    ${symHtml}
+    <div class="card-frame"></div>
+    <div class="card-bottom">
+      <div class="cname">${card.name}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
+        <div class="cnum">${card.num}</div>
+        <div class="ctype type-${card.type}">${card.type==='equipment'?'⚙':card.type==='curse'?'☠':'▶'}</div>
+      </div>
+    </div>
+  </div>`;
 }
 function renderCardGrid(cards,cb){
   return`<div style="display:flex;flex-wrap:wrap;gap:5px;">${cards.map(c=>`<div class="card" onclick="${cb}(${c.id})" style="cursor:pointer;"><div class="sym sym-${c.sym}">${SYM_EMOJI[c.sym]}</div><div class="cname">${c.name}</div><div class="cnum">${c.num}</div></div>`).join('')}</div>`;
@@ -1857,10 +2572,10 @@ function selCard(cid){
 
 /* ═══ MODAL ═══ */
 function showModal(title,body,actions){
-  document.getElementById('modal-title').textContent=title;
+  document.getElementById('modal-title').innerHTML=title;
   document.getElementById('modal-body').innerHTML=body;
   const el=document.getElementById('modal-acts');el.innerHTML='';
-  for(const a of actions){const b=document.createElement('button');b.className='btn';b.textContent=a.label;b.onclick=a.fn;el.appendChild(b);}
+  for(const a of actions){const b=document.createElement('button');b.className='btn';b.innerHTML=a.label;b.onclick=a.fn;el.appendChild(b);}
   document.getElementById('modal-wrap').classList.add('show');
 }
 function closeModal(){document.getElementById('modal-wrap').classList.remove('show');}
@@ -1951,6 +2666,7 @@ function olLeave(){
   OL = { roomId:null, myUid:null, mySlot:null, isHost:false, unsubRoom:null, charPicked:null, playerName:'' };
   document.getElementById('online-lobby').classList.remove('show');
   document.getElementById('title-screen').style.display='flex';
+  if(window._startParticles) window._startParticles();
   document.getElementById('ol-join-wrap').style.display='none';
   document.getElementById('lobby-room-id').style.display='none';
   document.getElementById('ol-char-pick').style.display='none';
@@ -2320,6 +3036,414 @@ buildCharGrid();
 <!-- Firebase SDK (loaded last so all game functions are ready first) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>_initFirebase();</script>
+<script>_initFirebase();
+
+/* ══ PARTICLE SYSTEM ══ */
+(function(){
+  const canvas = document.getElementById('particle-canvas');
+  if(!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [], animId;
+  const COUNT = 60;
+
+  const COLORS = [
+    'rgba(200,168,80,',   // gold
+    'rgba(144,96,208,',   // purple
+    'rgba(80,144,224,',   // blue
+    'rgba(255,255,255,',  // white
+  ];
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+
+  function mkParticle(){
+    const color = COLORS[Math.floor(Math.random()*COLORS.length)];
+    return {
+      x: Math.random()*W,
+      y: Math.random()*H,
+      r: Math.random()*1.8 + 0.3,
+      vx: (Math.random()-.5)*.3,
+      vy: -Math.random()*.5 - 0.1,
+      alpha: Math.random()*.7 + 0.1,
+      da: (Math.random()*.004+.001) * (Math.random()<.5?1:-1),
+      color,
+      twinkle: Math.random()*Math.PI*2
+    };
+  }
+
+  function init(){
+    resize();
+    particles = Array.from({length:COUNT}, mkParticle);
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    const now = performance.now()*0.001;
+    particles.forEach(p=>{
+      p.twinkle += 0.03;
+      const a = p.alpha * (.6 + .4*Math.sin(p.twinkle));
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
+      ctx.fillStyle = p.color + a + ')';
+      ctx.fill();
+      // larger particles get a soft glow
+      if(p.r > 1.2){
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r*3, 0, Math.PI*2);
+        ctx.fillStyle = p.color + (a*.15) + ')';
+        ctx.fill();
+      }
+      p.x += p.vx; p.y += p.vy;
+      p.alpha += p.da;
+      if(p.alpha <= 0.05 || p.alpha >= 0.85) p.da *= -1;
+      if(p.y < -10) { p.y = H+5; p.x = Math.random()*W; }
+      if(p.x < -10) p.x = W+5;
+      if(p.x > W+10) p.x = -5;
+    });
+    animId = requestAnimationFrame(draw);
+  }
+
+  // Only run when title screen is visible
+  function startParticles(){
+    if(animId) return;
+    init();
+    draw();
+  }
+  function stopParticles(){
+    if(animId){ cancelAnimationFrame(animId); animId=null; }
+  }
+
+  window.addEventListener('resize', ()=>{ resize(); });
+  // Start when page loads
+  window.addEventListener('load', startParticles);
+  // Stop when game starts to save performance
+  window._stopParticles = stopParticles;
+  window._startParticles = startParticles;
+})();
+
+function _over(touch, el){
+  if(!el) return false;
+  const r=el.getBoundingClientRect();
+  const x=touch.clientX, y=touch.clientY;
+  return x>=r.left && x<=r.right && y>=r.top && y<=r.bottom;
+}
+
+function _cleanDrag(){
+  if(window._dragCloneEl){window._dragCloneEl.remove();window._dragCloneEl=null;}
+  document.querySelectorAll('.card.dragging').forEach(c=>c.classList.remove('dragging'));
+  const dz=document.getElementById('drop-zone');
+  if(dz) dz.classList.remove('drag-active','drag-equip');
+  document.querySelectorAll('.eq-slot').forEach(s=>s.classList.remove('drag-over'));
+  window._dragCard=null;
+  const hint=document.getElementById('drop-zone-hint');
+  if(hint) hint.textContent='🃏 ลากการ์ดมาที่นี่เพื่อเล่น';
+}
+
+function _onDragStart(e){
+  if(window._dragCard) return;
+  if(!G||!G.players||!G.players.length||G.gameOver) return;
+  const cardEl=e.target.closest('#hand .card');
+  if(!cardEl) return;
+  const cid=+cardEl.dataset.id;
+  const pi=getActivePi();
+  if(G.turn!==pi||G.phase!=='action') return;
+  window._dragCard=G.players[pi]?.hand?.find(c=>c.id===cid);
+  if(!window._dragCard) return;
+  const t=e.touches?.[0]||e;
+  const r=cardEl.getBoundingClientRect();
+  const clone=cardEl.cloneNode(true);
+  clone.className='drag-clone-el';
+  clone.style.left=r.left+'px';
+  clone.style.top=r.top+'px';
+  document.body.appendChild(clone);
+  window._dragCloneEl=clone;
+  cardEl.classList.add('dragging');
+  e.preventDefault();
+}
+
+function _onDragMove(e){
+  if(!window._dragCloneEl||!window._dragCard) return;
+  const t=e.touches?.[0]||e;
+  window._dragCloneEl.style.left=(t.clientX-27)+'px';
+  window._dragCloneEl.style.top=(t.clientY-40)+'px';
+  const isEq=window._dragCard.type==='equipment';
+  const dz=document.getElementById('drop-zone');
+  if(dz){
+    const overDz=_over(t,dz);
+    dz.classList.toggle('drag-active', overDz&&!isEq);
+    dz.classList.toggle('drag-equip',  overDz&&isEq);
+    const hint=document.getElementById('drop-zone-hint');
+    if(hint){
+      if(overDz&&isEq) hint.textContent='📦 ติดตั้งอุปกรณ์';
+      else if(overDz) hint.textContent='✅ วางเพื่อเล่นการ์ด!';
+      else hint.textContent='🃏 ลากการ์ดมาที่นี่เพื่อเล่น';
+    }
+  }
+  document.querySelectorAll('.eq-slot').forEach(s=>{
+    s.classList.toggle('drag-over',isEq&&window._dragCard.slot&&s.id==='eq-'+window._dragCard.slot&&_over(t,s));
+  });
+  e.preventDefault();
+}
+
+function _onDragEnd(e){
+  try{
+    if(!window._dragCard||!window._dragCloneEl){_cleanDrag();return;}
+    const t=e.changedTouches?.[0]||e;
+    const isEq=window._dragCard&&window._dragCard.type==='equipment';
+    const dz=document.getElementById('drop-zone');
+    let done=false;
+    if(isEq){
+      document.querySelectorAll('.eq-slot').forEach(s=>{
+        if(!done&&_over(t,s)){G.selectedCard=window._dragCard;installSelected();done=true;}
+      });
+    }
+    if(!done&&dz&&_over(t,dz)){
+      G.selectedCard=window._dragCard;
+      isEq?installSelected():playSelected();
+    }
+  }catch(err){console.warn('drag end err:',err);}
+  finally{_cleanDrag();}
+}
+
+function _initDrag(){
+  if(window._dragInited) return;
+  if(!G||!G.players||!G.players.length) return;
+  window._dragInited=true;
+  document.addEventListener('mousedown',_onDragStart);
+  document.addEventListener('touchstart',_onDragStart,{passive:false});
+  document.addEventListener('mousemove',_onDragMove);
+  document.addEventListener('touchmove',_onDragMove,{passive:false});
+  document.addEventListener('mouseup',_onDragEnd);
+  document.addEventListener('touchend',_onDragEnd);
+  window.addEventListener('blur',_cleanDrag);
+  window.addEventListener('visibilitychange',()=>{if(document.hidden)_cleanDrag();});
+}
+
+/* patch renderHand to re-init drag each time */
+const __rh=renderHand;
+renderHand=function(){
+  try{__rh.apply(this,arguments);}catch(e){console.warn('renderHand err:',e);}
+  if(G&&G.players&&G.players.length){ _initDrag(); _applyOverlap(); }
+};
+
+function _applyOverlap(){
+  const hand=document.getElementById('hand');
+  if(!hand) return;
+  const cards=[...hand.querySelectorAll('.card')];
+  const n=cards.length; if(!n) return;
+  const overlap=44; // px overlap between cards
+  const totalW=(64+(64-overlap)*(n-1));
+  const startX=-totalW/2;
+  const handW=hand.getBoundingClientRect().width||400;
+  const rightOffset=handW*0.55; // shift cards to right 55% of hand area
+  cards.forEach((c,i)=>{
+    c.style.position='absolute';
+    c.style.left=(rightOffset+startX+i*(64-overlap))+'px';
+    c.style.bottom='0';
+    c.style.zIndex=i+1;
+    c.style.transform='none';
+    c.style.transition='transform .15s, box-shadow .15s, z-index 0s';
+    c.onmouseenter=()=>{c.style.transform='translateY(-10px)';c.style.zIndex=50;};
+    c.onmouseleave=()=>{c.style.transform='none';c.style.zIndex=i+1;};
+  });
+  hand.style.minWidth=Math.max(totalW,100)+'px';
+}
+
+
+/* ════ TAP TO ATTACK SYSTEM ════ */
+let _atkTarget = null; // currently highlighted target pi
+
+function tapBotSeat(pi){
+  if(!isMyTurnToAct()||G.gameOver) return;
+  const p=G.players[G.turn];
+  if(G.ap<1){addLog('AP ไม่พอ');return;}
+  if(G.attackUsed&&!p.multiAtk){addLog('โจมตีได้แค่ 1 ครั้ง');return;}
+  if(!p.hand.length){addLog('ไม่มีการ์ดในมือ');return;}
+  const nb=getNeighbors(G.turn);
+  if(!nb.includes(pi)){addLog('เป้าหมายอยู่นอกระยะ');return;}
+
+  if(_atkTarget===pi){
+    // Tap same target again = confirm attack
+    _atkTarget=null;
+    _clearAtkHighlight();
+    _doAttack(pi);
+  } else {
+    // Tap new target = show sword icon
+    _atkTarget=pi;
+    _showAtkHighlight(pi);
+  }
+}
+
+function _showAtkHighlight(pi){
+  _clearAtkHighlight();
+  const seat=document.getElementById('bot-seat-'+pi);
+  if(!seat) return;
+  const overlay=document.createElement('div');
+  overlay.id='atk-overlay';
+  overlay.innerHTML='⚔';
+  overlay.style.cssText='position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:40px;background:rgba(224,80,80,.25);border:2px solid #e05050;border-radius:10px;cursor:pointer;z-index:20;animation:atkPulse .7s ease-in-out infinite;';
+  overlay.onclick=(e)=>{e.stopPropagation();_atkTarget=null;_clearAtkHighlight();_doAttack(pi);};
+  seat.style.position='relative';
+  seat.appendChild(overlay);
+}
+
+function _clearAtkHighlight(){
+  const old=document.getElementById('atk-overlay');
+  if(old) old.remove();
+  document.querySelectorAll('.bot-seat').forEach(s=>s.style.border='');
+}
+
+function _doAttack(targetPi){
+  // Go straight to card selection (skip target picker)
+  const pi=G.turn;
+  const p=G.players[pi];
+  const t=G.players[targetPi];
+  if(!t||t.dead){addLog('เป้าหมายไม่ถูกต้อง');return;}
+  // Store target then show card modal
+  window._atkTargetPlayer=t;
+  showModal('⚔ โจมตี '+t.name+' — เลือกการ์ด',
+    p.hand.map(card=>`<button class="btn" onclick="closeModal();_execAtk(${card.id})">${SYM_IMG[card.sym]} ${card.name||''} (${card.num})</button>`).join(''),
+    [{label:'ยกเลิก',fn:()=>{closeModal();window._atkTargetPlayer=null;}}]
+  );
+}
+
+function _execAtk(cardId){
+  const t=window._atkTargetPlayer;
+  if(!t){addLog('ไม่มีเป้าหมาย');return;}
+  window._atkTargetPlayer=null;
+  const pi=G.turn;
+  const p=G.players[pi];
+  const card=p.hand.find(c=>c.id===cardId);
+  if(!card){addLog('ไม่พบการ์ด');return;}
+  G.selectedCard=card;
+  // Call existing attack logic with preset target
+  const origPickTarget=window._origPickTarget||pickTarget;
+  window._atkPresetTarget=t;
+  startAttack();
+}
+
+// Patch pickTarget to use preset if available
+const _origPickTarget=pickTarget;
+pickTarget=function(pi,title,cb){
+  if(window._atkPresetTarget){
+    const t=window._atkPresetTarget;
+    window._atkPresetTarget=null;
+    cb(t);
+    return;
+  }
+  _origPickTarget(pi,title,cb);
+};
+
+// Add CSS animation
+const _atkStyle=document.createElement('style');
+_atkStyle.textContent='@keyframes atkPulse{0%,100%{background:rgba(224,80,80,.2);}50%{background:rgba(224,80,80,.45);}}';
+document.head.appendChild(_atkStyle);
+
+/* ════ NEW ATTACK FLOW ════ */
+function onBotSeatClick(pi){
+  if(!isMyTurnToAct()||G.gameOver) return;
+  const p=G.players[G.turn];
+  if(G.ap<1){addLog('AP ไม่พอ');return;}
+  if(G.attackUsed&&!p.multiAtk){addLog('โจมตีได้แค่ 1 ครั้ง');return;}
+  if(!p.hand.length){addLog('ไม่มีการ์ดในมือ');return;}
+  const nb=getNeighbors(G.turn);
+  if(!nb.includes(pi)){addLog('เป้าหมายไม่อยู่ในระยะ');return;}
+
+  // Toggle: if same target clicked again → clear
+  if(_atkTarget===pi){
+    _atkTarget=null;
+    renderBoard();
+    return;
+  }
+  _atkTarget=pi;
+  renderBoard(); // re-render to show sword icon
+}
+
+function onSwordClick(pi){
+  if(_atkTarget!==pi) return;
+  const p=G.players[G.turn];
+  // Go straight to card selection (skip target select)
+  showModal('⚔ เลือกการ์ดโจมตี',
+    '<div style="font-size:11px;color:var(--dim);margin-bottom:6px;">สัญลักษณ์จะถูกเปิดเผย</div>'+
+    renderCardGrid(p.hand,'_atkCardWithTarget'),
+    [{label:'ยกเลิก',fn:()=>{closeModal();_atkTarget=null;renderBoard();}}]
+  );
+}
+
+function _atkCardWithTarget(cid){
+  const pi=G.turn;
+  const card=G.players[pi].hand.find(c=>c.id===cid); if(!card) return;
+  const ti=_atkTarget;
+  _atkTarget=null;
+  closeModal();
+  renderBoard();
+  doAttack(pi, ti, cid);
+}
+
+/* ════ BOT STAT TOOLTIP ════ */
+let _botTipTimer=null;
+function showBotTip(e, pi){
+  const p=G&&G.players&&G.players[pi];
+  if(!p) return;
+  const tip=document.getElementById('bot-tooltip');
+  if(!tip) return;
+  tip.innerHTML=`
+    <div class="tt-name">${p.char.emoji} ${p.name}</div>
+    <div><span class="tt-stat">HP: </span><span class="tt-val">${p.hp}/${p.maxHp}</span></div>
+    <div><span class="tt-stat">ATK: </span><span class="tt-val">${p.atk}</span></div>
+    <div><span class="tt-stat">DEF: </span><span class="tt-val">${p.def||0}</span></div>
+    <div><span class="tt-stat">Range: </span><span class="tt-val">${p.range}</span></div>
+    <div><span class="tt-stat">AP: </span><span class="tt-val">${p.ap||3}</span></div>
+    <div><span class="tt-stat">มือ: </span><span class="tt-val">${p.hand.length} ใบ</span></div>
+  `;
+  tip.style.display='block';
+  _moveBotTip(e);
+}
+function hideBotTip(){
+  const tip=document.getElementById('bot-tooltip');
+  if(tip) tip.style.display='none';
+  clearTimeout(_botTipTimer); _botTipTimer=null;
+}
+function _moveBotTip(e){
+  const tip=document.getElementById('bot-tooltip');
+  if(!tip||tip.style.display==='none') return;
+  const t=e.touches?.[0]||e;
+  let x=t.clientX+12, y=t.clientY+12;
+  if(x+140>window.innerWidth) x=t.clientX-150;
+  if(y+160>window.innerHeight) y=t.clientY-160;
+  tip.style.left=x+'px'; tip.style.top=y+'px';
+}
+document.addEventListener('mousemove', e=>{
+  const tip=document.getElementById('bot-tooltip');
+  if(tip&&tip.style.display==='block') _moveBotTip(e);
+});
+
+/* ════ DECK DRAW SYSTEM ════ */
+let _deckTapped = false;
+let _deckTimer = null;
+
+function onDeckClick(){
+  if(!isMyTurnToAct()||G.gameOver) return;
+  const img = document.getElementById('deck-img');
+  if(!_deckTapped){
+    // First tap - show deck drawing image
+    _deckTapped = true;
+    if(img) img.src = 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/CARDS%20ASSET/deck%20drawing.png';
+    // Reset after 2s if no second tap
+    _deckTimer = setTimeout(()=>{
+      _deckTapped = false;
+      if(img) img.src = 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/CARDS%20ASSET/deck.png';
+    }, 2000);
+  } else {
+    // Second tap - draw card
+    clearTimeout(_deckTimer);
+    _deckTapped = false;
+    if(img) img.src = 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/CARDS%20ASSET/deck.png';
+    drawAction();
+  }
+}
+</script>
 </body>
 </html>
