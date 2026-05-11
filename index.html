@@ -53,7 +53,10 @@ h1,h2{font-family:'Cinzel',serif;}
              radial-gradient(ellipse at 80% 30%,rgba(80,144,224,.06) 0%,transparent 50%),
              radial-gradient(ellipse at 50% 80%,rgba(200,168,80,.04) 0%,transparent 40%);}
 
-/* ══ BATTLE GROUND BACKGROUND ══ */
+/* ══ EQUIPMENT TOOLTIP (long press) ══ */
+#eq-tooltip{display:none;position:fixed;z-index:300;background:rgba(10,8,22,.97);border:1px solid var(--gold);border-radius:8px;padding:10px 14px;max-width:220px;pointer-events:none;}
+#eq-tooltip .eq-tt-name{font-family:'Cinzel',serif;font-size:12px;color:var(--gold);margin-bottom:4px;}
+#eq-tooltip .eq-tt-desc{font-size:11px;color:var(--dim);line-height:1.5;}
 #app::before{
   content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
   background-image:var(--bg-battle,url('https://raw.githubusercontent.com/dekster00/card-battle/main/assets/battle-ground.png'));
@@ -355,7 +358,7 @@ h1,h2{font-family:'Cinzel',serif;}
 /* Fan layout applied via JS */
 
 /* card */
-.card{width:76px;height:104px;border-radius:6px;border:none;background:none!important;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0;transition:transform .15s,box-shadow .15s;position:relative;user-select:none;overflow:hidden;flex-shrink:0;}
+.card{width:81px;height:104px;border-radius:6px;border:none;background:none!important;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0;transition:transform .15s,box-shadow .15s;position:relative;user-select:none;overflow:hidden;flex-shrink:0;}
 /* clip content inside card but let frame bleed slightly */
 .card-bottom{border-radius:0 0 6px 6px;}
 .card:hover{transform:translateY(-10px) scale(1.08)!important;box-shadow:0 12px 28px rgba(200,168,80,.35);z-index:50!important;}
@@ -424,8 +427,8 @@ h1,h2{font-family:'Cinzel',serif;}
 .cpo-card-big{width:148px;height:207px;position:relative;border-radius:10px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.8);}
 .cpo-card-big .cb-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;}
 .cpo-card-big .cb-frame{position:absolute;inset:0;width:100%;height:100%;background-size:100% 100%;background-repeat:no-repeat;z-index:4;}
-.cpo-card-big .cb-sym{position:absolute;top:4px;right:4px;z-index:5;width:28px;height:28px;display:flex;align-items:center;justify-content:center;}
-.cpo-card-big .cb-sym img{width:22px!important;height:22px!important;}
+.cpo-card-big .cb-sym{position:absolute;top:19px;right:4px;z-index:5;width:43px;height:43px;display:flex;align-items:center;justify-content:center;}
+.cpo-card-big .cb-sym img{width:37px!important;height:37px!important;}
 
 /* ★ DEATH REVEAL OVERLAY ★ */
 #death-overlay{
@@ -562,6 +565,154 @@ h1,h2{font-family:'Cinzel',serif;}
 @media (max-width: 380px) {
   .card{width:56px;height:80px;}
   .my-stat-box .msv{font-size:13px;}
+}
+
+/* ══════════════════════════════════════════
+   🎬 EFFECTS & ANIMATION SYSTEM
+══════════════════════════════════════════ */
+
+/* Damage / Heal floating numbers */
+.fx-float{
+  position:fixed;pointer-events:none;z-index:9500;
+  font-family:'Cinzel',serif;font-weight:700;
+  text-shadow:0 2px 10px rgba(0,0,0,.9);
+  transform:translateX(-50%);
+  animation:fxFloat 1.3s cubic-bezier(.2,.8,.4,1) forwards;
+}
+.fx-dmg  {color:#ff4040;font-size:30px;}
+.fx-crit {color:#ffe040;font-size:38px;text-shadow:0 0 20px rgba(255,220,0,.8),0 2px 10px rgba(0,0,0,.9);}
+.fx-heal {color:#40ff88;font-size:24px;}
+.fx-miss {color:#aaaacc;font-size:18px;font-style:italic;}
+.fx-block{color:#88aaff;font-size:22px;}
+@keyframes fxFloat{
+  0%  {opacity:1;transform:translateX(-50%) translateY(0) scale(.8);}
+  15% {opacity:1;transform:translateX(-50%) translateY(-18px) scale(1.3);}
+  80% {opacity:.9;transform:translateX(-50%) translateY(-70px) scale(1);}
+  100%{opacity:0;transform:translateX(-50%) translateY(-100px) scale(.85);}
+}
+
+/* Hit flash overlay */
+#fx-flash{
+  position:fixed;inset:0;z-index:8800;pointer-events:none;
+  opacity:0;transition:opacity .05s;
+}
+#fx-flash.red  {background:radial-gradient(ellipse at center,rgba(255,40,40,.55) 0%,transparent 70%);}
+#fx-flash.green{background:radial-gradient(ellipse at center,rgba(40,255,100,.4) 0%,transparent 70%);}
+#fx-flash.gold {background:radial-gradient(ellipse at center,rgba(220,170,40,.5) 0%,transparent 70%);}
+#fx-flash.blue {background:radial-gradient(ellipse at center,rgba(80,160,255,.45) 0%,transparent 70%);}
+@keyframes flashAnim{0%{opacity:0}15%{opacity:1}100%{opacity:0}}
+#fx-flash.fire {animation:flashAnim .35s ease forwards;}
+
+/* Screen shake */
+@keyframes shake{
+  0%,100%{transform:translate(0,0);}
+  10%{transform:translate(-7px,-3px) rotate(-.4deg);}
+  20%{transform:translate(7px,3px) rotate(.4deg);}
+  30%{transform:translate(-5px,4px) rotate(-.3deg);}
+  40%{transform:translate(5px,-4px) rotate(.3deg);}
+  50%{transform:translate(-3px,2px);}
+  60%{transform:translate(3px,-2px);}
+  70%{transform:translate(-2px,1px);}
+  80%{transform:translate(2px,-1px);}
+}
+.fx-shake{animation:shake .45s ease both;}
+
+/* Slash canvas */
+#fx-slash{position:fixed;inset:0;z-index:8600;pointer-events:none;}
+
+/* Ambient particle canvas */
+#fx-ambient{position:fixed;inset:0;z-index:2;pointer-events:none;}
+
+/* Turn announce */
+#fx-turn{
+  position:fixed;inset:0;z-index:7500;pointer-events:none;
+  display:flex;align-items:center;justify-content:center;
+}
+#fx-turn .ta-inner{
+  background:rgba(6,4,18,.93);
+  border:1.5px solid var(--gold);
+  border-radius:12px;padding:16px 52px;
+  font-family:'Cinzel',serif;font-size:20px;color:var(--gold2);
+  letter-spacing:4px;text-align:center;
+  box-shadow:0 0 50px rgba(200,168,80,.35);
+  animation:turnReveal 2s cubic-bezier(.34,1.4,.64,1) forwards;
+}
+@keyframes turnReveal{
+  0%  {opacity:0;transform:scale(.5);}
+  20% {opacity:1;transform:scale(1.06);}
+  50% {opacity:1;transform:scale(1);}
+  80% {opacity:1;}
+  100%{opacity:0;transform:scale(.9);}
+}
+
+/* Bot seat hit */
+@keyframes seatHit{
+  0%  {background:rgba(255,50,50,.55);transform:scale(1.06);}
+  60% {background:rgba(255,50,50,.15);}
+  100%{background:transparent;transform:scale(1);}
+}
+.bot-seat.seat-hit{animation:seatHit .4s ease;}
+
+/* My area hit vignette */
+@keyframes myHit{
+  0%  {box-shadow:inset 0 0 80px rgba(255,0,0,.8);}
+  100%{box-shadow:inset 0 0 0 rgba(255,0,0,0);}
+}
+#my-seat-area.my-hit{animation:myHit .55s ease;}
+
+/* Active turn glow pulse */
+@keyframes activeTurnPulse{
+  0%,100%{border-color:var(--gold);box-shadow:0 0 8px rgba(200,168,80,.3);}
+  50%    {border-color:var(--gold2);box-shadow:0 0 22px rgba(200,168,80,.75);}
+}
+.bot-seat.active-turn{animation:activeTurnPulse 1.8s ease-in-out infinite;}
+
+/* Char card reveal */
+@keyframes cardReveal{
+  from{opacity:0;transform:translateY(22px) scale(.9);filter:brightness(.4);}
+  to  {opacity:1;transform:translateY(0) scale(1);filter:brightness(1);}
+}
+.char-card{animation:cardReveal .35s ease both;}
+
+/* Selected char card pulse */
+@keyframes selGlow{
+  0%,100%{box-shadow:0 0 14px rgba(200,168,80,.4),0 0 28px rgba(200,168,80,.15);}
+  50%    {box-shadow:0 0 30px rgba(200,168,80,.85),0 0 60px rgba(200,168,80,.35);}
+}
+.char-card.selected{animation:selGlow 1.6s ease-in-out infinite!important;}
+
+/* Hand card touch */
+.card{transition:transform .15s,box-shadow .15s,border-color .15s;}
+.card.sel{
+  transform:translateY(-10px) scale(1.08)!important;
+  box-shadow:0 14px 32px rgba(200,168,80,.55)!important;
+  border-color:var(--gold2)!important;
+}
+
+/* Card overlay enhanced entrance */
+@keyframes cpoIn{
+  from{opacity:0;transform:translateY(80%) scale(.88);}
+  to  {opacity:1;transform:translateY(0) scale(1);}
+}
+#card-play-overlay.show .cpo-inner{animation:cpoIn .38s cubic-bezier(.34,1.3,.64,1);}
+
+/* Win screen pop */
+@keyframes winPop{
+  from{transform:scale(0) rotate(-8deg);opacity:0;}
+  60% {transform:scale(1.08) rotate(2deg);}
+  to  {transform:scale(1) rotate(0);opacity:1;}
+}
+#win-screen h1{animation:winPop .65s cubic-bezier(.34,1.56,.64,1) both;}
+
+/* Spark burst (char select tap) */
+@keyframes sparkOut{
+  0%  {opacity:1;transform:translate(var(--dx),var(--dy)) scale(1);}
+  100%{opacity:0;transform:translate(calc(var(--dx)*3.5),calc(var(--dy)*3.5)) scale(0);}
+}
+.fx-spark{
+  position:fixed;pointer-events:none;z-index:9400;
+  width:6px;height:6px;border-radius:50%;background:gold;
+  animation:sparkOut .65s ease-out forwards;
 }
 
 /* Touch-friendly: larger tap targets */
@@ -840,12 +991,12 @@ h1,h2{font-family:'Cinzel',serif;}
 /* LEFT */
 #left-panel{width:140px;flex-shrink:0;display:flex;flex-direction:column;gap:3px;padding:5px;border-right:1px solid rgba(255,255,255,.08);background:rgba(10,10,22,.45);overflow:visible;}
 #equip-col{display:grid;grid-template-columns:45px 45px;gap:4px;width:94px;flex-shrink:0;}
-.eq-slot{border:1.5px dashed rgba(255,255,255,.22);border-radius:8px;width:45px;height:45px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:.15s;background:rgba(255,255,255,.03);}
+.eq-slot{border:1.5px dashed rgba(255,255,255,.22);border-radius:8px;width:45px;height:45px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:.15s;background:rgba(255,255,255,.03);position:relative;overflow:visible;}
 .eq-slot:hover{border-color:var(--gold);}
 .eq-slot.has-item{border-color:rgba(200,168,80,.55);border-style:solid;}
 .eq-slot.drag-over{border-color:#50e080!important;background:rgba(80,224,128,.15)!important;}
-.eq-label{font-size:8px;color:var(--dim);}
-.eq-item{font-size:8px;color:var(--gold2);text-align:center;width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;}
+.eq-label{font-size:8px;color:var(--dim);position:relative;z-index:1;}
+.eq-item{font-size:8px;color:var(--gold2);text-align:center;position:absolute;inset:0;top:-3px;display:flex;align-items:center;justify-content:center;z-index:2;}
 .eq-item img{width:100%;height:100%;object-fit:contain;border-radius:4px;}
 #player-hp-row{position:relative;display:flex;align-items:center;height:111px;margin-top:-10px;overflow:visible;width:94px;}
 #player-icon-wrap{position:relative;z-index:2;flex-shrink:0;width:108px;height:107px;margin-right:-12px;margin-top:-25px;cursor:pointer;border-radius:6px;overflow:hidden;}
@@ -870,10 +1021,10 @@ h1,h2{font-family:'Cinzel',serif;}
 /* CENTER - hand */
 #center-hand-panel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:0 4px;overflow:hidden;padding-left:49px;padding-top:60px;}
 #hand-wrap{width:100%;display:flex;flex-direction:column;align-items:center;padding:0 4px 4px;overflow:hidden;position:relative;flex-shrink:0;}
-#hand-lbl{font-size:8px;color:var(--dim);margin-bottom:3px;text-align:center;}
-#hand-scroll{width:100%;overflow-x:auto;overflow-y:visible;scrollbar-width:none;display:flex;justify-content:center;}
+#hand-lbl{display:none;}
+#hand-scroll{width:100%;overflow-x:auto;overflow-y:visible;scrollbar-width:none;display:flex;justify-content:center;align-items:flex-end;direction:rtl;}
 #hand-scroll::-webkit-scrollbar{display:none;}
-#hand{display:inline-flex;gap:8px;align-items:flex-end;flex-wrap:nowrap;padding:4px 0;min-height:110px;}
+#hand{display:inline-flex;gap:8px;align-items:flex-end;flex-wrap:nowrap;padding:4px 8px;min-height:110px;margin:0 auto;direction:ltr;}
 
 /* DECK fixed to far right */
 #deck-fixed{position:fixed;right:8px;bottom:5px;z-index:50;display:flex;align-items:center;justify-content:center;}
@@ -945,6 +1096,12 @@ h1,h2{font-family:'Cinzel',serif;}
   <div class="rotate-sub">Please rotate your device to landscape</div>
 </div>
 
+<!-- ★ FX LAYER ★ -->
+<div id="fx-flash"></div>
+<canvas id="fx-slash"></canvas>
+<canvas id="fx-ambient"></canvas>
+<div id="fx-turn" style="display:none;"></div>
+
 <!-- BG decorations (char select) -->
 <div class="bg-overlay"></div>
 <div class="bg-grid"></div>
@@ -956,7 +1113,7 @@ h1,h2{font-family:'Cinzel',serif;}
   <h1 class="splash-title">⚔ CARD BATTLE ⚔</h1>
   <p class="splash-sub">เกมการ์ดต่อสู้ · ระบบ Role ซ่อนเร้น</p>
   <div class="splash-line"></div>
-  <div class="splash-click-box">CLICK TO START</div>
+  <div class="splash-click-box">PRESS TO START</div>
   <div class="splash-click-hint">แตะหน้าจอเพื่อเริ่ม</div>
 </div>
 
@@ -1204,6 +1361,7 @@ h1,h2{font-family:'Cinzel',serif;}
 </div></div>
 
 <!-- ★ card play overlay ★ -->
+<div id="eq-tooltip"><div class="eq-tt-name" id="eq-tt-name"></div><div class="eq-tt-desc" id="eq-tt-desc"></div></div>
 <div id="card-zoom-overlay" onclick="closeCardZoom()">
   <div id="card-zoom-inner"></div>
   <div id="card-zoom-desc">
@@ -1241,6 +1399,8 @@ h1,h2{font-family:'Cinzel',serif;}
 <script>
 function goBack(){
   if(confirm('กลับไปหน้าเลือกตัวละครใช่ไหม? ความคืบหน้าในเกมจะหายไป')){
+    stopBGM();
+    playLobbyBGM();
     document.getElementById('app').style.display='none';
     document.getElementById('title-screen').style.display='flex';
     G=null;
@@ -1254,6 +1414,8 @@ function randomBattleGround(){
   const url=`https://raw.githubusercontent.com/dekster00/card-battle/main/assets/BG/battle-ground-${v}.png`;
   const app=document.getElementById('app');
   if(app){app.style.setProperty('--bg-battle',`url("${url}")`);}
+  stopBGM();
+  playBattleBGM(v);
 }
 
 /* ══ CARD ZOOM (double-tap) ══ */
@@ -1293,22 +1455,141 @@ function openCardZoom(cid){
 }
 function closeCardZoom(){document.getElementById('card-zoom-overlay').classList.remove('show');}
 
-/* ══ SOUND SYSTEM ══ */
-const SFX_BASE='https://raw.githubusercontent.com/dekster00/card-battle/main/assets/sound/';
-const _sfxCache={};
-function playSound(name){
-  try{
-    if(!_sfxCache[name]){
-      const a=new Audio(SFX_BASE+name);
-      a.preload='auto';
-      _sfxCache[name]=a;
-    }
-    const s=_sfxCache[name];
-    s.currentTime=0;
-    s.volume=0.7;
-    s.play().catch(()=>{});
-  }catch(e){}
+/* ══ EQUIPMENT LONG PRESS ══ */
+let _eqPressTimer=null;
+function _eqPressStart(e,name,desc){
+  _eqPressTimer=setTimeout(()=>{
+    const tt=document.getElementById('eq-tooltip');
+    document.getElementById('eq-tt-name').textContent=name;
+    document.getElementById('eq-tt-desc').textContent=desc;
+    const x=e.touches?e.touches[0].clientX:e.clientX;
+    const y=e.touches?e.touches[0].clientY:e.clientY;
+    tt.style.left=Math.min(x+10,window.innerWidth-240)+'px';
+    tt.style.top=Math.max(y-80,8)+'px';
+    tt.style.display='block';
+  },350);
 }
+function _eqPressEnd(){
+  clearTimeout(_eqPressTimer);
+  setTimeout(()=>{document.getElementById('eq-tooltip').style.display='none';},800);
+}
+
+/* ══ SOUND SYSTEM (Web Audio API — instant playback) ══ */
+const _audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+const _sfxBuffers={};
+const SFX_BASE='https://raw.githubusercontent.com/dekster00/card-battle/main/assets/sound/';
+const SFX_PUNCH=[
+  SFX_BASE+'punch/Punch%20sfx.mp3',
+  SFX_BASE+'punch/Voicy_Punch%20Sound%20Effect.mp3',
+  SFX_BASE+'punch/Voicy_Punch%20sound%20effect%20(1).mp3',
+  SFX_BASE+'punch/Voicy_Punch.mp3',
+];
+const SFX_EQUIP=[
+  SFX_BASE+'equip/RO_UnusedSeequip_item_05.mp3',
+  SFX_BASE+'equip/RO_Unused_Seequip_item_02.mp3',
+  SFX_BASE+'equip/RO_Unused_seequip_item_03.mp3',
+  SFX_BASE+'equip/Ragnarok-online-se-scrapped-equip-item01.mp3',
+];
+const SFX_VICTORY=SFX_BASE+'interface/VICTORY.mp3';
+const SFX_CURSOR=SFX_BASE+'interface/Cursor%20Move.mp3';
+const SFX_START=SFX_BASE+'interface/Voicy_Save_Load.mp3';
+const SFX_DRAW=SFX_BASE+'card%20draw.mp3';
+const SFX_PULLING=SFX_BASE+'interface/Pulling%20the%20Master.mp3';
+const SFX_WINK=SFX_BASE+'interface/Wink.mp3';
+const SFX_ITEM_GET=SFX_BASE+'interface/Item%20Get.mp3';
+const SFX_BATTLE_START=SFX_BASE+'interface/Start%20.mp3';
+
+/* ══ BACKGROUND MUSIC ══ */
+const BGM_LOBBY=SFX_BASE+'LOBBY.mp3';
+const BGM_BATTLE={
+  A:SFX_BASE+'BATTLE%20FIELD/Maple%20Wand.mp3',
+  B:SFX_BASE+'BATTLE%20FIELD/Battle%20Lemonade%20(1).mp3',
+  C:SFX_BASE+'BATTLE%20FIELD/Cursor%20Sprint.mp3',
+  D:SFX_BASE+'BATTLE%20FIELD/Blizzard%20Selection.mp3',
+  E:SFX_BASE+'BATTLE%20FIELD/Kaiju%20Matchup.mp3',
+};
+let _bgmEl=null;
+let _bgmFadeTimer=null;
+function _playBGM(url,vol=0.4,fadeInSec=0){
+  if(_bgmFadeTimer){clearInterval(_bgmFadeTimer);_bgmFadeTimer=null;}
+  if(_bgmEl){try{_bgmEl.pause();}catch(e){}; _bgmEl.src='';_bgmEl=null;}
+  const audio=new Audio(url);
+  audio.loop=true;
+  _bgmEl=audio;
+  if(fadeInSec>0){
+    audio.volume=0;
+    audio.play().catch(()=>{});
+    const steps=50;
+    const interval=fadeInSec*1000/steps;
+    let current=0;
+    _bgmFadeTimer=setInterval(()=>{
+      if(!_bgmEl||_bgmEl!==audio){clearInterval(_bgmFadeTimer);return;}
+      current++;
+      audio.volume=Math.min(vol,vol*(current/steps));
+      if(current>=steps){clearInterval(_bgmFadeTimer);_bgmFadeTimer=null;}
+    },interval);
+  } else {
+    audio.volume=vol;
+    audio.play().catch(()=>{});
+  }
+}
+function stopBGM(){
+  if(_bgmFadeTimer){clearInterval(_bgmFadeTimer);_bgmFadeTimer=null;}
+  if(_bgmEl){try{_bgmEl.pause();}catch(e){};_bgmEl=null;}
+}
+function playLobbyBGM(){_playBGM(BGM_LOBBY,0.4);}
+function playBattleBGM(bgVariant){
+  const url=BGM_BATTLE[bgVariant]||BGM_BATTLE.A;
+  _playBGM(url,0.3,5);
+}
+
+async function _loadBuf(url){
+  if(_sfxBuffers[url])return _sfxBuffers[url];
+  try{
+    const res=await fetch(url);
+    const arr=await res.arrayBuffer();
+    const buf=await _audioCtx.decodeAudioData(arr);
+    _sfxBuffers[url]=buf;return buf;
+  }catch(e){console.warn('SFX load fail:',url);return null;}
+}
+function _playBuf(buf,vol=0.7){
+  if(!buf)return;
+  if(_audioCtx.state==='suspended')_audioCtx.resume();
+  const src=_audioCtx.createBufferSource();
+  const gain=_audioCtx.createGain();
+  src.buffer=buf;gain.gain.value=vol;
+  src.connect(gain);gain.connect(_audioCtx.destination);
+  src.start(0);
+}
+function playSound(url){_loadBuf(url).then(b=>_playBuf(b));}
+function playPunch(){
+  const url=SFX_PUNCH[~~(Math.random()*SFX_PUNCH.length)];
+  if(_sfxBuffers[url])_playBuf(_sfxBuffers[url],0.3);else{_loadBuf(url).then(b=>_playBuf(b,0.3));}
+}
+function playEquip(){
+  const url=SFX_EQUIP[~~(Math.random()*SFX_EQUIP.length)];
+  if(_sfxBuffers[url])_playBuf(_sfxBuffers[url]);else playSound(url);
+}
+function playVictory(){if(_sfxBuffers[SFX_VICTORY])_playBuf(_sfxBuffers[SFX_VICTORY]);else playSound(SFX_VICTORY);}
+function playCursor(){if(_sfxBuffers[SFX_CURSOR])_playBuf(_sfxBuffers[SFX_CURSOR]);else playSound(SFX_CURSOR);}
+function playStart(){if(_sfxBuffers[SFX_START])_playBuf(_sfxBuffers[SFX_START]);else playSound(SFX_START);}
+function playPulling(){if(_sfxBuffers[SFX_PULLING])_playBuf(_sfxBuffers[SFX_PULLING]);else playSound(SFX_PULLING);}
+function playWink(){if(_sfxBuffers[SFX_WINK])_playBuf(_sfxBuffers[SFX_WINK]);else playSound(SFX_WINK);}
+function playItemGet(){if(_sfxBuffers[SFX_ITEM_GET])_playBuf(_sfxBuffers[SFX_ITEM_GET]);else playSound(SFX_ITEM_GET);}
+function playBattleStart(){if(_sfxBuffers[SFX_BATTLE_START])_playBuf(_sfxBuffers[SFX_BATTLE_START]);else playSound(SFX_BATTLE_START);}
+
+async function preloadAllSounds(){
+  const all=[...SFX_PUNCH,...SFX_EQUIP,SFX_VICTORY,SFX_CURSOR,SFX_START,SFX_DRAW,SFX_PULLING,SFX_WINK,SFX_ITEM_GET,SFX_BATTLE_START];
+  await Promise.all(all.map(url=>_loadBuf(url)));
+}
+
+/* Preload sounds on first interaction */
+function _warmAudio(){
+  _audioCtx.resume();
+  preloadAllSounds();
+}
+document.addEventListener('touchstart',_warmAudio,{once:true});
+document.addEventListener('click',_warmAudio,{once:true});
 const ICON_IMAGES = {
   'zizeus': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/3.png', 'pluto': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/4.png', 'hades': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/10.png', 'arez': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/6.png', 'hermes': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/2.png', 'aphrodite': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/5.png', 'hephaestus': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/8.png', 'athena': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/9.png', 'artemis': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/7.png', 'apollonius': 'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/1.png'
 };
@@ -1388,7 +1669,6 @@ function makeDeck(){
   add(6,{name:'จั่วสองใบ',    type:'action',   ap:0,effect:'draw2',       no:4, color:'B'});
   add(3,{name:'การ์ดยา',      type:'action',   ap:0,effect:'heal1',       no:5, color:'B'});
   add(3,{name:'ฮีลแรง',       type:'action',   ap:0,effect:'healstrong',  no:6, color:'B'});
-  add(4,{name:'การ์ดยกเลิก',  type:'action',   ap:0,effect:'cancel',      no:7, color:'B'});
   add(2,{name:'ตีวงกว้าง🔨',  type:'action',   ap:1,effect:'aoe_hammer',  no:8, color:'A'});
   add(2,{name:'ตีวงกว้าง✂️', type:'action',   ap:1,effect:'aoe_scissors',no:9, color:'A'});
   add(2,{name:'ตีวงกว้าง📄',  type:'action',   ap:1,effect:'aoe_paper',   no:10,color:'A'});
@@ -1410,10 +1690,10 @@ function makeDeck(){
   add(2,{name:'นาฬิกา',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'watch',desc:'Skill: -2MP→จั่ว 3',no:26,color:'C'});
   add(2,{name:'หมาน้อย',type:'equipment',ap:0,slot:'pet',effect:'equip',skill:'dog',desc:'Skill: -3MP ดำ→เป้า HP-1',no:27,color:'C'});
   add(2,{name:'แมวน้อย',type:'equipment',ap:0,slot:'pet',effect:'equip',skill:'cat',desc:'Skill: -2MP ขาว→เป้า HP+1',no:28,color:'C'});
-  add(6,{name:'BLACK',      type:'action',ap:1,effect:'mp_black1',no:29,color:'A'});
-  add(6,{name:'WHITE',      type:'action',ap:1,effect:'mp_white1',no:30,color:'A'});
-  add(4,{name:'SUPER BLACK',type:'action',ap:1,effect:'mp_black2',no:31,color:'A'});
-  add(4,{name:'SUPER WHITE',type:'action',ap:1,effect:'mp_white2',no:32,color:'A'});
+  add(6,{name:'MP +1',        type:'action',ap:1,effect:'mp_black1',no:29,color:'A'});
+  add(6,{name:'MP +1',        type:'action',ap:1,effect:'mp_white1',no:30,color:'A'});
+  add(4,{name:'MP +2',        type:'action',ap:1,effect:'mp_black2',no:31,color:'A'});
+  add(4,{name:'MP +2',        type:'action',ap:1,effect:'mp_white2',no:32,color:'A'});
   add(6,{name:'MORE ACTION',type:'action',ap:0,effect:'ap_plus1', no:33,color:'B'});
   return shuffle(cards);
 }
@@ -1479,6 +1759,7 @@ function buildCharGrid(){
 }
 
 function selectChar(id){
+  playCursor();
   selectedCharId=id;
   document.querySelectorAll('.char-card').forEach(el=>el.classList.remove('selected'));
   document.getElementById('cc-'+id)?.classList.add('selected');
@@ -1546,11 +1827,14 @@ function closeSplash(){
 }
 let csCurrentMode='vs';
 function pickMode(m){
+  playCursor();
   csCurrentMode=m;
   document.querySelectorAll('.mode-card').forEach(c=>c.classList.remove('active'));
   document.getElementById('mc-'+m).classList.add('active');
 }
 function confirmMode(){
+  playStart();
+  playLobbyBGM();
   document.getElementById('mode-overlay').classList.remove('show');
   const dot=document.getElementById('tm-dot'),lbl=document.getElementById('tm-label');
   if(csCurrentMode==='online'){dot.style.background='#5090e0';lbl.textContent='🌐 Online';}
@@ -1577,7 +1861,7 @@ function startGame(){
   startBg.id='start-bg-overlay';
   startBg.style.cssText='position:fixed;inset:0;z-index:9999;background:#000 url("https://raw.githubusercontent.com/dekster00/card-battle/main/assets/START-BG.png") center/cover no-repeat;transition:opacity 1s ease;opacity:0;';
   document.body.appendChild(startBg);
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{ startBg.style.opacity='1'; }));
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{ startBg.style.opacity='1'; playBattleStart(); }));
   setTimeout(()=>{
     document.getElementById('title-screen').style.display='none';
     document.getElementById('splash').style.display='none';
@@ -1607,7 +1891,7 @@ function startGame(){
     const baseHp=(role==='LEADER'?cd.hp+1:cd.hp)||7;
     const p={i,name:names[i],isBot:i>0,role,char:ch,
              hp:baseHp,maxHp:baseHp,
-             atk:cd.atk||1,def:0,range:cd.range||1,mpW:0,mpB:0,
+             atk:cd.atk||1,def:0,range:cd.range||1,mp:0,
              hand:[],equip:{},dead:false,
              multiAtk:false,ignoreArmor:false,drawAfterAtk:false,_athBonus:0};
     if(ch.onSetup)ch.onSetup(p);
@@ -1619,11 +1903,9 @@ function startGame(){
   const ldr=G.players.find(p=>p.role==='LEADER');
   addLog(`👑 LEADER: ${ldr.name} [${ldr.char.name}]`,'imp');
   renderAll();
+  stopBGM();
   randomBattleGround();
-  // Preload sounds
-  ['card draw.mp3','attack-hit.mp3'].forEach(n=>{
-    if(!_sfxCache[n]){const a=new Audio(SFX_BASE+n);a.preload='auto';_sfxCache[n]=a;}
-  });
+  preloadAllSounds();
   // Fade out START-BG then begin
   setTimeout(()=>{
     startBg.style.opacity='0';
@@ -1641,7 +1923,7 @@ function beginTurn(pi){
   if(p._athBonus){p._athBonus=0;recalcStats(pi);}
   setPhase('standby');
   addLog(`— เทิร์น ${p.char.emoji} ${p.name} —`);
-  if(p.equip.trinket?.skill==='charger'){p.mpB=Math.min(3,p.mpB+1);addLog(`${p.name}: ชาร์จไฟ +1 MPดำ`);}
+  if(p.equip.trinket?.skill==='charger'){p.mp=Math.min(6,p.mp+1);addLog(`${p.name}: ชาร์จไฟ +1 MP`);}
   if(G.curseCard[pi]){
     if(!G.deck.length)G.deck=shuffle(G.discard.splice(0));
     const top=G.deck.pop();G.discard.push(G.curseCard[pi]);
@@ -1781,6 +2063,7 @@ function checkWin(){
 function endGame(winner,detail){
   G.gameOver=true;
   renderAll();
+  playVictory();
   document.getElementById('win-title').textContent=`🏆 ${winner} ชนะ!`;
   document.getElementById('win-detail').textContent=detail;
   // show all roles
@@ -1791,10 +2074,8 @@ function endGame(winner,detail){
 }
 
 function spendMP(p,n){
-  if(p.mpW+p.mpB<n)return false;
-  let need=n;
-  if(p.mpB>=need)p.mpB-=need;
-  else{need-=p.mpB;p.mpB=0;p.mpW=Math.max(0,p.mpW-need);}
+  if((p.mp||0)<n)return false;
+  p.mp-=n;
   return true;
 }
 function recalcStats(pi){
@@ -1983,7 +2264,10 @@ function _showDefendModal(atkI,defI,atkCard,after){
     def.hand=def.hand.filter(c=>c.id!==cc.id);G.discard.push(cc);
     addLog(`${def.name}: ยกเลิกการโจมตี!`,'imp');
     G._defendRequest=null; if(after)after();}});
-  showModal(`${atk.char.emoji} ${atk.name} โจมตีด้วย ${SYM_IMG[atkCard.sym]}`,
+  const atkIconHtml=ICON_IMAGES[atk.char.id]
+    ?`<img src="${ICON_IMAGES[atk.char.id]}" style="width:44px;height:44px;object-fit:cover;object-position:top;border-radius:6px;border:2px solid var(--red);margin-right:8px;vertical-align:middle;">`
+    :`<span style="font-size:28px;margin-right:6px;">${atk.char.emoji}</span>`;
+  showModal(`${atkIconHtml}<b style="vertical-align:middle;">${atk.name}</b> โจมตีด้วย ${SYM_IMG[atkCard.sym]}`,
     `<div style="font-size:12px;margin-bottom:8px;">ATK ${atk.atk} − DEF ${def.def} = <b style="color:var(--red);">${dmg} HP</b><br><span style="color:var(--dim);font-size:10px;">หลบต้องมีการ์ด ${SYM_IMG[dodgeSym]}</span></div>`,opts);
 }
 function botDefend(atkI,defI,atkCard){
@@ -2019,7 +2303,7 @@ function applyHit(atkI,defI,atkCard){
   let dmg=atk.atk;if(!atk.ignoreArmor)dmg=Math.max(1,dmg-def.def);
   def.hp=Math.max(0,def.hp-dmg);
   addLog(`${def.name}: -${dmg} HP (เหลือ ${def.hp})`,'dmg');
-  playSound('attack-hit.mp3');
+  playPunch();
   renderBoard(); // update HP bar immediately
   if(atk.drawAfterAtk)drawCards(atkI,1);
   checkDeath(defI);
@@ -2107,10 +2391,10 @@ function applyCardEffect(pi,card,tPi){
     case'draw2':drawCards(pi,2);break;
     case'heal1':{const t=tPi!==null?G.players[tPi]:p;t.hp=Math.min(t.maxHp,t.hp+1);addLog(`${t.name} HP+1`,'hl');break;}
     case'healstrong':{p.hp=Math.min(p.maxHp,p.hp+1);if(Math.random()<0.5){p.hp=Math.min(p.maxHp,p.hp+1);addLog(`${p.name} ฮีลแรง! HP+2`,'hl');}else addLog(`${p.name} HP+1`,'hl');break;}
-    case'mp_black1':p.mpB=Math.min(3,p.mpB+1);addLog(`${p.name}: +1 MPดำ`);break;
-    case'mp_white1':p.mpW=Math.min(3,p.mpW+1);addLog(`${p.name}: +1 MPขาว`);break;
-    case'mp_black2':p.mpB=Math.min(3,p.mpB+2);addLog(`${p.name}: +2 MPดำ`);break;
-    case'mp_white2':p.mpW=Math.min(3,p.mpW+2);addLog(`${p.name}: +2 MPขาว`);break;
+    case'mp_black1':p.mp=Math.min(6,p.mp+1);addLog(`${p.name}: +1 MP`);break;
+    case'mp_white1':p.mp=Math.min(6,p.mp+1);addLog(`${p.name}: +1 MP`);break;
+    case'mp_black2':p.mp=Math.min(6,p.mp+2);addLog(`${p.name}: +2 MP`);break;
+    case'mp_white2':p.mp=Math.min(6,p.mp+2);addLog(`${p.name}: +2 MP`);break;
     case'ap_plus1':G.ap++;addLog(`${p.name}: +1 AP!`,'imp');break;
     case'skipturn':if(tPi!==null){G.skipCurse[tPi]=true;addLog(`${G.players[tPi].name}: ถูกคำสาปข้ามเทิร์น!`);}break;
     case'curse':G.curseCard[pi]=card;addLog(`${p.name}: วางการ์ดคำสาป`);break;
@@ -2123,7 +2407,7 @@ function applyCardEffect(pi,card,tPi){
     case'share':doShare(pi);break;
     case'counter':addLog('สวนกลับ: ใช้ตอนถูกโจมตี');break;
     case'cancel':addLog('ยกเลิก: ใช้ตอนถูกโจมตี');break;
-    case'equip':doInstall(pi,card);return;
+    case'equip':doInstall(pi,card);playEquip();return;
   }
   renderAll();
 }
@@ -2133,7 +2417,7 @@ function doAOE(pi,sym){
     if(q.dead||q.i===pi)continue;
     const c=q.hand.find(x=>x.sym===sym);
     if(c){q.hand=q.hand.filter(x=>x.id!==c.id);G.discard.push(c);addLog(`${q.name}: ทิ้ง ${SYM_EMOJI[sym]} ปลอดภัย`);}
-    else{q.hp=Math.max(0,q.hp-1);addLog(`${q.name}: ไม่มี ${SYM_EMOJI[sym]} HP-1`,'dmg');checkDeath(q.i);}
+    else{q.hp=Math.max(0,q.hp-1);addLog(`${q.name}: ไม่มี ${SYM_EMOJI[sym]} HP-1`,'dmg');playPunch();checkDeath(q.i);}
   }
 }
 function doDuel(pi,ti){
@@ -2143,9 +2427,9 @@ function doDuel(pi,ti){
   const tc=t.hand[~~(Math.random()*t.hand.length)];
   addLog(`ดวล: ${p.name}[${SYM_EMOJI[pc.sym]}] vs ${t.name}[${SYM_EMOJI[tc.sym]}]`);
   function beats(a,b){return(a==='hammer'&&b==='scissors')||(a==='scissors'&&b==='paper')||(a==='paper'&&b==='hammer');}
-  if(pc.sym===tc.sym){p.hp=Math.max(0,p.hp-1);t.hp=Math.max(0,t.hp-1);addLog('เสมอ! ทั้งคู่ HP-1','dmg');}
-  else if(beats(pc.sym,tc.sym)){t.hp=Math.max(0,t.hp-1);addLog(`${t.name} HP-1`,'dmg');}
-  else{p.hp=Math.max(0,p.hp-1);addLog(`${p.name} HP-1`,'dmg');}
+  if(pc.sym===tc.sym){p.hp=Math.max(0,p.hp-1);t.hp=Math.max(0,t.hp-1);addLog('เสมอ! ทั้งคู่ HP-1','dmg');playPunch();}
+  else if(beats(pc.sym,tc.sym)){t.hp=Math.max(0,t.hp-1);addLog(`${t.name} HP-1`,'dmg');playPunch();}
+  else{p.hp=Math.max(0,p.hp-1);addLog(`${p.name} HP-1`,'dmg');playPunch();}
   checkDeath(pi);checkDeath(ti);
 }
 function doShare(pi){
@@ -2195,7 +2479,7 @@ function plutoToss(cid){
 function drawAction(){
   if(!isMyTurnToAct())return;
   if(G.ap<1){addLog('AP ไม่พอ');return;}
-  G.ap--;drawCards(G.turn,1);playSound('card draw.mp3');renderAll();
+  G.ap--;drawCards(G.turn,1);playSound(SFX_DRAW);renderAll();
 }
 function playSelected(){
   if(!isMyTurnToAct())return;
@@ -2233,7 +2517,7 @@ function installSelected(){
   const card=G.selectedCard;
   if(!card||card.type!=='equipment'){addLog('เลือกการ์ดอุปกรณ์ก่อน');return;}
   const pi=G.turn;const p=G.players[pi];
-  showCardOverlay(p.name,card,()=>{doInstall(pi,card);G.selectedCard=null;});
+  showCardOverlay(p.name,card,()=>{doInstall(pi,card);playEquip();G.selectedCard=null;});
 }
 function useCharSkill(){
   if(!isMyTurnToAct())return;
@@ -2255,8 +2539,8 @@ function activateItemSkill(pi,eq){
   if(eq.skill==='necklace'){if(p.hp<=1){addLog('HP ไม่พอ');return;}p.hp--;drawCards(pi,2);addLog(`สร้อยคอ: HP-1→จั่ว2`);}
   else if(eq.skill==='bag'){if(!spendMP(p,1)){addLog('MP ไม่พอ');return;}drawCards(pi,1);addLog(`กระเป๋า: -1MP→จั่ว1`);}
   else if(eq.skill==='watch'){if(!spendMP(p,2)){addLog('MP ไม่พอ (ต้องการ2)');return;}drawCards(pi,3);addLog(`นาฬิกา: -2MP→จั่ว3`);}
-  else if(eq.skill==='dog'){if(p.mpB<3){addLog('MPดำ ไม่พอ (3)');return;}pickTarget(pi,'หมาน้อย: เป้าหมาย',t=>{p.mpB-=3;t.hp=Math.max(0,t.hp-1);addLog(`หมาน้อย! ${t.name} HP-1`,'dmg');checkDeath(t.i);renderAll();});return;}
-  else if(eq.skill==='cat'){if(p.mpW<2){addLog('MPขาว ไม่พอ (2)');return;}pickTarget(pi,'แมวน้อย: เป้าหมาย',t=>{p.mpW-=2;t.hp=Math.min(t.maxHp,t.hp+1);addLog(`แมวน้อย! ${t.name} HP+1`,'hl');renderAll();});return;}
+  else if(eq.skill==='dog'){if(p.mp<3){addLog('MP ไม่พอ (3)');return;}pickTarget(pi,'หมาน้อย: เป้าหมาย',t=>{p.mp-=3;t.hp=Math.max(0,t.hp-1);addLog(`หมาน้อย! ${t.name} HP-1`,'dmg');checkDeath(t.i);renderAll();});return;}
+  else if(eq.skill==='cat'){if(p.mp<2){addLog('MP ไม่พอ (2)');return;}pickTarget(pi,'แมวน้อย: เป้าหมาย',t=>{p.mp-=2;t.hp=Math.min(t.maxHp,t.hp+1);addLog(`แมวน้อย! ${t.name} HP+1`,'hl');renderAll();});return;}
   renderAll();
 }
 function hermesDestroy(ti){closeModal();const t=G.players[ti];const sl=Object.keys(t.equip);if(!sl.length){addLog('ไม่มีอุปกรณ์');return;}const s=sl[~~(Math.random()*sl.length)];G.discard.push(t.equip[s]);delete t.equip[s];recalcStats(ti);addLog(`🪶 Hermes: ทำลาย ${s} ของ ${t.name}`,'dmg');renderAll();}
@@ -2324,10 +2608,10 @@ function renderBotSeat(pi){
   const roleTxt=roleVis?p.role:'?';
   const roleCol={LEADER:'#c090e0',Guardian:'#70b0f0',Betrayer:'#f08080',Watcher:'#f0c040',hidden:'#666'};
   const col=roleVis?roleCol[p.role]||'#888':roleCol.hidden;
-  const hpIdx2=Math.max(0,Math.min(10,Math.round(p.hp/p.maxHp*10)));
+  const hpIdx2=Math.max(0,Math.min(10,p.hp));
   const isTarget=_atkTarget===pi;
   const manaDots=[0,1,2,3,4,5].map(i=>
-    `<div class="mana-dot"><img src="${i<(p.mpW||0)?'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/mana.png':'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/no%20mana.png'}" onerror="this.style.opacity='.3'"></div>`
+    `<div class="mana-dot"><img src="${i<(p.mp||0)?'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/mana.png':'https://raw.githubusercontent.com/dekster00/card-battle/main/assets/no%20mana.png'}" onerror="this.style.opacity='.3'"></div>`
   ).join('');
   const swordHtml=isTarget?`<div class="sword-icon" onclick="event.stopPropagation();onSwordClick(${pi})">
     <img src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/battle-Act01.png"
@@ -2375,10 +2659,10 @@ function renderMyAvatar(pi){
       ? '<img src="'+iconUrl+'" style="width:100%;height:100%;object-fit:cover;object-position:top;">'
       : charSVG(p.char.id,74);
   }
-  // HP bar image - same as bot
+  // HP bar image - use actual HP value directly (7hp → image 7)
   const hpWrap=document.getElementById('hp-bar-wrap');
   if(hpWrap){
-    const hpIdx=Math.max(0,Math.min(10,Math.round(p.hp/p.maxHp*10)));
+    const hpIdx=Math.max(0,Math.min(10,p.hp));
     hpWrap.innerHTML=`<img src="${HP_BAR_IMAGES[hpIdx]}" style="width:100%;height:100%;object-fit:fill;display:block;">`;
   }
 
@@ -2397,7 +2681,7 @@ function renderMyAvatar(pi){
   if(pmana){
     const MBASE='https://raw.githubusercontent.com/dekster00/card-battle/main/assets/';
     pmana.innerHTML=[0,1,2,3,4,5].map(i=>
-      `<div class="mana-dot"><img src="${i<(p.mpW||0)?MBASE+'mana.png':MBASE+'no%20mana.png'}"></div>`
+      `<div class="mana-dot"><img src="${i<(p.mp||0)?MBASE+'mana.png':MBASE+'no%20mana.png'}"></div>`
     ).join('');
   }
   // AP pips
@@ -2410,7 +2694,7 @@ function renderMyAvatar(pi){
   // MP row
   const mpEl=document.getElementById('mp-row-wrap');
   if(mpEl){
-    mpEl.innerHTML=`<div class="mp-row"><span class="mp-sep">W</span>${[0,1,2].map(i=>`<div class="mp-dot ${i<p.mpW?'wf':'em'}"></div>`).join('')}<span class="mp-sep">B</span>${[0,1,2].map(i=>`<div class="mp-dot ${i<p.mpB?'bf':'em'}"></div>`).join('')}</div>`;
+    mpEl.innerHTML=`<div class="mp-row">${[0,1,2,3,4,5].map(i=>`<div class="mp-dot ${i<(p.mp||0)?'wf':'em'}"></div>`).join('')}</div>`;
   }
 }
 
@@ -2436,7 +2720,15 @@ function renderEquipSlots(pi){
     if(!el) return;
     const imgUrl=e.no?EQUIP_IMG_BASE+e.no+'.png':'';
     el.innerHTML=imgUrl
-      ?`<img src="${imgUrl}" title="${e.name}: ${e.desc||''}" onerror="this.remove();this.parentNode.textContent='${e.name}'">`
+      ?`<img src="${imgUrl}" title="${e.name}: ${e.desc||''}"
+          style="width:100%;height:100%;object-fit:contain;border-radius:4px;cursor:pointer;"
+          onerror="this.remove();this.parentNode.innerHTML='<span style=\'font-size:7px;word-break:break-all;\'>${e.name}</span>'"
+          onmousedown="_eqPressStart(event,'${e.name}','${(e.desc||'').replace(/'/g,"\\'")}')"
+          onmouseup="_eqPressEnd()"
+          onmouseleave="_eqPressEnd()"
+          ontouchstart="_eqPressStart(event,'${e.name}','${(e.desc||'').replace(/'/g,"\\'")}')"
+          ontouchend="_eqPressEnd()"
+          ontouchmove="_eqPressEnd()">`
       :`<span title="${e.desc||e.name}" style="font-size:7px;word-break:break-all;">${e.name}</span>`;
     el.parentElement.title=e.desc||e.name;
     el.parentElement.classList.add('has-item');
@@ -2460,7 +2752,7 @@ function renderSeat(pi){
   const roleBadge=roleVis?`<span class="role-badge role-${p.role}" title="${p.role}">${p.role}</span>`:`<span class="role-badge role-hidden">?</span>`;
   const playerTypeBadge=p.isBot?`<span class="bot-badge">BOT</span>`:`<span class="human-badge">👤</span>`;
   const eqHtml=Object.entries(p.equip||{}).map(([sl,e])=>e?`<span class="equip-badge" data-desc="${e.desc||e.name}">${e.name}</span>`:'').join('');
-  const mpRow=`<div class="mp-row"><span class="mp-sep">W</span>${[0,1,2].map(i=>`<div class="mp-dot ${i<p.mpW?'wf':'em'}"></div>`).join('')}<span class="mp-sep">B</span>${[0,1,2].map(i=>`<div class="mp-dot ${i<p.mpB?'bf':'em'}"></div>`).join('')}</div>`;
+  const mpRow=`<div class="mp-row">${[0,1,2,3,4,5].map(i=>`<div class="mp-dot ${i<(p.mp||0)?'wf':'em'}"></div>`).join('')}</div>`;
   const curseL=G.curseCard[pi]?`<div class="tag-sm curse-tag">☠ คำสาปรอ</div>`:'';
   const skipL=G.skipCurse[pi]?`<div class="tag-sm curse-tag">⏭ จะข้ามเทิร์น</div>`:'';
   let myStatusHtml='';
@@ -2473,8 +2765,8 @@ function renderSeat(pi){
         <div class="my-stat-box"><div class="msl">🛡 DEF</div><div class="msv msv-def">${p.def}</div></div>
         <div class="my-stat-box"><div class="msl">📏 ระยะ</div><div class="msv msv-range">${p.range}</div></div>
         <div class="my-stat-box"><div class="msl">⚡ AP</div><div class="msv msv-ap">${active?G.ap:3}/3</div></div>
-        <div class="my-stat-box"><div class="msl">⬜MP</div><div class="msv msv-mp">${p.mpW}/3</div></div>
-        <div class="my-stat-box"><div class="msl">⬛MP</div><div class="msv msv-mp">${p.mpB}/3</div></div>
+        <div class="my-stat-box"><div class="msl">⬜MP</div><div class="msv msv-mp">${p.mp}/3</div></div>
+        <div class="my-stat-box"><div class="msl">⬛MP</div><div class="msv msv-mp">${p.mp}/3</div></div>
         <div class="my-stat-box"><div class="msl">🂠มือ</div><div class="msv msv-hand">${p.hand.length}</div></div>
       </div>
       <div class="my-char-info"><div class="my-passive">Passive: ${p.char.passive}</div><div class="my-skill-desc">Skill: ${p.char.skillDesc}</div></div>
@@ -2526,7 +2818,6 @@ function renderHand(){
   const activePi=getActivePi();
   const p=G.players[activePi];
   const isHumanTurn=!p.isBot&&G.turn===activePi&&G.phase==='action';
-  document.getElementById('hand-lbl').textContent=isHumanTurn?`${p.name} — มือของคุณ (แตะเพื่อเลือก)`:`มือของคุณ (${p.hand.length} ใบ) — รอเทิร์น`;
   el.innerHTML=p.hand.map(c=>renderCardEl(c)).join('');
   el.querySelectorAll('.card').forEach(cardEl=>{
     const cid=+cardEl.dataset.id;
@@ -2714,6 +3005,7 @@ function selCard(cid){
 
 /* ═══ MODAL ═══ */
 function showModal(title,body,actions){
+  playWink();
   document.getElementById('modal-title').innerHTML=title;
   document.getElementById('modal-body').innerHTML=body;
   const el=document.getElementById('modal-acts');el.innerHTML='';
@@ -3150,7 +3442,7 @@ function olBuildInitialGameState(slots){
     const p = {
       i, name: names[i], isBot: i >= humanCount, role, charId: ch.id,
       hp: role==='LEADER'?8:7, maxHp: role==='LEADER'?8:7,
-      atk:1, def:0, range:1, mpW:0, mpB:0,
+      atk:1, def:0, range:1, mp:0,
       hand:[], equip:{}, dead:false,
       multiAtk:false, ignoreArmor:false, drawAfterAtk:false, _athBonus:0
     };
@@ -3178,7 +3470,7 @@ buildCharGrid();
 <!-- Firebase SDK (loaded last so all game functions are ready first) -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-<script>_initFirebase();
+<script>try{_initFirebase();}catch(e){console.warn('Firebase init skipped:',e);}
 
 /* ══ PARTICLE SYSTEM ══ */
 (function(){
@@ -3586,6 +3878,282 @@ function onDeckClick(){
     drawAction();
   }
 }
+
+/* ╔══════════════════════════════════════════════════════════════╗
+   ║  🎬  FX ENGINE  —  Damage Numbers · Slash · Shake · Ambient ║
+   ╚══════════════════════════════════════════════════════════════╝ */
+
+/* ── resize canvases ── */
+function _fxResize(){
+  ['fx-slash','fx-ambient'].forEach(id=>{
+    const c=document.getElementById(id);
+    if(c){c.width=window.innerWidth;c.height=window.innerHeight;}
+  });
+}
+window.addEventListener('resize',_fxResize);
+_fxResize();
+
+/* ── floating damage / heal number ── */
+function fxNum(val, type, x, y){
+  const el=document.createElement('div');
+  el.className='fx-float fx-'+type;
+  const labels={dmg:`-${val}HP`, crit:`💥-${val}HP`, heal:`+${val}HP`, miss:'DODGE!', block:'BLOCKED!'};
+  el.textContent = labels[type] || String(val);
+  const sx = x ?? window.innerWidth*.5 + (Math.random()-.5)*60;
+  const sy = y ?? window.innerHeight*.38;
+  el.style.left = sx+'px';
+  el.style.top  = sy+'px';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1500);
+}
+
+/* ── screen flash ── */
+function fxFlash(color='red'){
+  const f=document.getElementById('fx-flash');
+  if(!f) return;
+  f.className = color;
+  void f.offsetWidth;
+  f.className = color+' fire';
+}
+
+/* ── screen shake ── */
+function fxShake(el){
+  el = el || document.getElementById('app');
+  if(!el) return;
+  el.classList.remove('fx-shake');
+  void el.offsetWidth;
+  el.classList.add('fx-shake');
+  setTimeout(()=>el.classList.remove('fx-shake'),500);
+}
+
+/* ── slash line effect ── */
+const _slashPtcl=[];
+function fxSlash(srcEl, dstEl){
+  const cv=document.getElementById('fx-slash');
+  if(!cv) return;
+  const ctx=cv.getContext('2d');
+  function centre(el){
+    if(!el) return {x:cv.width/2, y:cv.height/2};
+    const r=el.getBoundingClientRect();
+    return {x:r.left+r.width/2, y:r.top+r.height/2};
+  }
+  const A=centre(srcEl), B=centre(dstEl);
+  const ang=Math.atan2(B.y-A.y, B.x-A.x);
+  const perp=ang+Math.PI/2;
+  /* slash lines */
+  const lines=[-10,-4,0,4,10].map((o,i)=>({
+    x1:A.x+Math.cos(perp)*o, y1:A.y+Math.sin(perp)*o,
+    x2:B.x+Math.cos(perp)*o, y2:B.y+Math.sin(perp)*o,
+    col: i===2 ? 'rgba(255,240,80,A)':'rgba(255,110,40,A)', w:i===2?3.5:1.5
+  }));
+  /* impact particles */
+  for(let i=0;i<24;i++){
+    const a=Math.random()*Math.PI*2, sp=2+Math.random()*6;
+    _slashPtcl.push({x:B.x,y:B.y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,
+      life:1,decay:.04+Math.random()*.04,
+      r:3+Math.random()*5,
+      h:20+Math.floor(Math.random()*30)});
+  }
+  let prog=0;
+  (function draw(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    prog=Math.min(1,prog+.14);
+    const alpha=1-prog;
+    /* draw each slash line up to progress */
+    lines.forEach(l=>{
+      const ex=l.x1+(l.x2-l.x1)*prog, ey=l.y1+(l.y2-l.y1)*prog;
+      ctx.beginPath(); ctx.moveTo(l.x1,l.y1); ctx.lineTo(ex,ey);
+      ctx.strokeStyle=l.col.replace('A',alpha.toFixed(2));
+      ctx.lineWidth=l.w; ctx.lineCap='round'; ctx.stroke();
+    });
+    /* particles */
+    for(let i=_slashPtcl.length-1;i>=0;i--){
+      const p=_slashPtcl[i];
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r*p.life,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${p.h},100%,65%,${p.life})`;
+      ctx.fill();
+      p.x+=p.vx; p.y+=p.vy; p.vy+=.25;
+      p.life-=p.decay;
+      if(p.life<=0) _slashPtcl.splice(i,1);
+    }
+    if(prog<1||_slashPtcl.length) requestAnimationFrame(draw);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+
+/* ── turn announce banner ── */
+function fxTurnAnnounce(name, emoji){
+  const el=document.getElementById('fx-turn');
+  if(!el) return;
+  el.style.display='flex';
+  el.innerHTML=`<div class="ta-inner">${emoji} ${name}<br>
+    <span style="font-size:11px;color:var(--dim);letter-spacing:2px;">YOUR TURN</span></div>`;
+  setTimeout(()=>{el.style.display='none';el.innerHTML='';},2200);
+}
+
+/* ── ambient particle drift ── */
+const _ambPtcl=[];
+let _ambRAF=null;
+function fxAmbientStart(){
+  const cv=document.getElementById('fx-ambient');
+  if(!cv||_ambRAF) return;
+  const ctx=cv.getContext('2d');
+  function spawn(){
+    _ambPtcl.push({
+      x:Math.random()*cv.width, y:cv.height+8,
+      vx:(Math.random()-.5)*.6, vy:-(0.25+Math.random()*.7),
+      r:1+Math.random()*2.5,
+      life:1, decay:.0025+Math.random()*.004,
+      hue:Math.random()<.55?45:270
+    });
+  }
+  function loop(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    if(Math.random()<.15) spawn();
+    for(let i=_ambPtcl.length-1;i>=0;i--){
+      const p=_ambPtcl[i];
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle=`hsla(${p.hue},100%,72%,${p.life*.45})`;
+      ctx.fill();
+      p.x+=p.vx; p.y+=p.vy; p.life-=p.decay;
+      if(p.life<=0||p.y<-10) _ambPtcl.splice(i,1);
+    }
+    _ambRAF=requestAnimationFrame(loop);
+  }
+  loop();
+}
+function fxAmbientStop(){
+  if(_ambRAF){cancelAnimationFrame(_ambRAF);_ambRAF=null;}
+  const cv=document.getElementById('fx-ambient');
+  if(cv) cv.getContext('2d').clearRect(0,0,cv.width,cv.height);
+}
+
+/* ── spark burst on char-card tap ── */
+function fxSpark(cx,cy){
+  for(let i=0;i<10;i++){
+    const ang=Math.random()*Math.PI*2;
+    const dist=18+Math.random()*22;
+    const el=document.createElement('div');
+    el.className='fx-spark';
+    el.style.left=cx+'px'; el.style.top=cy+'px';
+    el.style.setProperty('--dx',Math.cos(ang)*dist+'px');
+    el.style.setProperty('--dy',Math.sin(ang)*dist+'px');
+    el.style.background=`hsl(${40+Math.random()*30},100%,65%)`;
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),700);
+  }
+}
+
+/* ══════════════════════════════════════════
+   HOOK INTO GAME FUNCTIONS
+══════════════════════════════════════════ */
+
+/* applyHit → damage FX */
+const _origApplyHit=applyHit;
+window.applyHit=function(atkI,defI,atkCard){
+  const atkBefore=G.players[atkI];
+  const defBefore=G.players[defI];
+  _origApplyHit(atkI,defI,atkCard);
+
+  const atk=G.players[atkI], def=G.players[defI];
+  const dmg=Math.max(1,atk.atk-(atk.ignoreArmor?0:def.def));
+  const isCrit = dmg>=4;
+  const activePi=getActivePi();
+
+  /* shake + flash */
+  fxShake();
+  fxFlash('red');
+
+  /* find where to put the number */
+  const defSeat=document.getElementById('bot-seat-'+defI);
+  let nx=window.innerWidth*.5, ny=window.innerHeight*.38;
+  if(defI===activePi){
+    /* defender is me */
+    const ms=document.getElementById('my-seat-area');
+    if(ms){ms.classList.remove('my-hit');void ms.offsetWidth;ms.classList.add('my-hit');setTimeout(()=>ms.classList.remove('my-hit'),600);}
+    nx=window.innerWidth*.5; ny=window.innerHeight*.6;
+  } else if(defSeat){
+    const r=defSeat.getBoundingClientRect();
+    nx=r.left+r.width/2; ny=r.top+r.height/2;
+    defSeat.classList.remove('seat-hit');void defSeat.offsetWidth;
+    defSeat.classList.add('seat-hit');
+    setTimeout(()=>defSeat.classList.remove('seat-hit'),450);
+  }
+  fxNum(dmg, isCrit?'crit':'dmg', nx, ny);
+
+  /* slash: attacker → defender element */
+  const atkEl = atkI===activePi
+    ? document.getElementById('char-avatar')
+    : document.getElementById('bot-seat-'+atkI);
+  fxSlash(atkEl, defSeat || document.getElementById('my-seat-area'));
+};
+
+/* heal effect */
+const _origApplyCardEffect=applyCardEffect;
+window.applyCardEffect=function(pi,card,ti){
+  _origApplyCardEffect(pi,card,ti);
+  if((card.effect==='heal1'||card.effect==='healstrong')&&ti!=null){
+    const healAmt=card.effect==='heal1'?1:2;
+    fxFlash('green');
+    const tSeat=document.getElementById('bot-seat-'+ti);
+    let hx=window.innerWidth*.5,hy=window.innerHeight*.4;
+    if(tSeat){const r=tSeat.getBoundingClientRect();hx=r.left+r.width/2;hy=r.top+r.height/2;}
+    fxNum(healAmt,'heal',hx,hy);
+  }
+  if(card.effect==='draw2'||card.effect==='ap_plus1') fxFlash('gold');
+};
+
+/* dodge / block → show in chat but also float text */
+const _origAddLog=addLog;
+window.addLog=function(msg,cls){
+  _origAddLog(msg,cls);
+  /* detect dodge or block and float near center */
+  if(msg.includes('หลบ!')){
+    fxNum(0,'miss',window.innerWidth*.5,window.innerHeight*.42);
+  } else if(msg.includes('บล็อก')||msg.includes('สะท้อน')){
+    fxNum(0,'block',window.innerWidth*.5,window.innerHeight*.42);
+    fxFlash('blue');
+  }
+};
+
+/* nextTurn → show turn announce for human */
+const _origNextTurn=nextTurn;
+window.nextTurn=function(){
+  _origNextTurn();
+  if(G&&G.players){
+    const p=G.players[G.turn];
+    if(p&&!p.isBot) setTimeout(()=>fxTurnAnnounce(p.name,p.char.emoji),250);
+  }
+};
+
+/* startGame → start ambient */
+const _origStartGame=startGame;
+window.startGame=function(...a){
+  _origStartGame(...a);
+  setTimeout(fxAmbientStart,1200);
+};
+
+/* char card tap → spark burst */
+document.addEventListener('click',e=>{
+  const cc=e.target.closest('.char-card');
+  if(cc&&!cc.classList.contains('taken')){
+    fxSpark(e.clientX,e.clientY);
+    fxFlash('gold');
+  }
+});
+
+/* beginTurn announce for first human turn */
+const _origBeginTurn=beginTurn;
+window.beginTurn=function(pi){
+  _origBeginTurn(pi);
+  if(G&&G.players){
+    const p=G.players[pi];
+    if(p&&!p.isBot) setTimeout(()=>fxTurnAnnounce(p.name,p.char.emoji),200);
+  }
+};
+
+console.log('🎬 FX Engine ready!');
 </script>
 </body>
 </html>
