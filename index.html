@@ -56,7 +56,7 @@ h1,h2{font-family:'Cinzel',serif;}
 /* ══ BATTLE GROUND BACKGROUND ══ */
 #app::before{
   content:'';position:absolute;inset:0;z-index:0;pointer-events:none;
-  background-image:url('https://raw.githubusercontent.com/dekster00/card-battle/main/assets/battle-ground.png');
+  background-image:var(--bg-battle,url('https://raw.githubusercontent.com/dekster00/card-battle/main/assets/battle-ground.png'));
   background-size:cover;background-position:center;background-repeat:no-repeat;
   opacity:.45;
 }
@@ -355,15 +355,15 @@ h1,h2{font-family:'Cinzel',serif;}
 /* Fan layout applied via JS */
 
 /* card */
-.card{width:74px;height:104px;border-radius:6px;border:none;background:none!important;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0;transition:transform .15s,box-shadow .15s;position:relative;user-select:none;overflow:hidden;flex-shrink:0;}
+.card{width:76px;height:104px;border-radius:6px;border:none;background:none!important;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0;transition:transform .15s,box-shadow .15s;position:relative;user-select:none;overflow:hidden;flex-shrink:0;}
 /* clip content inside card but let frame bleed slightly */
 .card-bottom{border-radius:0 0 6px 6px;}
 .card:hover{transform:translateY(-10px) scale(1.08)!important;box-shadow:0 12px 28px rgba(200,168,80,.35);z-index:50!important;}
 .card.sel{box-shadow:0 0 16px rgba(200,168,80,.7),0 0 32px rgba(200,168,80,.3);z-index:50!important;transform:translateY(-12px) scale(1.1)!important;}
 /* card frame overlay */
 .card-frame{position:absolute;inset:0;width:100%;height:100%;background-size:100% 100%;background-repeat:no-repeat;z-index:4;pointer-events:none;}
-/* sym corner */
-.card-sym-corner{position:absolute;top:3px;right:3px;z-index:5;width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:none;border-radius:4px;}
+/* sym corner — shifted down 1px, right 1px */
+.card-sym-corner{position:absolute;top:3px;right:2px;z-index:5;width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:none;border-radius:4px;}
 .card-sym-corner img{width:16px!important;height:16px!important;object-fit:contain;}
 /* art inside card */
 .card-art-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:1;background:transparent;}
@@ -372,8 +372,8 @@ h1,h2{font-family:'Cinzel',serif;}
 .sym-bg-hammer{background:transparent;}
 .sym-bg-scissors{background:transparent;}
 .sym-bg-paper{background:transparent;}
-/* card bottom info */
-.card-bottom{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:2px 4px 3px;background:linear-gradient(transparent,rgba(0,0,0,.85) 40%);display:flex;flex-direction:column;gap:1px;}
+/* card bottom info — hidden */
+.card-bottom{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:2px 4px 3px;background:none;display:none;flex-direction:column;gap:1px;}
 .card.sel{border-color:var(--gold2);transform:translateY(-8px);box-shadow:0 4px 12px rgba(200,168,80,.4);}
 .card .sym{font-size:17px;}.sym-hammer{color:#e08030;}.sym-scissors{color:#5080e0;}.sym-paper{color:#50c060;}
 /* sym images */
@@ -384,7 +384,7 @@ h1,h2{font-family:'Cinzel',serif;}
 .card .cnum{font-size:10px;font-weight:600;color:var(--gold);}
 .card .ctype{font-size:6px;padding:1px 3px;border-radius:2px;}
 .type-action{background:#203050;color:#80b0e0;}.type-curse{background:#400020;color:#e080a0;}.type-equipment{background:#302000;color:#e0b050;}
-.card .apc{position:absolute;top:2px;right:2px;font-size:7px;font-weight:700;color:var(--gold);background:rgba(0,0,0,.7);border-radius:2px;padding:0 2px;}
+.card .apc{display:none;}
 
 /* modal */
 #modal-wrap{display:none;position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:100;align-items:center;justify-content:center;}
@@ -395,22 +395,37 @@ h1,h2{font-family:'Cinzel',serif;}
 #modal-acts{display:flex;gap:6px;flex-wrap:wrap;}
 #modal-acts .btn{flex:1;min-width:100px;}
 
-/* ★ CARD PLAYED BANNER — ตรงกลางหน้าจอ ★ */
+/* ★ CARD ZOOM OVERLAY ★ */
+#card-zoom-overlay{display:none;position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.88);align-items:center;justify-content:center;flex-direction:column;gap:12px;cursor:pointer;}
+#card-zoom-overlay.show{display:flex;}
+#card-zoom-inner{width:180px;height:252px;position:relative;border-radius:10px;overflow:hidden;box-shadow:0 0 40px rgba(200,168,80,.5);}
+#card-zoom-inner img.cz-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+#card-zoom-inner .cz-frame{position:absolute;inset:0;width:100%;height:100%;background-size:100% 100%;background-repeat:no-repeat;z-index:4;}
+#card-zoom-desc{background:rgba(10,8,22,.9);border:1px solid rgba(200,168,80,.4);border-radius:8px;padding:10px 14px;max-width:260px;text-align:center;}
+#card-zoom-desc .cz-name{font-family:'Cinzel',serif;font-size:14px;color:var(--gold);margin-bottom:6px;}
+#card-zoom-desc .cz-detail{font-size:11px;color:var(--dim);line-height:1.6;}
+#card-zoom-hint{font-size:10px;color:rgba(255,255,255,.3);margin-top:4px;}
 #card-play-overlay{
   display:none;position:fixed;inset:0;z-index:85;
   align-items:center;justify-content:center;pointer-events:none;
+  background:rgba(0,0,0,.45);
 }
 #card-play-overlay.show{display:flex;}
 .cpo-inner{
-  background:rgba(10,8,20,.92);border:2px solid var(--gold);border-radius:12px;
-  padding:16px 28px;text-align:center;
-  animation:cpo-in .2s ease;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  animation:cpo-in .25s ease;
 }
-@keyframes cpo-in{from{opacity:0;transform:scale(.85);}to{opacity:1;transform:scale(1);}}
-.cpo-player{font-size:11px;color:var(--dim);margin-bottom:4px;}
+@keyframes cpo-in{from{opacity:0;transform:scale(.75) translateY(20px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.cpo-player{font-size:12px;color:rgba(255,255,255,.7);text-align:center;background:rgba(0,0,0,.6);padding:3px 12px;border-radius:20px;}
 .cpo-card-sym{font-size:40px;margin:4px 0;}
 .cpo-card-name{font-size:16px;font-weight:700;color:var(--gold);}
 .cpo-card-type{font-size:10px;color:var(--dim);margin-top:2px;}
+/* big card display in overlay */
+.cpo-card-big{width:148px;height:207px;position:relative;border-radius:10px;overflow:hidden;box-shadow:0 8px 32px rgba(0,0,0,.8);}
+.cpo-card-big .cb-art{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top;}
+.cpo-card-big .cb-frame{position:absolute;inset:0;width:100%;height:100%;background-size:100% 100%;background-repeat:no-repeat;z-index:4;}
+.cpo-card-big .cb-sym{position:absolute;top:4px;right:4px;z-index:5;width:28px;height:28px;display:flex;align-items:center;justify-content:center;}
+.cpo-card-big .cb-sym img{width:22px!important;height:22px!important;}
 
 /* ★ DEATH REVEAL OVERLAY ★ */
 #death-overlay{
@@ -830,7 +845,8 @@ h1,h2{font-family:'Cinzel',serif;}
 .eq-slot.has-item{border-color:rgba(200,168,80,.55);border-style:solid;}
 .eq-slot.drag-over{border-color:#50e080!important;background:rgba(80,224,128,.15)!important;}
 .eq-label{font-size:8px;color:var(--dim);}
-.eq-item{font-size:8px;color:var(--gold2);text-align:center;}
+.eq-item{font-size:8px;color:var(--gold2);text-align:center;width:100%;height:100%;display:flex;align-items:center;justify-content:center;position:relative;}
+.eq-item img{width:100%;height:100%;object-fit:contain;border-radius:4px;}
 #player-hp-row{position:relative;display:flex;align-items:center;height:111px;margin-top:-10px;overflow:visible;width:94px;}
 #player-icon-wrap{position:relative;z-index:2;flex-shrink:0;width:108px;height:107px;margin-right:-12px;margin-top:-25px;cursor:pointer;border-radius:6px;overflow:hidden;}
 #player-icon-wrap:active{border-color:var(--gold);}
@@ -1188,6 +1204,14 @@ h1,h2{font-family:'Cinzel',serif;}
 </div></div>
 
 <!-- ★ card play overlay ★ -->
+<div id="card-zoom-overlay" onclick="closeCardZoom()">
+  <div id="card-zoom-inner"></div>
+  <div id="card-zoom-desc">
+    <div class="cz-name" id="cz-name"></div>
+    <div class="cz-detail" id="cz-detail"></div>
+  </div>
+  <div id="card-zoom-hint">แตะที่ใดก็ได้เพื่อปิด</div>
+</div>
 <div id="card-play-overlay">
   <div class="cpo-inner" id="cpo-inner"></div>
 </div>
@@ -1223,13 +1247,64 @@ function goBack(){
   }
 }
 
+/* ══ BATTLE GROUND RANDOM BG ══ */
+const BG_VARIANTS=['A','B','C','D','E'];
+function randomBattleGround(){
+  const v=BG_VARIANTS[~~(Math.random()*BG_VARIANTS.length)];
+  const url=`https://raw.githubusercontent.com/dekster00/card-battle/main/assets/BG/battle-ground-${v}.png`;
+  const app=document.getElementById('app');
+  if(app){app.style.setProperty('--bg-battle',`url("${url}")`);}
+}
+
+/* ══ CARD ZOOM (double-tap) ══ */
+const _cardTapTime={};
+function handleCardTap(cid){
+  const now=Date.now();
+  if(_cardTapTime[cid]&&now-_cardTapTime[cid]<400){
+    openCardZoom(cid);_cardTapTime[cid]=0;
+  } else {
+    _cardTapTime[cid]=now;
+    selCard(cid);
+  }
+}
+function openCardZoom(cid){
+  const pi=getActivePi();
+  const card=G.players[pi]?.hand.find(c=>c.id===cid);
+  if(!card)return;
+  const inner=document.getElementById('card-zoom-inner');
+  const picUrl=card.no?cardPicUrl(card.no):'';
+  const frameUrl=card.color?cardFrameUrl(card.color):'';
+  inner.innerHTML=picUrl?`<img class="cz-art" src="${picUrl}">`:'';
+  if(frameUrl)inner.innerHTML+=`<div class="cz-frame" style="background-image:url('${frameUrl}')"></div>`;
+  document.getElementById('cz-name').textContent=card.name;
+  const EFFECT_DESC={
+    destroy:'ทำลาย Equipment ของเป้าหมาย 1 ชิ้น',steal:'ขโมย Equipment จากเป้าหมาย',
+    skipturn:'เป้าหมายข้ามเทิร์นถัดไป',draw2:'จั่วการ์ด 2 ใบทันที',
+    heal1:'ฮีล HP +1',healstrong:'ฮีล HP +2',cancel:'ยกเลิก Effect การ์ดล่าสุด',
+    aoe_hammer:'โจมตี AOE ทุกคนด้วย 🔨',aoe_scissors:'โจมตี AOE ทุกคนด้วย ✂️',aoe_paper:'โจมตี AOE ทุกคนด้วย 📄',
+    share:'แบ่ง HP ให้ผู้เล่นที่เลือก',duel:'ท้าดวล 1v1 กับเป้าหมาย',
+    curse:'สาปเป้าหมาย',counter:'สวนกลับการโจมตีครั้งถัดไป',
+    mp_black1:'+1 MP ดำ',mp_white1:'+1 MP ขาว',mp_black2:'+2 MP ดำ',mp_white2:'+2 MP ขาว',
+    ap_plus1:'+1 AP ในเทิร์นนี้',equip:`ติดตั้ง: ${card.desc||''}`
+  };
+  const desc=card.type==='equipment'?`[${card.slot}] ${card.desc||''}`:EFFECT_DESC[card.effect]||card.effect;
+  document.getElementById('cz-detail').innerHTML=`<b>Type:</b> ${card.type} | <b>AP:</b> ${card.ap}<br>${desc}`;
+  document.getElementById('card-zoom-overlay').classList.add('show');
+}
+function closeCardZoom(){document.getElementById('card-zoom-overlay').classList.remove('show');}
+
 /* ══ SOUND SYSTEM ══ */
 const SFX_BASE='https://raw.githubusercontent.com/dekster00/card-battle/main/assets/sound/';
 const _sfxCache={};
 function playSound(name){
   try{
-    if(!_sfxCache[name]){_sfxCache[name]=new Audio(SFX_BASE+name);}
-    const s=_sfxCache[name].cloneNode();
+    if(!_sfxCache[name]){
+      const a=new Audio(SFX_BASE+name);
+      a.preload='auto';
+      _sfxCache[name]=a;
+    }
+    const s=_sfxCache[name];
+    s.currentTime=0;
     s.volume=0.7;
     s.play().catch(()=>{});
   }catch(e){}
@@ -1544,6 +1619,11 @@ function startGame(){
   const ldr=G.players.find(p=>p.role==='LEADER');
   addLog(`👑 LEADER: ${ldr.name} [${ldr.char.name}]`,'imp');
   renderAll();
+  randomBattleGround();
+  // Preload sounds
+  ['card draw.mp3','attack-hit.mp3'].forEach(n=>{
+    if(!_sfxCache[n]){const a=new Audio(SFX_BASE+n);a.preload='auto';_sfxCache[n]=a;}
+  });
   // Fade out START-BG then begin
   setTimeout(()=>{
     startBg.style.opacity='0';
@@ -1583,7 +1663,7 @@ function beginTurn(pi){
   setPhase('action');renderAll();
   olSchedulePush(); // push state ทันทีเมื่อเริ่มเทิร์นใหม่
 
-  if(p.isBot)setTimeout(()=>botTurn(pi),800);
+  if(p.isBot)setTimeout(()=>botTurn(pi),1400);
 }
 
 function endPhase(pi){
@@ -1742,16 +1822,16 @@ function pickTarget(pi,title,cb){
 /* ★ CARD PLAY OVERLAY ★ */
 function showCardOverlay(playerName,card,cb){
   const el=document.getElementById('cpo-inner');
-  const typeLabel={action:'Action',curse:'Curse',equipment:'Equipment'}[card.type]||card.type;
-  // find which player is playing
-  const playingPlayer=G.players.find(p=>p.name===playerName)||null;
-  const artHtml=playingPlayer?`<div style="width:48px;height:48px;margin:0 auto 4px;">${charSVG(playingPlayer.char.id,48)}</div>`:'';
+  const picUrl=card.no?cardPicUrl(card.no):'';
+  const frameUrl=card.color?cardFrameUrl(card.color):'';
+  const bigCard=`<div class="cpo-card-big">
+    ${picUrl?`<img class="cb-art" src="${picUrl}" onerror="this.remove();">`:''}
+    ${frameUrl?`<div class="cb-frame" style="background-image:url('${frameUrl}')"></div>`:''}
+    <div class="cb-sym">${SYM_IMG[card.sym]}</div>
+  </div>`;
   el.innerHTML=`
-    ${artHtml}
-    <div class="cpo-player">${playerName} เล่นการ์ด</div>
-    <div class="cpo-card-sym sym-${card.sym}">${SYM_IMG[card.sym]}</div>
-    <div class="cpo-card-name">${card.name}</div>
-    <div class="cpo-card-type">${typeLabel}${card.ap>0?' · '+card.ap+' AP':''}</div>`;
+    <div class="cpo-player">${playerName} เล่น: ${card.name}</div>
+    ${bigCard}`;
   document.getElementById('card-play-overlay').classList.add('show');
   setTimeout(()=>{
     document.getElementById('card-play-overlay').classList.remove('show');
@@ -1794,18 +1874,18 @@ function doAttack(atkI,defI,cid){
 }
 function showAtkBanner(atk,def,card){
   const b=document.getElementById('banner-atk');
-  b.innerHTML=`${atk.char.emoji} <b>${atk.name}</b> ⚔️ ${SYM_IMG[card.sym]} <b>${card.name}</b><br><span style="font-size:12px;color:var(--dim);">→ ${def.char.emoji} ${def.name}</span>`;
+  const atkIcon=ICON_IMAGES[atk.char.id]?`<img src="${ICON_IMAGES[atk.char.id]}" style="width:40px;height:40px;object-fit:cover;object-position:top;border-radius:4px;border:2px solid var(--red);">`:`<span style="font-size:28px;">${atk.char.emoji}</span>`;
+  const defIcon=ICON_IMAGES[def.char.id]?`<img src="${ICON_IMAGES[def.char.id]}" style="width:40px;height:40px;object-fit:cover;object-position:top;border-radius:4px;border:2px solid rgba(255,255,255,.3);">`:`<span style="font-size:28px;">${def.char.emoji}</span>`;
+  b.innerHTML=`
+    <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px;">
+      <div style="text-align:center;">${atkIcon}<div style="font-size:9px;color:var(--gold);margin-top:2px;">${atk.name}</div></div>
+      <div style="font-size:18px;color:var(--red);">⚔️</div>
+      <div style="font-size:13px;color:var(--dim);">${SYM_IMG[card.sym]}</div>
+      <div style="font-size:18px;color:rgba(255,255,255,.4);">→</div>
+      <div style="text-align:center;">${defIcon}<div style="font-size:9px;color:var(--dim);margin-top:2px;">${def.name}</div></div>
+    </div>
+    <div style="font-size:11px;color:var(--gold2);">${card.name}</div>`;
   b.classList.add('show');
-  // Show card in center for 2 seconds
-  const cl=document.getElementById('center-lbl');
-  if(cl){
-    cl._orig=cl._orig||cl.innerHTML;
-    cl.innerHTML=`<div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-      <div style="font-size:10px;color:var(--gold);">${atk.name} เล่น:</div>
-      ${renderCardEl(card,false)}
-    </div>`;
-    setTimeout(()=>{cl.innerHTML=cl._orig||'⚔ กองกลาง';},2000);
-  }
   setTimeout(()=>b.classList.remove('show'),3000);
 }
 
@@ -1940,6 +2020,7 @@ function applyHit(atkI,defI,atkCard){
   def.hp=Math.max(0,def.hp-dmg);
   addLog(`${def.name}: -${dmg} HP (เหลือ ${def.hp})`,'dmg');
   playSound('attack-hit.mp3');
+  renderBoard(); // update HP bar immediately
   if(atk.drawAfterAtk)drawCards(atkI,1);
   checkDeath(defI);
 }
@@ -1958,20 +2039,48 @@ function checkArmor(pi,atkCard){
 function botTurn(pi){
   if(G.gameOver)return;
   const p=G.players[pi];
+
+  // Helper: show card overlay then run callback after 1.2s
+  function botPlayCard(card,cb){
+    p.hand=p.hand.filter(c=>c.id!==card.id);G.discard.push(card);
+    addLog(`${p.name} เล่น: ${card.name}`);
+    showCardOverlay(p.name,card,null);
+    renderAll();
+    setTimeout(cb,1400); // wait for card overlay
+  }
+
+  // Step 1: install equipment
   const eqs=p.hand.filter(c=>c.type==='equipment');
-  if(eqs.length)doInstall(pi,eqs[~~(Math.random()*eqs.length)]);
+  if(eqs.length){
+    const eq=eqs[~~(Math.random()*eqs.length)];
+    doInstall(pi,eq);
+    renderAll();
+  }
+
+  // Step 2: play action card (with overlay delay)
   const acts=p.hand.filter(c=>c.type==='action'&&G.ap>=c.ap&&c.effect!=='counter'&&c.effect!=='cancel');
   if(acts.length&&G.ap>0){
     const card=acts[~~(Math.random()*acts.length)];
-    p.hand=p.hand.filter(c=>c.id!==card.id);G.discard.push(card);
     G.ap=Math.max(0,G.ap-card.ap);
-    addLog(`${p.name} เล่น: ${card.name}`);
-    showCardOverlay(p.name,card,null);
-    const alive=G.players.filter(q=>!q.dead&&q.i!==pi);
-    const needsTarget=['heal1','destroy','steal','skipturn','duel'].includes(card.effect);
-    const tPi=needsTarget&&alive.length?alive[~~(Math.random()*alive.length)].i:null;
-    setTimeout(()=>{applyCardEffect(pi,card,tPi);},500);
+    botPlayCard(card,()=>{
+      const alive=G.players.filter(q=>!q.dead&&q.i!==pi);
+      const needsTarget=['heal1','destroy','steal','skipturn','duel'].includes(card.effect);
+      const tPi=needsTarget&&alive.length?alive[~~(Math.random()*alive.length)].i:null;
+      applyCardEffect(pi,card,tPi);
+      renderAll();
+      // Step 3: attack after card resolved
+      setTimeout(()=>_botAttack(pi),1200);
+    });
+    return;
   }
+
+  // No card to play — go straight to attack
+  setTimeout(()=>_botAttack(pi),1000);
+}
+
+function _botAttack(pi){
+  if(G.gameOver)return;
+  const p=G.players[pi];
   const nb=getNeighbors(pi);
   if(nb.length&&G.ap>=1&&(!G.attackUsed||p.multiAtk)&&p.hand.length){
     const tgt=nb.map(ni=>G.players[ni]).filter(q=>!q.dead).sort((a,b)=>a.hp-b.hp)[0];
@@ -1984,11 +2093,11 @@ function botTurn(pi){
       setTimeout(()=>{
         if(tgt.isBot)botDefend(pi,tgt.i,card);
         else playerDefend(pi,tgt.i,card);
-      },1800);
+      },2000);
       return;
     }
   }
-  setTimeout(()=>endPhase(pi),600);
+  setTimeout(()=>endPhase(pi),900);
 }
 
 /* ═══ CARD EFFECTS ═══ */
@@ -2305,16 +2414,32 @@ function renderMyAvatar(pi){
   }
 }
 
+const EQUIP_IMG_BASE='https://raw.githubusercontent.com/dekster00/card-battle/main/assets/Card/Equipment/';
 function renderEquipSlots(pi){
   if(!G||!G.players) return;
   const p=G.players[pi];
   if(!p) return;
+  const SLOT_MAP={weapon:'weapon',armor:'armor',trinket:'charm',pet:'pet'};
+  // clear all slots first
   ['weapon','armor','charm','pet'].forEach(sl=>{
     const el=document.getElementById('eq-'+sl+'-item');
     if(!el) return;
-    const e=p.equip?.[sl];
-    el.textContent=e?e.name:'';
-    el.parentElement.title=e?e.desc||e.name:'';
+    el.innerHTML='';
+    el.parentElement.title='';
+    el.parentElement.classList.remove('has-item');
+  });
+  // fill slots from equip
+  Object.entries(p.equip||{}).forEach(([sl,e])=>{
+    if(!e) return;
+    const slotKey=SLOT_MAP[sl]||sl;
+    const el=document.getElementById('eq-'+slotKey+'-item');
+    if(!el) return;
+    const imgUrl=e.no?EQUIP_IMG_BASE+e.no+'.png':'';
+    el.innerHTML=imgUrl
+      ?`<img src="${imgUrl}" title="${e.name}: ${e.desc||''}" onerror="this.remove();this.parentNode.textContent='${e.name}'">`
+      :`<span title="${e.desc||e.name}" style="font-size:7px;word-break:break-all;">${e.name}</span>`;
+    el.parentElement.title=e.desc||e.name;
+    el.parentElement.classList.add('has-item');
   });
 }
 
@@ -2397,18 +2522,21 @@ function renderHand(){
     return;
   }
 
-  // Local mode (original logic)
+  // Local mode — always show player 0's cards
   const activePi=getActivePi();
   const p=G.players[activePi];
   const isHumanTurn=!p.isBot&&G.turn===activePi&&G.phase==='action';
-  document.getElementById('hand-lbl').textContent=isHumanTurn?`${p.name} — มือของคุณ (แตะเพื่อเลือก)`:`${G.players[G.turn].name} กำลังเล่น...`;
-  if(!isHumanTurn){el.innerHTML='<div style="font-size:11px;color:var(--dim);padding:4px;">รอเทิร์นของคุณ...</div>';return;}
+  document.getElementById('hand-lbl').textContent=isHumanTurn?`${p.name} — มือของคุณ (แตะเพื่อเลือก)`:`มือของคุณ (${p.hand.length} ใบ) — รอเทิร์น`;
   el.innerHTML=p.hand.map(c=>renderCardEl(c)).join('');
-  el.querySelectorAll('.card').forEach(el=>{
-    const cid=+el.dataset.id;
-    el.addEventListener('click',()=>selCard(cid));
-    el.addEventListener('mouseenter',e=>showCardTip(e,cid));
-    el.addEventListener('mouseleave',hideTip);
+  el.querySelectorAll('.card').forEach(cardEl=>{
+    const cid=+cardEl.dataset.id;
+    if(isHumanTurn){
+      cardEl.addEventListener('click',()=>handleCardTap(cid));
+    } else {
+      cardEl.addEventListener('click',()=>openCardZoom(cid));
+    }
+    cardEl.addEventListener('mouseenter',e=>showCardTip(e,cid));
+    cardEl.addEventListener('mouseleave',hideTip);
   });
 }
 
