@@ -114,7 +114,7 @@ h1,h2{font-family:'Cinzel',serif;}
 .mode-confirm:hover{background:rgba(200,168,80,.1);box-shadow:0 0 20px rgba(200,168,80,.2);}
 
 /* ══ RESOURCE BAR ══ */
-#resource-bar{background:rgba(13,13,26,.98);border-bottom:1px solid var(--border);height:45px;flex-shrink:0;
+#resource-bar{background:rgba(13,13,26,.98);border-bottom:1px solid var(--border);height:45px;flex-shrink:0;position:relative;z-index:950;
   padding:0 16px;display:flex;align-items:center;gap:14px;position:relative;z-index:10;}
 .res-item{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;}
 .res-val{color:var(--white);}
@@ -366,7 +366,7 @@ h1,h2{font-family:'Cinzel',serif;}
 /* card frame overlay */
 .card-frame{position:absolute;inset:0;width:100%;height:100%;background-size:100% 100%;background-repeat:no-repeat;z-index:4;pointer-events:none;}
 /* sym corner — shifted down 1px, right 1px */
-.card-sym-corner{position:absolute;top:3px;right:2px;z-index:5;width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:none;border-radius:4px;}
+.card-sym-corner{position:absolute;bottom:1px;left:5px;z-index:5;width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:none;border-radius:4px;}
 .card-sym-corner img{width:16px!important;height:16px!important;object-fit:contain;}
 /* art inside card */
 .card-art-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:1;background:transparent;}
@@ -715,6 +715,72 @@ h1,h2{font-family:'Cinzel',serif;}
   animation:sparkOut .65s ease-out forwards;
 }
 
+/* ── DEATH ── */
+@keyframes deathShake{0%,100%{transform:translateX(0) rotate(0deg);filter:grayscale(0);}15%{transform:translateX(-8px) rotate(-3deg);filter:grayscale(.3);}30%{transform:translateX(7px) rotate(2deg);filter:grayscale(.5);}45%{transform:translateX(-6px) rotate(-2deg);filter:grayscale(.7);}60%{transform:translateX(5px) rotate(1deg);filter:grayscale(.85);}80%{transform:translateX(-3px);filter:grayscale(1);}}
+@keyframes deathFade{0%{opacity:1;filter:grayscale(1) brightness(1);}40%{filter:grayscale(1) brightness(1.8);}100%{opacity:.28;filter:grayscale(1) brightness(.6);}}
+.death-shake{animation:deathShake .6s ease forwards;}
+.death-fade{animation:deathFade .9s ease .5s forwards;}
+/* ── HP FLASH — handled by GSAP, class kept for fallback ── */
+@keyframes hpFlash{0%{filter:brightness(1);}30%{filter:brightness(2.2) saturate(0);}100%{filter:brightness(1);}}
+.bot-hp-img{transition:opacity .3s;}
+/* ── HEAL PULSE — fallback if GSAP not loaded ── */
+@keyframes healGlow{0%{box-shadow:0 0 0 0 rgba(80,200,120,0);}40%{box-shadow:0 0 0 14px rgba(80,200,120,.55);}100%{box-shadow:0 0 0 0 rgba(80,200,120,0);}}
+.heal-pulse{animation:healGlow .65s ease;}
+/* ── ATTACK BUTTON ── */
+#atk-btn-fixed{position:fixed;right:110px;bottom:100px;z-index:50;}
+#btn-atk-main{width:68px;height:68px;border-radius:50%;background:rgba(200,50,50,.15);border:2px solid rgba(200,80,80,.5);cursor:pointer;padding:0;transition:all .2s;box-shadow:0 0 12px rgba(200,50,50,.25);}
+#btn-atk-main:hover{background:rgba(200,50,50,.3);box-shadow:0 0 24px rgba(200,80,80,.6);}
+#btn-atk-main.active{background:rgba(200,168,80,.2);border-color:var(--gold);box-shadow:0 0 28px rgba(200,168,80,.7);animation:atkBtnPulse .7s ease-in-out infinite;}
+#btn-atk-main:disabled{opacity:.35;cursor:not-allowed;}
+@keyframes atkBtnPulse{0%,100%{box-shadow:0 0 18px rgba(200,168,80,.5);}50%{box-shadow:0 0 36px rgba(200,168,80,.9);}}
+
+/* ── BOT SEAT ATTACK HIGHLIGHT (สีเหลือง) ── */
+.bot-seat.atk-reachable{
+  box-shadow:0 0 0 3px #f0c040, 0 0 20px rgba(240,192,64,.6) !important;
+  border-color:#f0c040 !important;
+  animation:reachablePulse .8s ease-in-out infinite;
+}
+@keyframes reachablePulse{0%,100%{box-shadow:0 0 0 3px #f0c040,0 0 16px rgba(240,192,64,.5);}50%{box-shadow:0 0 0 3px #f0c040,0 0 32px rgba(240,192,64,.85);}}
+
+/* ── AP INLINE ── */
+#hand-lbl{font-size:11px;color:var(--dim);}
+#ap-inline{position:fixed;left:88px;bottom:70px;display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gold);z-index:60;pointer-events:none;background:rgba(0,0,0,.45);padding:3px 8px;border-radius:8px;}
+#ap-inline .ap-pip{width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);}
+#ap-inline .ap-pip.full{background:var(--gold);border-color:var(--gold2);box-shadow:0 0 4px var(--gold);}
+
+/* ── HOW TO PLAY ── */
+.htp-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:.2s;}
+.htp-dot.active{background:var(--gold);transform:scale(1.3);}
+
+/* ── BOT STAT BAR ── */
+.bot-bar-stat{display:flex;flex-wrap:nowrap;gap:5px;padding:2px 4px;background:rgba(0,0,0,.45);border-radius:4px;margin:-3px 0 0 4px;align-items:center;overflow:hidden;white-space:nowrap;}
+.bbs-item{display:flex;align-items:center;gap:2px;}
+.bbs-l{font-size:8px;color:var(--dim);}
+.bbs-v{font-size:10px;font-weight:700;color:#eee;}
+.bbs-debuff{color:#f08080;}
+/* ── STATUS BADGES ── */
+.status-badge{display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border-radius:4px;font-size:9px;font-weight:600;white-space:nowrap;flex-shrink:0;}
+.sb-sleep{background:rgba(80,100,200,.35);color:#aac0ff;border:1px solid rgba(80,100,200,.5);}
+.sb-eye{background:rgba(160,40,160,.35);color:#e080e0;border:1px solid rgba(160,40,160,.5);}
+.sb-burn{background:rgba(220,80,20,.35);color:#ff9060;border:1px solid rgba(220,80,20,.5);}
+.sb-skip{background:rgba(80,80,80,.35);color:#aaa;border:1px solid rgba(120,120,120,.5);}
+
+/* ── PLAYER STAT STRIP ── */
+#player-stat-strip{
+  position:absolute;
+  bottom:50px;left:140px;
+  display:flex;flex-wrap:nowrap;gap:4px;padding:3px 6px;
+  background:rgba(0,0,0,.55);
+  border-radius:6px;
+  z-index:10;pointer-events:none;
+  align-items:center;
+  white-space:nowrap;
+  overflow:hidden;
+}
+.pss-box{display:flex;align-items:center;gap:2px;}
+.pss-l{color:var(--dim);font-size:8px;}
+.pss-v{color:#eee;font-weight:700;font-size:11px;line-height:1;}
+
 /* Touch-friendly: larger tap targets */
 @media (hover: none) {
   .btn{padding:8px 7px;}
@@ -1027,7 +1093,7 @@ h1,h2{font-family:'Cinzel',serif;}
 #hand{display:inline-flex;gap:8px;align-items:flex-end;flex-wrap:nowrap;padding:4px 8px;min-height:110px;margin:0 auto;direction:ltr;}
 
 /* DECK fixed to far right */
-#deck-fixed{position:fixed;right:8px;bottom:5px;z-index:50;display:flex;align-items:center;justify-content:center;}
+#deck-fixed{position:fixed;right:-7px;bottom:-5px;z-index:50;display:flex;align-items:center;justify-content:center;}
 
 /* END fixed top-right */
 #end-fixed{position:fixed;right:-7px;bottom:165px;z-index:50;display:flex;align-items:center;justify-content:center;}
@@ -1136,6 +1202,7 @@ h1,h2{font-family:'Cinzel',serif;}
     </div>
   </div>
   <button class="mode-confirm" onclick="confirmMode()">เลือกตัวละคร ▶</button>
+  <button onclick="openHowToPlay()" style="margin-top:10px;padding:9px 24px;border-radius:7px;border:1px solid rgba(200,168,80,.4);background:transparent;color:rgba(200,168,80,.7);cursor:pointer;font-family:'Cinzel',sans-serif;font-size:12px;letter-spacing:1px;">📖 How to Play</button>
 </div>
 
 <!-- TITLE / SETUP = char select screen -->
@@ -1147,6 +1214,7 @@ h1,h2{font-family:'Cinzel',serif;}
     <div class="res-item" style="display:none;"><span class="res-val">150</span><span class="res-cap">/300</span></div>
     <div class="res-sep" style="display:none;"></div>
     <div class="res-item" style="display:none;"><span class="res-val">30</span></div>
+    <button onclick="openHowToPlay()" style="padding:5px 14px;border-radius:6px;border:1px solid rgba(200,168,80,.45);background:rgba(200,168,80,.08);color:rgba(200,168,80,.9);cursor:pointer;font-size:11px;letter-spacing:.5px;white-space:nowrap;transition:.2s;position:relative;z-index:1000;" onmouseover="this.style.background='rgba(200,168,80,.18)'" onmouseout="this.style.background='rgba(200,168,80,.08)'">📖 How to Play</button>
     <div class="topbar-mode" onclick="reopenModeSelect()">
       <span class="tm-dot" id="tm-dot" style="background:#c8a850;"></span>
       <span class="tm-label" id="tm-label">Solo vs Bot</span>
@@ -1264,7 +1332,7 @@ h1,h2{font-family:'Cinzel',serif;}
     <div id="turn-info">รอเริ่มเกม</div>
     <div id="deck-count">🂠 <span id="deck-num">0</span></div>
     <button id="btn-back" onclick="goBack()" title="กลับหน้าเลือกตัวละคร" style="margin-left:4px;padding:3px 10px;border-radius:4px;border:1px solid rgba(200,168,80,.4);background:rgba(200,168,80,.08);color:var(--gold2);cursor:pointer;font-size:11px;font-family:'Sarabun',sans-serif;">◀ Back</button>
-    <button id="btn-settings" onclick="document.getElementById('log-panel').classList.toggle('show')">⚙</button>
+    <button id="btn-settings" onclick="openPauseMenu()">⚙</button>
   </div>
 
   <!-- GAME AREA -->
@@ -1301,13 +1369,18 @@ h1,h2{font-family:'Cinzel',serif;}
         <div id="player-hp-row">
           <div id="player-icon-wrap" onclick="useCharSkill()" title="Skill">
             <div id="char-avatar"></div>
-            
           </div>
           <div id="hp-bar-wrap">
             <div id="char-name-lbl"></div>
             <div id="char-role-lbl"></div>
           </div>
           <div id="player-mana-row"></div>
+          <!-- Stat strip ทับบน icon มุมล่างซ้าย -->
+          <div id="player-stat-strip">
+            <div class="pss-box"><span class="pss-l">⚔</span><span class="pss-v" id="pss-atk">1</span></div>
+            <div class="pss-box"><span class="pss-l">🛡</span><span class="pss-v" id="pss-def">0</span></div>
+            <div class="pss-box"><span class="pss-l">📏</span><span class="pss-v" id="pss-rng">1</span></div>
+          </div>
         </div>
         <div id="char-info-col">
           <div id="char-name-lbl"></div>
@@ -1320,7 +1393,8 @@ h1,h2{font-family:'Cinzel',serif;}
       <!-- CENTER: hand cards -->
       <div id="center-hand-panel">
         <div id="hand-wrap">
-          <div id="hand-lbl">คุณ — มือของคุณ (แตะเพื่อเลือก)</div>
+          <div id="hand-lbl">คุณ — มือของคุณ</div>
+          <div id="ap-inline"></div>
           <div id="hand-scroll"><div id="hand"></div></div>
         </div>
       </div>
@@ -1331,9 +1405,6 @@ h1,h2{font-family:'Cinzel',serif;}
           <button style="display:none" id="btn-atk"   onclick="startAttack()">Attack</button>
           <button style="display:none" id="btn-play"   onclick="playSelected()">Play</button>
           <button style="display:none" id="btn-inst"   onclick="installSelected()">Install</button>
-          <button style="display:none" id="btn-cskill" onclick="useCharSkill()">Skill</button>
-          <button style="display:none" id="btn-iskill" onclick="useItemSkill()">Item</button>
-        </div>
       </div>
 
       <!-- END button: fixed far right top -->
@@ -1341,6 +1412,16 @@ h1,h2{font-family:'Cinzel',serif;}
         <button class="ab-btn ab-end" id="btn-end" onclick="endTurn()" style="background:transparent;border:none;box-shadow:none;padding:0;width:80px;height:80px;">
           <img src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/END.png" style="width:100%;height:100%;object-fit:contain;transform:rotate(-45deg);" onerror="this.style.display='none';this.nextSibling.style.display='block'">
           <span style="display:none;transform:rotate(-45deg);font-family:'Cinzel',serif;font-weight:700;font-size:11px;">END</span>
+        </button>
+      </div>
+
+      <!-- ATTACK BUTTON: above deck -->
+      <div id="atk-btn-fixed">
+        <button id="btn-atk-main" onclick="enterAttackMode()" title="โจมตี">
+          <img src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/battle-Act01.png"
+            style="width:100%;height:100%;object-fit:contain;"
+            onerror="this.style.display='none';this.nextSibling.style.display='block'">
+          <span style="display:none;font-size:22px;">⚔</span>
         </button>
       </div>
 
@@ -1390,10 +1471,13 @@ h1,h2{font-family:'Cinzel',serif;}
 <div id="banner-atk"></div>
 <div id="tooltip"></div>
 <div id="win-screen">
-  <h1 id="win-title">🏆</h1>
-  <p id="win-detail"></p>
-  <div id="win-roles" style="font-size:12px;color:var(--dim);margin-top:8px;text-align:left;"></div>
-  <button class="btn-reload" onclick="location.reload()">▶ เล่นใหม่</button>
+  <div id="win-inner" style="width:100%;max-width:480px;max-height:90vh;overflow-y:auto;display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 16px;">
+    <h1 id="win-title" style="margin:0;">🏆</h1>
+    <p id="win-detail" style="margin:0;"></p>
+    <div id="win-roles" style="font-size:12px;color:var(--dim);text-align:left;width:100%;"></div>
+    <div id="win-analysis" style="width:100%;"></div>
+    <button class="btn" onclick="goLobby()" style="margin-top:8px;width:100%;font-size:15px;padding:14px;">▶ ดำเนินต่อ (เลือกตัวละคร)</button>
+  </div>
 </div>
 
 <script>
@@ -1444,7 +1528,7 @@ function openCardZoom(cid){
     skipturn:'เป้าหมายข้ามเทิร์นถัดไป',draw2:'จั่วการ์ด 2 ใบทันที',
     heal1:'ฮีล HP +1',healstrong:'ฮีล HP +2',cancel:'ยกเลิก Effect การ์ดล่าสุด',
     aoe_hammer:'โจมตี AOE ทุกคนด้วย 🔨',aoe_scissors:'โจมตี AOE ทุกคนด้วย ✂️',aoe_paper:'โจมตี AOE ทุกคนด้วย 📄',
-    share:'แบ่ง HP ให้ผู้เล่นที่เลือก',duel:'ท้าดวล 1v1 กับเป้าหมาย',
+    share:'จั่ว 5 ใบ แจกสุ่มให้ทุกคนที่ยังมีชีวิต คนละ 1 ใบ',duel:'ท้าดวล 1v1 กับเป้าหมาย',
     curse:'สาปเป้าหมาย',counter:'สวนกลับการโจมตีครั้งถัดไป',
     mp_black1:'+1 MP ดำ',mp_white1:'+1 MP ขาว',mp_black2:'+2 MP ดำ',mp_white2:'+2 MP ขาว',
     ap_plus1:'+1 AP ในเทิร์นนี้',equip:`ติดตั้ง: ${card.desc||''}`
@@ -1494,7 +1578,7 @@ const SFX_VICTORY=SFX_BASE+'interface/VICTORY.mp3';
 const SFX_CURSOR=SFX_BASE+'interface/Cursor%20Move.mp3';
 const SFX_START=SFX_BASE+'interface/Voicy_Save_Load.mp3';
 const SFX_DRAW=SFX_BASE+'card%20draw.mp3';
-const SFX_PULLING=SFX_BASE+'interface/Pulling%20the%20Master.mp3';
+const SFX_ROLE_REVEAL=SFX_BASE+'interface/role%20reveal%20(start%20round).mp3';
 const SFX_WINK=SFX_BASE+'interface/Wink.mp3';
 const SFX_ITEM_GET=SFX_BASE+'interface/Item%20Get.mp3';
 const SFX_BATTLE_START=SFX_BASE+'interface/Start%20.mp3';
@@ -1513,6 +1597,7 @@ let _bgmFadeTimer=null;
 function _playBGM(url,vol=0.4,fadeInSec=0){
   if(_bgmFadeTimer){clearInterval(_bgmFadeTimer);_bgmFadeTimer=null;}
   if(_bgmEl){try{_bgmEl.pause();}catch(e){}; _bgmEl.src='';_bgmEl=null;}
+  if(window._bgmMuted) return; // ปิดเสียงอยู่
   const audio=new Audio(url);
   audio.loop=true;
   _bgmEl=audio;
@@ -1554,6 +1639,7 @@ async function _loadBuf(url){
 }
 function _playBuf(buf,vol=0.7){
   if(!buf)return;
+  if(window._sfxMuted)return;
   if(_audioCtx.state==='suspended')_audioCtx.resume();
   const src=_audioCtx.createBufferSource();
   const gain=_audioCtx.createGain();
@@ -1573,13 +1659,13 @@ function playEquip(){
 function playVictory(){if(_sfxBuffers[SFX_VICTORY])_playBuf(_sfxBuffers[SFX_VICTORY]);else playSound(SFX_VICTORY);}
 function playCursor(){if(_sfxBuffers[SFX_CURSOR])_playBuf(_sfxBuffers[SFX_CURSOR]);else playSound(SFX_CURSOR);}
 function playStart(){if(_sfxBuffers[SFX_START])_playBuf(_sfxBuffers[SFX_START]);else playSound(SFX_START);}
-function playPulling(){if(_sfxBuffers[SFX_PULLING])_playBuf(_sfxBuffers[SFX_PULLING]);else playSound(SFX_PULLING);}
+function playPulling(){if(_sfxBuffers[SFX_ROLE_REVEAL])_playBuf(_sfxBuffers[SFX_ROLE_REVEAL]);else _loadBuf(SFX_ROLE_REVEAL).then(b=>_playBuf(b));}
 function playWink(){if(_sfxBuffers[SFX_WINK])_playBuf(_sfxBuffers[SFX_WINK]);else playSound(SFX_WINK);}
 function playItemGet(){if(_sfxBuffers[SFX_ITEM_GET])_playBuf(_sfxBuffers[SFX_ITEM_GET]);else playSound(SFX_ITEM_GET);}
 function playBattleStart(){if(_sfxBuffers[SFX_BATTLE_START])_playBuf(_sfxBuffers[SFX_BATTLE_START]);else playSound(SFX_BATTLE_START);}
 
 async function preloadAllSounds(){
-  const all=[...SFX_PUNCH,...SFX_EQUIP,SFX_VICTORY,SFX_CURSOR,SFX_START,SFX_DRAW,SFX_PULLING,SFX_WINK,SFX_ITEM_GET,SFX_BATTLE_START];
+  const all=[...SFX_PUNCH,...SFX_EQUIP,SFX_VICTORY,SFX_CURSOR,SFX_START,SFX_DRAW,SFX_ROLE_REVEAL,SFX_WINK,SFX_ITEM_GET,SFX_BATTLE_START];
   await Promise.all(all.map(url=>_loadBuf(url)));
 }
 
@@ -1625,7 +1711,7 @@ const ROLE_COLOR={LEADER:'#c090e0',Guardian:'#70b0f0',Betrayer:'#f08080',Watcher
 const CHARACTERS=[
   {id:'zizeus',name:'Nesta',emoji:'⚡',color:'#d4a020',passive:'—',skillDesc:'จ่าย 3 MP → เลือก 1 คน HP-2',hasSkill:true,
    onSkill(pi){const p=G.players[pi];if(!spendMP(p,3)){addLog('MP ไม่พอ (3)');return;}
-     pickTarget(pi,'Zizeus: เลือกเป้าหมาย',t=>{t.hp=Math.max(0,t.hp-2);addLog(`⚡ Zizeus! ${t.name} HP-2`,'dmg');checkDeath(t.i);renderAll();})}},
+     pickTarget(pi,'Zizeus: เลือกเป้าหมาย',t=>{dealDamage(t.i,2);addLog(`⚡ Zizeus! ${t.name} HP-2`,'dmg');checkDeath(t.i);renderAll();})}},
   {id:'pluto',name:'Jannis',emoji:'💀',color:'#9060d0',passive:'—',skillDesc:'จ่าย 2 MP → ทุกคนทิ้งการ์ด 1 ใบ',hasSkill:true,
    onSkill(pi){const p=G.players[pi];if(!spendMP(p,2)){addLog('MP ไม่พอ (2)');return;}
      for(const q of G.players){if(q.dead||q.i===pi||q.isBot&&q.hand.length){if(q.isBot&&!q.dead&&q.i!==pi){const c=q.hand.splice(~~(Math.random()*q.hand.length),1)[0];G.discard.push(c);addLog(`${q.name}: ทิ้ง ${c.name}`);}}}
@@ -1663,38 +1749,38 @@ function cardPicUrl(no){return CARD_PICS_BASE+no+'.png';}
 function makeDeck(){
   const cards=[];let id=0;
   function add(n,def){for(let i=0;i<n;i++)cards.push({id:id++,sym:SYM[~~(Math.random()*3)],num:~~(Math.random()*7)+1,...def});}
-  add(4,{name:'การ์ดทำลาย',   type:'action',   ap:1,effect:'destroy',    no:1, color:'A'});
-  add(4,{name:'การ์ดขโมย',    type:'action',   ap:1,effect:'steal',       no:2, color:'A'});
-  add(4,{name:'การ์ดข้ามเทิร์น',type:'curse',  ap:1,effect:'skipturn',   no:3, color:'E'});
-  add(6,{name:'จั่วสองใบ',    type:'action',   ap:0,effect:'draw2',       no:4, color:'B'});
-  add(3,{name:'การ์ดยา',      type:'action',   ap:0,effect:'heal1',       no:5, color:'B'});
-  add(3,{name:'ฮีลแรง',       type:'action',   ap:0,effect:'healstrong',  no:6, color:'B'});
-  add(2,{name:'ตีวงกว้าง🔨',  type:'action',   ap:1,effect:'aoe_hammer',  no:8, color:'A'});
-  add(2,{name:'ตีวงกว้าง✂️', type:'action',   ap:1,effect:'aoe_scissors',no:9, color:'A'});
-  add(2,{name:'ตีวงกว้าง📄',  type:'action',   ap:1,effect:'aoe_paper',   no:10,color:'A'});
-  add(4,{name:'การ์ดแบ่งปัน', type:'action',   ap:0,effect:'share',       no:11,color:'B'});
-  add(6,{name:'การ์ดท้าดวล',  type:'action',   ap:1,effect:'duel',        no:12,color:'A'});
-  add(2,{name:'การ์ดคำสาป',   type:'curse',    ap:1,effect:'curse',       no:13,color:'E'});
-  add(4,{name:'สวนกลับ',      type:'action',   ap:0,effect:'counter',     no:14,color:'B'});
-  add(2,{name:'ดาบ',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:3},desc:'ATK+3',no:15,color:'C'});
-  add(2,{name:'ธนู',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,range:2,multiAtk:true},desc:'ATK+1 ระยะ+2 Multi-Atk',no:16,color:'C'});
-  add(2,{name:'หอก',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,range:1,ignoreArmor:true},desc:'ATK+1 ระยะ+1 ทะลุเกราะ',no:17,color:'C'});
-  add(2,{name:'ทวน',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:2,multiAtk:true},desc:'ATK+2 Multi-Atk',no:18,color:'C'});
-  add(2,{name:'ไม้เบสบอล',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,drawAfterAtk:true},desc:'ATK+1 โจมตีแล้วจั่ว 1',no:19,color:'C'});
-  add(2,{name:'ผ้าคลุมฮีโร่',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{},armorType:'cape',desc:'เปิดการ์ด: กระดาษ→สะท้อน',no:20,color:'C'});
-  add(2,{name:'เสื้อหนา',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{},armorType:'jacket',desc:'เปิดการ์ด: กรรไกร→บล็อก',no:21,color:'C'});
-  add(2,{name:'โล่ไวเบเนียม',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{def:1},armorType:'shield',desc:'DEF+1',no:22,color:'C'});
-  add(2,{name:'สร้อยคอ',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'necklace',desc:'Skill: -1HP→จั่ว 2',no:23,color:'C'});
-  add(2,{name:'กระเป๋า',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'bag',desc:'Skill: -1MP→จั่ว 1',no:24,color:'C'});
-  add(2,{name:'เครื่องชาร์จไฟ',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'charger',desc:'Standby: +1 MP ดำอัตโนมัติ',no:25,color:'C'});
-  add(2,{name:'นาฬิกา',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'watch',desc:'Skill: -2MP→จั่ว 3',no:26,color:'C'});
-  add(2,{name:'หมาน้อย',type:'equipment',ap:0,slot:'pet',effect:'equip',skill:'dog',desc:'Skill: -3MP ดำ→เป้า HP-1',no:27,color:'C'});
-  add(2,{name:'แมวน้อย',type:'equipment',ap:0,slot:'pet',effect:'equip',skill:'cat',desc:'Skill: -2MP ขาว→เป้า HP+1',no:28,color:'C'});
-  add(6,{name:'MP +1',        type:'action',ap:1,effect:'mp_black1',no:29,color:'A'});
-  add(6,{name:'MP +1',        type:'action',ap:1,effect:'mp_white1',no:30,color:'A'});
-  add(4,{name:'MP +2',        type:'action',ap:1,effect:'mp_black2',no:31,color:'A'});
-  add(4,{name:'MP +2',        type:'action',ap:1,effect:'mp_white2',no:32,color:'A'});
-  add(6,{name:'MORE ACTION',type:'action',ap:0,effect:'ap_plus1', no:33,color:'B'});
+  add(4,{name:'ค้อนทุบ',      type:'action',   ap:1,effect:'destroy',     no:1, color:'A'});
+  add(4,{name:'ขโมย',         type:'action',   ap:1,effect:'steal',        no:2, color:'A'});
+  add(4,{name:'หมอนนอนนุ่ม',  type:'curse',    ap:1,effect:'skipturn',    no:3, color:'E'});
+  add(6,{name:'อ่านหนังสือ',  type:'action',   ap:0,effect:'draw2',        no:4, color:'B'});
+  add(3,{name:'เบอเก้อ',      type:'action',   ap:0,effect:'heal1',        no:5, color:'B'});
+  add(3,{name:'พิซซ่า',       type:'action',   ap:0,effect:'healstrong',   no:6, color:'B'});
+  add(2,{name:'ระเบิดแดง',    type:'action',   ap:1,effect:'aoe_hammer',   no:8, color:'A'});
+  add(2,{name:'ระเบิดเขียว',  type:'action',   ap:1,effect:'aoe_scissors', no:9, color:'A'});
+  add(2,{name:'ระเบิดฟ้า',    type:'action',   ap:1,effect:'aoe_paper',    no:10,color:'A'});
+  add(4,{name:'นมกล่องแบ่งกัน',type:'action',  ap:0,effect:'share',        no:11,color:'B'});
+  add(6,{name:'ท้าต่อย',      type:'action',   ap:1,effect:'duel',         no:12,color:'A'});
+  add(2,{name:'ดวงตาคำสาป',   type:'curse',    ap:1,effect:'eyecurse',     no:13,color:'E'});
+  add(4,{name:'ป้ายสวนกลับ',  type:'action',   ap:0,effect:'counter',      no:14,color:'B'});
+  add(2,{name:'ไม้บรรทัด',    type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:2},desc:'ATK+2',no:15,color:'C'});
+  add(2,{name:'ปืนฉีดน้ำ',    type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{range:2,multiAtk:true},desc:'ระยะ+2 Multi-Atk',no:16,color:'C'});
+  add(2,{name:'ไม้เสียบดังโงะ',type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,range:1,ignoreArmor:true},desc:'ATK+1 ทะลุเกราะ',no:17,color:'C'});
+  add(2,{name:'ไม้แบด',       type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,multiAtk:true},desc:'ATK+1 Multi-Atk',no:18,color:'C'});
+  add(2,{name:'ไม้เบสบอล',    type:'equipment',ap:0,slot:'weapon',effect:'equip',stats:{atk:1,drawAfterAtk:true},desc:'ATK+1 โจมตีแล้วจั่ว 1',no:19,color:'C'});
+  add(2,{name:'ผ้าพันคอวิเศษ',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{},armorType:'cape',desc:'สุ่มกองการ์ด: 📄→สะท้อน',no:20,color:'C'});
+  add(2,{name:'เสื้อหนากันเหนียว',type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{},armorType:'jacket',desc:'สุ่มกองการ์ด: ✂️→บล็อก',no:21,color:'C'});
+  add(2,{name:'ฝาหม้อ',       type:'equipment',ap:0,slot:'armor',effect:'equip',stats:{def:2},armorType:'shield',desc:'DEF+2 (โดน 3 ครั้งหาย)',no:22,color:'C',hitCount:0,maxHits:3});
+  add(2,{name:'สร้อยผนึกวิญญาณ',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'necklace',desc:'Skill: -1HP→จั่ว 2 (1ครั้ง/รอบ)',no:23,color:'C'});
+  add(2,{name:'กระเป๋าเป้',   type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'bag',desc:'Skill: -1MP→จั่ว 1',no:24,color:'C'});
+  add(2,{name:'เครื่องชาร์จไฟ',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'charger',desc:'Standby: +1 MP อัตโนมัติ',no:25,color:'C'});
+  add(2,{name:'นาฬิกาทรายเวทมน',type:'equipment',ap:0,slot:'trinket',effect:'equip',skill:'watch',desc:'Skill: -2MP→จั่ว 3 เก็บ 1 ทิ้ง 2',no:26,color:'C'});
+  add(2,{name:'หมาไฟ',        type:'equipment',ap:0,slot:'pet',effect:'equip',stats:{atk:1},skill:'dog',desc:'ATK+1 | Skill: -3MP ดำ→เป้า HP-2',no:27,color:'C'});
+  add(2,{name:'แมวเทวดา',     type:'equipment',ap:0,slot:'pet',effect:'equip',stats:{atk:1},skill:'cat',desc:'ATK+1 | Skill: -2MP ขาว→เป้า HP+2',no:28,color:'C'});
+  add(6,{name:'หินดำ',        type:'action',ap:0,effect:'mp_black1',no:29,color:'B'});
+  add(6,{name:'หินขาว',       type:'action',ap:0,effect:'mp_white1',no:30,color:'B'});
+  add(4,{name:'crystal ดำ',   type:'action',ap:1,effect:'mp_black2',no:31,color:'A'});
+  add(4,{name:'crystal ขาว',  type:'action',ap:1,effect:'mp_white2',no:32,color:'A'});
+  add(6,{name:'เอเนอจี้ ดิ้ง',type:'action',ap:0,effect:'ap_plus1', no:33,color:'B'});
   return shuffle(cards);
 }
 function shuffle(a){for(let i=a.length-1;i>0;i--){const j=~~(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
@@ -1881,9 +1967,10 @@ function startGame(){
 
   G={deck:makeDeck(),discard:[],players:[],turn:0,phase:'standby',ap:3,
      attackUsed:false,selectedCard:null,log:[],gameOver:false,
-     skipCurse:Array(5).fill(false),curseCard:Array(5).fill(null),
+     skipCurse:Array(5).fill(false),curseCard:Array(5).fill(null),eyeCurse:{},
      _aphSel:[],_deathQueue:[],_deathCb:null,_plutoVictims:[],
-     humanCount:1};
+     humanCount:1,
+     _stats:{dmgDealt:{},dmgTaken:{},kills:{},cardsPlayed:{}}};
 
   for(let i=0;i<5;i++){
     const role=roleList[i],ch=chars[i];
@@ -1897,21 +1984,150 @@ function startGame(){
     if(ch.onSetup)ch.onSetup(p);
     G.players.push(p);
   }
-  for(let r=0;r<5;r++)for(let i=0;i<5;i++){const c=G.deck.pop();if(c)G.players[i].hand.push(c);}
-
+  // ยังไม่แจกการ์ด — รอ animate หลัง fade
   addLog('=== เกมเริ่ม! ===','imp');
   const ldr=G.players.find(p=>p.role==='LEADER');
   addLog(`👑 LEADER: ${ldr.name} [${ldr.char.name}]`,'imp');
   renderAll();
   stopBGM();
-  randomBattleGround();
   preloadAllSounds();
-  // Fade out START-BG then begin
+  // Fade out START-BG then animate deal
   setTimeout(()=>{
     startBg.style.opacity='0';
-    setTimeout(()=>{startBg.remove();beginTurn(0);},1000);
+    setTimeout(()=>{
+      startBg.remove();
+      // ── Animated deal: ทีละใบ round-robin 5 rounds x 5 players ──
+      const DEAL_DELAY = 120; // ms ระหว่างใบ
+      const totalCards = 5; // ใบต่อคน (แจกแค่ของผู้เล่น animate)
+      let dealIdx = 0;
+      // แจกการ์ดจริงทีละ round-robin
+      function dealNext(){
+        if(dealIdx >= 5 * 5){
+          // แจกครบแล้ว → แสดง role reveal
+          // แจกครบแล้ว → ตั้ง BG ทันที แต่ BGM ค่อยมา
+          const bgV=BG_VARIANTS[~~(Math.random()*BG_VARIANTS.length)];
+          const bgUrl=`https://raw.githubusercontent.com/dekster00/card-battle/main/assets/BG/battle-ground-${bgV}.png`;
+          const appEl=document.getElementById('app');
+          if(appEl) appEl.style.setProperty('--bg-battle',`url("${bgUrl}")`);
+          showRoleReveal(()=>{
+            // BGM เริ่มหลัง role reveal dismiss 2 วิ
+            setTimeout(()=>{ stopBGM(); playBattleBGM(bgV); }, 2000);
+            beginTurn(0);
+          });
+          return;
+        }
+        const round = Math.floor(dealIdx / 5);
+        const playerIdx = dealIdx % 5;
+        const c = G.deck.pop();
+        if(c) G.players[playerIdx].hand.push(c);
+        // เสียงและ animation เฉพาะการ์ดของผู้เล่น (pi=0)
+        if(playerIdx === 0){
+          _loadBuf(SFX_DRAW).then(b=>_playBuf(b, 0.55));
+          fxDealCard(round);
+        }
+        renderHand();
+        dealIdx++;
+        setTimeout(dealNext, DEAL_DELAY);
+      }
+      dealNext();
+    },1000);
   },1200);
   },100); // end of startBg timeout
+}
+
+/* ── fxDealCard: การ์ดบินมาจากกองเข้ามือ ── */
+function fxDealCard(cardIndex){
+  const deck = document.getElementById('deck-wrap') || document.getElementById('deck-area');
+  const hand = document.getElementById('hand-area') || document.getElementById('my-hand');
+  const card = document.createElement('div');
+  card.style.cssText = `
+    position:fixed;z-index:9000;
+    width:62px;height:88px;border-radius:8px;
+    background:#1a1228;border:2px solid #c8a850;
+    box-shadow:0 4px 20px rgba(200,168,80,.5);
+    pointer-events:none;
+  `;
+  // ตำแหน่งเริ่มต้น (กลางจอ บน)
+  const startX = window.innerWidth * 0.5 - 31;
+  const startY = window.innerHeight * 0.15;
+  card.style.left = startX + 'px';
+  card.style.top  = startY + 'px';
+  document.body.appendChild(card);
+
+  // ตำแหน่งปลาย (มือผู้เล่น)
+  const handEl = document.getElementById('hand-area') || document.querySelector('.hand-scroll') || document.querySelector('#my-hand');
+  let endX = window.innerWidth * 0.5 - 31 + (cardIndex - 2) * 70;
+  let endY = window.innerHeight * 0.82;
+  if(handEl){
+    const r = handEl.getBoundingClientRect();
+    endX = r.left + r.width * 0.5 + (cardIndex - 2) * 70;
+    endY = r.top + 20;
+  }
+
+  if(typeof gsap !== 'undefined'){
+    gsap.fromTo(card,
+      { x:0, y:0, scale:0.6, opacity:0, rotation: -15 },
+      { x: endX - startX, y: endY - startY,
+        scale:1, opacity:1, rotation:0,
+        duration:0.38, ease:'power3.out',
+        onComplete(){ card.remove(); }
+      }
+    );
+  } else {
+    setTimeout(()=>card.remove(), 400);
+  }
+}
+
+/* ── showRoleReveal: ประกาศ Role กลางจอ ── */
+function showRoleReveal(cb){
+  const myP = G.players[0];
+  const roleColors = {
+    LEADER:'#c090e0', Guardian:'#70b0f0',
+    Betrayer:'#f08080', Watcher:'#f0c040'
+  };
+  const roleDesc = {
+    LEADER:'ปกป้องตัวเองจาก Betrayer และ Watcher',
+    Guardian:'ปกป้อง LEADER — กำจัด Betrayer และ Watcher',
+    Betrayer:'สังหาร LEADER ให้ได้!',
+    Watcher:'กำจัดทุกคนแล้วเป็นคนสุดท้ายที่รอดชีวิต'
+  };
+  const col = roleColors[myP.role] || '#fff';
+
+  const ov = document.createElement('div');
+  ov.style.cssText = `
+    position:fixed;inset:0;z-index:9500;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    background:rgba(0,0,0,.82);backdrop-filter:blur(6px);
+    opacity:0;transition:opacity .35s;
+  `;
+  ov.innerHTML = `
+    <div style="text-align:center;padding:32px 40px;
+      background:rgba(10,8,22,.92);border:2px solid ${col};
+      border-radius:18px;box-shadow:0 0 60px ${col}55;
+      max-width:320px;transform:scale(.85);transition:transform .35s;">
+      <div style="font-size:13px;color:#aaa;letter-spacing:2px;margin-bottom:8px;">คุณได้รับ Role</div>
+      <div style="font-size:42px;font-weight:700;color:${col};
+        text-shadow:0 0 24px ${col};margin-bottom:6px;">${myP.role}</div>
+      <div style="font-size:13px;color:#ccc;margin-bottom:20px;line-height:1.5;">${roleDesc[myP.role]||''}</div>
+      <div style="font-size:11px;color:#666;">แตะหรือคลิกเพื่อเริ่มเกม</div>
+    </div>
+  `;
+  document.body.appendChild(ov);
+  _loadBuf(SFX_ROLE_REVEAL).then(b=>_playBuf(b, 0.6));
+
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    ov.style.opacity = '1';
+    const box = ov.querySelector('div');
+    if(box) box.style.transform = 'scale(1)';
+  }));
+
+  function dismiss(){
+    ov.style.opacity = '0';
+    setTimeout(()=>{ ov.remove(); if(cb)cb(); }, 350);
+  }
+  ov.addEventListener('click', dismiss);
+  // auto dismiss หลัง 4 วิถ้าไม่กด
+  setTimeout(dismiss, 4000);
 }
 
 /* ═══ TURN ENGINE ═══ */
@@ -1924,12 +2140,23 @@ function beginTurn(pi){
   setPhase('standby');
   addLog(`— เทิร์น ${p.char.emoji} ${p.name} —`);
   if(p.equip.trinket?.skill==='charger'){p.mp=Math.min(6,p.mp+1);addLog(`${p.name}: ชาร์จไฟ +1 MP`);}
+  // eyecurse countdown
+  if(G.eyeCurse&&G.eyeCurse[pi]){
+    G.eyeCurse[pi].rounds--;
+    if(G.eyeCurse[pi].rounds<=0){
+      delete G.eyeCurse[pi];
+      recalcStats(pi);
+      addLog(`${p.name}: คำสาปดวงตาหาย!`,'imp');
+    } else {
+      addLog(`${p.name}: คำสาป ATK-1 ระยะ-1 (เหลือ ${G.eyeCurse[pi].rounds} รอบ)`,'dmg');
+    }
+  }
   if(G.curseCard[pi]){
     if(!G.deck.length)G.deck=shuffle(G.discard.splice(0));
     const top=G.deck.pop();G.discard.push(G.curseCard[pi]);
     if(top){
       G.discard.push(top);
-      if(top.sym==='hammer'){p.hp=Math.max(0,p.hp-3);addLog(`${p.name}: คำสาปออก🔨 HP-3!`,'dmg');checkDeath(pi);}
+      if(top.sym==='hammer'){dealDamage(pi,3);addLog(`${p.name}: คำสาปออก🔨 HP-3!`,'dmg');checkDeath(pi);}
       else{const nxt=nextAlive(pi);if(nxt!==null){G.curseCard[nxt]=G.curseCard[pi];addLog(`คำสาปส่งต่อ→${G.players[nxt].name}`);}}
       G.curseCard[pi]=null;
     }
@@ -1973,11 +2200,22 @@ function setPhase(ph){
 }
 function drawCards(pi,n){
   const p=G.players[pi];
+  const isHuman = pi===getActivePi();
+  const startHandLen = p.hand.length;
   for(let i=0;i<n;i++){
     if(!G.deck.length){G.deck=shuffle(G.discard.splice(0));addLog('สับกองทิ้งใหม่');}
     const c=G.deck.pop();if(c)p.hand.push(c);
+    if(isHuman){
+      const delay=i*160;
+      setTimeout(()=>{
+        _loadBuf(SFX_DRAW).then(b=>_playBuf(b,0.5));
+        fxDealCard(startHandLen+i);
+        renderHand();
+      }, delay);
+    }
   }
-  renderAll();
+  if(!isHuman) renderAll();
+  else setTimeout(()=>renderAll(), n*160+100);
 }
 function addLog(msg,cls=''){
   G.log.unshift({msg,cls});if(G.log.length>80)G.log.pop();
@@ -2016,7 +2254,10 @@ function checkDeath(pi){
   if(p.hp<=0&&!p.dead){
     p.dead=true;p.hp=0;
     addLog(`💀 ${p.name} [${p.char.name}] ตาย!`,'dmg');
-    // show death reveal then check win
+    // kill tracking
+    if(G._stats && G.turn !== pi){
+      G._stats.kills[G.turn]=(G._stats.kills[G.turn]||0)+1;
+    }
     showDeathReveal(pi,()=>checkWin());
   }
 }
@@ -2043,34 +2284,131 @@ function checkWin(){
   const ldr=G.players.find(p=>p.role==='LEADER');
   const btrs=G.players.filter(p=>p.role==='Betrayer');
   const wtch=G.players.find(p=>p.role==='Watcher');
-  const grd=G.players.find(p=>p.role==='Guardian');
   if(!ldr) return;
+
   if(ldr.dead){
-    const alive=G.players.filter(p=>!p.dead);
-    if(wtch&&!wtch.dead&&alive.length===1)endGame('⚫ Watcher',`${wtch.name} ชนะ! เหลืออยู่คนสุดท้าย`);
-    else if(btrs.some(b=>!b.dead))endGame('🔴 Betrayer','Betrayer กำจัด LEADER สำเร็จ!');
-    else endGame('❓','LEADER ตาย แต่ไม่มีผู้ชนะชัดเจน');
+    // LEADER ตายแล้ว — Betrayer ชนะก่อนเสมอถ้ายังมีชีวิต
+    if(btrs.some(b=>!b.dead)){
+      endGame('Betrayer','Betrayer กำจัด LEADER สำเร็จ!');
+      return;
+    }
+    // Betrayer ตายหมดก่อน LEADER ตาย → Watcher ชนะ (ถ้ายังอยู่)
+    if(wtch&&!wtch.dead){
+      endGame('Watcher',`${wtch.name} ชนะ! Betrayer ตายหมดและ LEADER ตาย`);
+      return;
+    }
+    endGame('❓','LEADER ตาย แต่ไม่มีผู้ชนะชัดเจน');
     return;
   }
-  // LEADER alive: check if all threats eliminated
+
+  // LEADER ยังอยู่: Betrayer + Watcher ตายหมด → LEADER & Guardian ชนะ
   const allEnemiesDead=btrs.every(b=>b.dead)&&(!wtch||wtch.dead);
   if(allEnemiesDead){
+    const grd=G.players.find(p=>p.role==='Guardian');
     const grdAlive=grd&&!grd.dead;
-    endGame('👑 LEADER & Guardian',`${ldr.name}${grdAlive?' และ '+grd.name:''} ชนะ!`);
+    endGame('LEADER',`${ldr.name}${grdAlive?' และ '+grd.name:''} ชนะ!`);
   }
 }
 
-function endGame(winner,detail){
+function endGame(winnerRole, detail){
   G.gameOver=true;
   renderAll();
   playVictory();
-  document.getElementById('win-title').textContent=`🏆 ${winner} ชนะ!`;
+
+  // ตัดสินแพ้ชนะของผู้เล่นแต่ละคนตาม role
+  function didWin(p){
+    if(winnerRole==='LEADER')    return p.role==='LEADER'||p.role==='Guardian';
+    if(winnerRole==='Betrayer')  return p.role==='Betrayer';
+    if(winnerRole==='Watcher')   return p.role==='Watcher';
+    return false;
+  }
+
+  const myP=G.players[0];
+  const iWon=didWin(myP);
+  const winnerLabel={
+    LEADER:'👑 LEADER & Guardian',
+    Betrayer:'🔴 Betrayer',
+    Watcher:'⚫ Watcher',
+    '❓':'❓'
+  }[winnerRole]||winnerRole;
+
+  document.getElementById('win-title').textContent=`${iWon?'🏆 ชนะ!':'💀 แพ้'} ${winnerLabel}`;
   document.getElementById('win-detail').textContent=detail;
-  // show all roles
-  const rolesHtml=G.players.map(p=>`<div style="padding:3px 0;color:${ROLE_COLOR[p.role]||'#fff'};">${p.char.emoji} ${p.name}: <b>${p.role}</b> ${p.dead?'💀':''}</div>`).join('');
-  document.getElementById('win-roles').innerHTML='<div style="margin-bottom:4px;color:var(--dim);">Role ทั้งหมด:</div>'+rolesHtml;
+
+  // Role reveal ทุกคน + แสดงผลแพ้/ชนะรายคน
+  const roleColors={LEADER:'#c090e0',Guardian:'#70b0f0',Betrayer:'#f08080',Watcher:'#f0c040'};
+  const rolesHtml=G.players.map(p=>{
+    const icon=ICON_IMAGES[p.char.id]
+      ?`<img src="${ICON_IMAGES[p.char.id]}" style="width:28px;height:28px;object-fit:cover;object-position:top;border-radius:4px;vertical-align:middle;margin-right:6px;">`
+      :`<span style="margin-right:4px;">${p.char.emoji}</span>`;
+    const won=didWin(p);
+    return`<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.06);">
+      ${icon}
+      <span style="flex:1;">${p.name}</span>
+      <span style="color:${roleColors[p.role]||'#fff'};font-weight:600;">${p.role}</span>
+      <span style="font-size:11px;color:${won?'#70f090':'#f07070'};font-weight:600;">${won?'🏆 ชนะ':'💀 แพ้'}</span>
+    </div>`;
+  }).join('');
+  document.getElementById('win-roles').innerHTML=
+    `<div style="font-weight:600;margin-bottom:6px;color:#ccc;">Role ทั้งหมด</div>`+rolesHtml;
+
+  // ── Analysis ──
+  const stats=G._stats||{};
+  const playerRows=G.players.map(p=>{
+    const dealt=(stats.dmgDealt||{})[p.i]||0;
+    const taken=(stats.dmgTaken||{})[p.i]||0;
+    const kills=(stats.kills||{})[p.i]||0;
+    const cardsPlayed=(stats.cardsPlayed||{})[p.i]||0;
+    const won=didWin(p);
+    return`<tr style="border-bottom:1px solid rgba(255,255,255,.05);">
+      <td style="padding:5px 4px;">${ICON_IMAGES[p.char.id]?`<img src="${ICON_IMAGES[p.char.id]}" style="width:22px;height:22px;object-fit:cover;border-radius:3px;vertical-align:middle;">`:p.char.emoji} ${p.name}</td>
+      <td style="text-align:center;color:#f08080;">${dealt}</td>
+      <td style="text-align:center;color:#aaa;">${taken}</td>
+      <td style="text-align:center;color:#f0c040;">${kills}</td>
+      <td style="text-align:center;color:#70b0f0;">${cardsPlayed}</td>
+      <td style="text-align:center;font-weight:600;color:${won?'#70f090':'#f07070'};">${won?'🏆':'💀'}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('win-analysis').innerHTML=`
+    <div style="width:100%;margin-top:4px;">
+      <div style="font-weight:600;margin-bottom:8px;color:#ccc;">📊 สรุปผลการแข่งขัน</div>
+      <div style="overflow-x:auto;">
+        <table style="width:100%;font-size:12px;border-collapse:collapse;">
+          <thead>
+            <tr style="color:var(--dim);border-bottom:1px solid rgba(255,255,255,.15);">
+              <th style="text-align:left;padding:4px;">ผู้เล่น</th>
+              <th style="padding:4px;">ดาเมจ<br>ทำได้</th>
+              <th style="padding:4px;">ดาเมจ<br>รับ</th>
+              <th style="padding:4px;">Kill</th>
+              <th style="padding:4px;">การ์ด<br>เล่น</th>
+              <th style="padding:4px;">ผล</th>
+            </tr>
+          </thead>
+          <tbody>${playerRows}</tbody>
+        </table>
+      </div>
+    </div>`;
+
   document.getElementById('win-screen').classList.add('show');
   addLog(`🏆 ${detail}`,'imp');
+}
+
+function goLobby(){
+  stopBGM();
+  playLobbyBGM();
+  document.getElementById('win-screen').classList.remove('show');
+  document.getElementById('app').style.display='none';
+  document.getElementById('title-screen').style.display='flex';
+  // reset char selection
+  selectedCharId=null;
+  document.querySelectorAll('.char-card').forEach(el=>el.classList.remove('selected'));
+  const startBtn=document.getElementById('btn-start');
+  if(startBtn)startBtn.disabled=true;
+  // scroll char select to top
+  const cs=document.getElementById('cs-screen');
+  if(cs)cs.scrollTop=0;
+  G=null;
 }
 
 function spendMP(p,n){
@@ -2093,10 +2431,21 @@ function recalcStats(pi){
     if(eq.stats.drawAfterAtk)p.drawAfterAtk=true;
   }
   if(p._athBonus)p.atk+=p._athBonus;
+  // eyecurse penalty
+  if(G.eyeCurse&&G.eyeCurse[pi]){
+    const ec=G.eyeCurse[pi];
+    p.atk=Math.max(0,p.atk-ec.atkPen);
+    p.range=Math.max(1,p.range-ec.rangePen);
+  }
 }
 function pickTarget(pi,title,cb){
   const ts=G.players.filter(q=>!q.dead&&q.i!==pi);
-  showModal(title,ts.map(t=>`<button class="btn" onclick="closeModal();_pcb(${t.i})">${t.char.emoji} ${t.name} HP:${t.hp}</button>`).join(''),[{label:'ยกเลิก',fn:closeModal}]);
+  showModal(title,ts.map(t=>{
+    const icon=ICON_IMAGES[t.char.id]
+      ?`<img src="${ICON_IMAGES[t.char.id]}" style="width:28px;height:28px;object-fit:cover;object-position:top;border-radius:4px;margin-right:8px;vertical-align:middle;">`
+      :`<span style="margin-right:6px;">${t.char.emoji}</span>`;
+    return`<button class="btn" onclick="closeModal();_pcb(${t.i})" style="display:flex;align-items:center;">${icon}${t.name} HP:${t.hp}</button>`;
+  }).join(''),[{label:'ยกเลิก',fn:closeModal}]);
   window._pcb=(ti)=>cb(G.players[ti]);
 }
 
@@ -2138,7 +2487,13 @@ function atkPickCard(cid){
   const nb=getNeighbors(pi);
   showModal('เลือกเป้าหมาย',
     `<div style="margin-bottom:8px;">โจมตีด้วย ${SYM_IMG[card.sym]} · หลบต้องมี ${SYM_IMG[DODGE_SYM[card.sym]]}</div>`+
-    nb.map(ni=>`<button class="btn" onclick="doAttack(${pi},${ni},${cid})">${G.players[ni].char.emoji} ${G.players[ni].name} HP:${G.players[ni].hp}</button>`).join(''),
+    nb.map(ni=>{
+      const t=G.players[ni];
+      const icon=ICON_IMAGES[t.char.id]
+        ?`<img src="${ICON_IMAGES[t.char.id]}" style="width:28px;height:28px;object-fit:cover;object-position:top;border-radius:4px;margin-right:8px;vertical-align:middle;">`
+        :`<span style="margin-right:6px;">${t.char.emoji}</span>`;
+      return`<button class="btn" onclick="doAttack(${pi},${ni},${cid})" style="display:flex;align-items:center;">${icon}${t.name} HP:${t.hp}</button>`;
+    }).join(''),
     [{label:'ยกเลิก',fn:closeModal}]);
 }
 function doAttack(atkI,defI,cid){
@@ -2191,7 +2546,7 @@ function playerDefend(atkI,defI,atkCard){
   if(def.equip.armor){
     const ar=checkArmor(defI,atkCard);
     if(ar==='block'){addLog(`${def.name}: เกราะบล็อก!`);renderAll();after();return;}
-    if(ar==='reflect'){atk.hp=Math.max(0,atk.hp-atk.atk);addLog(`เกราะสะท้อน! ${atk.name} HP-${atk.atk}`,'dmg');checkDeath(atkI);renderAll();after();return;}
+    if(ar==='reflect'){dealDamage(atkI,atk.atk);addLog(`เกราะสะท้อน! ${atk.name} HP-${atk.atk}`,'dmg');checkDeath(atkI);renderAll();after();return;}
   }
 
   // Online mode: if defender is a human player on another device, they handle it themselves
@@ -2246,14 +2601,34 @@ function _showDefendModal(atkI,defI,atkCard,after){
   const dmg=Math.max(1,atk.atk-(atk.ignoreArmor?0:def.def));
   const opts=[];
   if(hasDodge)opts.push({label:`🛡 หลบ (ทิ้ง ${SYM_IMG[dodgeSym]})`,fn:()=>{
-    closeModal();const dc=def.hand.find(c=>c.sym===dodgeSym);
-    def.hand=def.hand.filter(c=>c.id!==dc.id);G.discard.push(dc);
-    addLog(`${def.name}: หลบ! (ทิ้ง ${SYM_EMOJI[dc.sym]})`);
-    G._defendRequest=null; if(after)after();}});
+    closeModal();
+    const dodgeCards=def.hand.filter(c=>c.sym===dodgeSym);
+    function doDodge(dc){
+      def.hand=def.hand.filter(c=>c.id!==dc.id);G.discard.push(dc);
+      addLog(`${def.name}: หลบ! (ทิ้ง ${SYM_EMOJI[dc.sym]} ${dc.name})`);
+      G._defendRequest=null; if(after)after();
+    }
+    if(dodgeCards.length===1){
+      doDodge(dodgeCards[0]);
+    } else {
+      // มีหลายใบ — เปิด modal ให้เลือก
+      showModal(`🛡 เลือกการ์ดที่จะทิ้งเพื่อหลบ`,
+        `<div style="font-size:12px;color:var(--dim);margin-bottom:10px;">เลือก 1 ใบที่จะใช้หลบการโจมตี</div>`+
+        renderCardGrid(dodgeCards,'_dodgePick'),
+        [{label:'ยกเลิก',fn:()=>_showDefendModal(atkI,defI,atkCard,after)}]);
+      // ผูก global handler ชั่วคราว
+      window._dodgePick=function(cid){
+        const dc=dodgeCards.find(c=>c.id===cid);
+        if(!dc)return;
+        closeModal();
+        doDodge(dc);
+      };
+    }
+  }});
   if(hasCounter)opts.push({label:'↩ สวนกลับ',fn:()=>{
     closeModal();const cc=def.hand.find(c=>c.effect==='counter');
     def.hand=def.hand.filter(c=>c.id!==cc.id);G.discard.push(cc);
-    atk.hp=Math.max(0,atk.hp-1);addLog(`${def.name}: สวนกลับ! ${atk.name} HP-1`,'dmg');
+    dealDamage(atkI,1);addLog(`${def.name}: สวนกลับ! ${atk.name} HP-1`,'dmg');
     showCardOverlay(def.name,cc,null);checkDeath(atkI);
     G._defendRequest=null; if(after)after();}});
   opts.push({label:`💥 รับ (-${dmg} HP)`,fn:()=>{
@@ -2267,8 +2642,12 @@ function _showDefendModal(atkI,defI,atkCard,after){
   const atkIconHtml=ICON_IMAGES[atk.char.id]
     ?`<img src="${ICON_IMAGES[atk.char.id]}" style="width:44px;height:44px;object-fit:cover;object-position:top;border-radius:6px;border:2px solid var(--red);margin-right:8px;vertical-align:middle;">`
     :`<span style="font-size:28px;margin-right:6px;">${atk.char.emoji}</span>`;
-  showModal(`${atkIconHtml}<b style="vertical-align:middle;">${atk.name}</b> โจมตีด้วย ${SYM_IMG[atkCard.sym]}`,
-    `<div style="font-size:12px;margin-bottom:8px;">ATK ${atk.atk} − DEF ${def.def} = <b style="color:var(--red);">${dmg} HP</b><br><span style="color:var(--dim);font-size:10px;">หลบต้องมีการ์ด ${SYM_IMG[dodgeSym]}</span></div>`,opts);
+  showModal(`${atkIconHtml}<b style="vertical-align:middle;">${atk.name}</b> โจมตีคุณด้วยสัญลักษณ์ ${SYM_IMG[atkCard.sym]}`,
+    `<div style="font-size:12px;margin-bottom:8px;line-height:1.7;">
+      ATK ${atk.atk} − DEF ${def.def} = <b style="color:var(--red);">${dmg} HP</b><br>
+      <span style="color:var(--dim);">♡ หลบ — ทิ้งการ์ดสัญลักษณ์ ${SYM_IMG[dodgeSym]} จากมือ</span><br>
+      <span style="color:var(--dim);">↩ สวนกลับ — ใช้การ์ด <b style="color:#fff;">สวนกลับ</b> ที่มีในมือ</span>
+    </div>`,opts);
 }
 function botDefend(atkI,defI,atkCard){
   const atk=G.players[atkI],def=G.players[defI];
@@ -2281,13 +2660,13 @@ function botDefend(atkI,defI,atkCard){
   const counter=def.hand.find(c=>c.effect==='counter');
   if(counter&&Math.random()<0.45){
     def.hand=def.hand.filter(c=>c.id!==counter.id);G.discard.push(counter);
-    atk.hp=Math.max(0,atk.hp-1);addLog(`${def.name}: สวนกลับ! ${atk.name} HP-1`,'dmg');
+    dealDamage(atkI,1);addLog(`${def.name}: สวนกลับ! ${atk.name} HP-1`,'dmg');
     showCardOverlay(def.name,counter,null);checkDeath(atkI);after();return;
   }
   if(def.equip.armor){
     const ar=checkArmor(defI,atkCard);
     if(ar==='block'){addLog(`${def.name}: เกราะบล็อก!`);after();return;}
-    if(ar==='reflect'){atk.hp=Math.max(0,atk.hp-atk.atk);addLog(`${def.name}: เกราะสะท้อน! ${atk.name} HP-${atk.atk}`,'dmg');checkDeath(atkI);after();return;}
+    if(ar==='reflect'){dealDamage(atkI,atk.atk);addLog(`${def.name}: เกราะสะท้อน! ${atk.name} HP-${atk.atk}`,'dmg');checkDeath(atkI);after();return;}
   }
   const dodgeSym=DODGE_SYM[atkCard.sym];
   const dc=def.hand.find(c=>c.sym===dodgeSym);
@@ -2316,6 +2695,14 @@ function checkArmor(pi,atkCard){
   const a=p.equip.armor;
   if(a.armorType==='cape'&&top.sym==='paper')return'reflect';
   if(a.armorType==='jacket'&&top.sym==='scissors')return'block';
+  // ฝาหม้อ: นับโดน
+  if(a.armorType==='shield'&&a.maxHits){
+    a.hitCount=(a.hitCount||0)+1;
+    if(a.hitCount>=a.maxHits){
+      addLog(`${p.name}: ฝาหม้อแตก! (โดน ${a.maxHits} ครั้ง)`,'dmg');
+      G.discard.push(a);delete p.equip.armor;recalcStats(pi);
+    }
+  }
   return'none';
 }
 
@@ -2348,8 +2735,11 @@ function botTurn(pi){
     G.ap=Math.max(0,G.ap-card.ap);
     botPlayCard(card,()=>{
       const alive=G.players.filter(q=>!q.dead&&q.i!==pi);
-      const needsTarget=['heal1','destroy','steal','skipturn','duel'].includes(card.effect);
-      const tPi=needsTarget&&alive.length?alive[~~(Math.random()*alive.length)].i:null;
+      const isHeal=card.effect==='heal1'||card.effect==='healstrong';
+      const healTargets=isHeal?G.players.filter(q=>!q.dead):alive;
+      const needsTarget=['heal1','healstrong','destroy','steal','skipturn','duel','eyecurse'].includes(card.effect);
+      const pool=needsTarget?(isHeal?healTargets:alive):[];
+      const tPi=needsTarget&&pool.length?pool[~~(Math.random()*pool.length)].i:null;
       applyCardEffect(pi,card,tPi);
       renderAll();
       // Step 3: attack after card resolved
@@ -2389,8 +2779,28 @@ function applyCardEffect(pi,card,tPi){
   const p=G.players[pi];
   switch(card.effect){
     case'draw2':drawCards(pi,2);break;
-    case'heal1':{const t=tPi!==null?G.players[tPi]:p;t.hp=Math.min(t.maxHp,t.hp+1);addLog(`${t.name} HP+1`,'hl');break;}
-    case'healstrong':{p.hp=Math.min(p.maxHp,p.hp+1);if(Math.random()<0.5){p.hp=Math.min(p.maxHp,p.hp+1);addLog(`${p.name} ฮีลแรง! HP+2`,'hl');}else addLog(`${p.name} HP+1`,'hl');break;}
+    case'heal1':{
+      const t=tPi!==null?G.players[tPi]:p;
+      t.hp=Math.min(t.maxHp,t.hp+1);
+      // ถ้าเป้าหมายมี eyecurse → ฮีลถอดคำสาปออก
+      if(G.eyeCurse&&G.eyeCurse[t.i]){
+        delete G.eyeCurse[t.i];
+        recalcStats(t.i);
+        addLog(`${t.name}: คำสาปดวงตาหาย! (ฮีล)`,'imp');
+      }
+      addLog(`${t.name} HP+1`,'hl');
+      break;
+    }
+    case'healstrong':{
+      const t=tPi!==null?G.players[tPi]:p;
+      t.hp=Math.min(t.maxHp,t.hp+2);
+      if(G.eyeCurse&&G.eyeCurse[t.i]){
+        delete G.eyeCurse[t.i];recalcStats(t.i);
+        addLog(`${t.name}: คำสาปดวงตาหาย!`,'imp');
+      }
+      addLog(`🍕 ${t.name} ฮีล HP+2`,'hl');
+      break;
+    }
     case'mp_black1':p.mp=Math.min(6,p.mp+1);addLog(`${p.name}: +1 MP`);break;
     case'mp_white1':p.mp=Math.min(6,p.mp+1);addLog(`${p.name}: +1 MP`);break;
     case'mp_black2':p.mp=Math.min(6,p.mp+2);addLog(`${p.name}: +2 MP`);break;
@@ -2398,13 +2808,84 @@ function applyCardEffect(pi,card,tPi){
     case'ap_plus1':G.ap++;addLog(`${p.name}: +1 AP!`,'imp');break;
     case'skipturn':if(tPi!==null){G.skipCurse[tPi]=true;addLog(`${G.players[tPi].name}: ถูกคำสาปข้ามเทิร์น!`);}break;
     case'curse':G.curseCard[pi]=card;addLog(`${p.name}: วางการ์ดคำสาป`);break;
-    case'destroy':{if(tPi!==null){const t=G.players[tPi];const sl=Object.keys(t.equip);if(sl.length){const s=sl[~~(Math.random()*sl.length)];G.discard.push(t.equip[s]);delete t.equip[s];recalcStats(tPi);addLog(`${p.name}: ทำลาย ${s} ของ ${t.name}`,'dmg');}else addLog(`${G.players[tPi].name} ไม่มีอุปกรณ์`);}break;}
-    case'steal':{if(tPi!==null){const t=G.players[tPi];const sl=Object.keys(t.equip);if(sl.length){const s=sl[~~(Math.random()*sl.length)];const eq=t.equip[s];delete t.equip[s];recalcStats(tPi);doInstall(pi,eq);addLog(`${p.name}: ขโมย ${eq.name} จาก ${t.name}!`);}else addLog(`${G.players[tPi].name} ไม่มีอุปกรณ์`);}break;}
+    case'eyecurse':{
+      // debuff ATK-1 ระยะ-1 ติด 3 รอบ
+      if(tPi!==null){
+        if(!G.eyeCurse)G.eyeCurse={};
+        G.eyeCurse[tPi]={rounds:3,atkPen:1,rangePen:1};
+        recalcStats(tPi);
+        addLog(`${G.players[tPi].name}: ดวงตาคำสาป! ATK-1 ระยะ-1 (3รอบ)`,'dmg');
+      }
+      break;
+    }
+    case'destroy':{
+      if(tPi===null)break;
+      const t=G.players[tPi];
+      const sl=Object.keys(t.equip);
+      if(sl.length){
+        // มีอุปกรณ์ → เปิดให้เลือกว่าจะทำลายชิ้นไหน
+        const opts=sl.map(s=>({
+          label:`🗑 ${t.equip[s].name} (${s})`,
+          fn:()=>{
+            closeModal();
+            const eq=t.equip[s];
+            G.discard.push(eq);delete t.equip[s];recalcStats(tPi);
+            addLog(`${p.name}: ทำลาย ${eq.name} ของ ${t.name}`,'dmg');
+            renderAll();
+          }
+        }));
+        showModal(`🔨 ค้อนทุบ — เลือกทำลายอุปกรณ์ของ ${t.name}`,
+          `<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">เลือก 1 ชิ้นที่จะทำลาย</div>`,
+          [...opts,{label:'ยกเลิก',fn:closeModal}]);
+      } else {
+        // ไม่มีอุปกรณ์ → สุ่มทิ้งการ์ดในมือ 2 ใบ
+        let discarded=0;
+        for(let i=0;i<2&&t.hand.length>0;i++){
+          const idx=~~(Math.random()*t.hand.length);
+          const c=t.hand.splice(idx,1)[0];
+          G.discard.push(c);discarded++;
+        }
+        addLog(`${t.name} ไม่มีอุปกรณ์ → ทิ้งการ์ด ${discarded} ใบ`,'dmg');
+      }
+      break;
+    }
+    case'steal':{
+      if(tPi===null)break;
+      const t=G.players[tPi];
+      const sl=Object.keys(t.equip);
+      if(sl.length){
+        // มีอุปกรณ์ → เปิดให้เลือกว่าจะขโมยชิ้นไหน
+        const opts=sl.map(s=>({
+          label:`💰 ${t.equip[s].name} (${s})`,
+          fn:()=>{
+            closeModal();
+            const eq=t.equip[s];
+            delete t.equip[s];recalcStats(tPi);
+            doInstall(pi,eq);
+            addLog(`${p.name}: ขโมย ${eq.name} จาก ${t.name}!`,'imp');
+            renderAll();
+          }
+        }));
+        showModal(`💰 ขโมย — เลือกอุปกรณ์ของ ${t.name}`,
+          `<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">เลือก 1 ชิ้นที่จะขโมย</div>`,
+          [...opts,{label:'ยกเลิก',fn:closeModal}]);
+      } else {
+        // ไม่มีอุปกรณ์ → สุ่มขโมยการ์ดในมือ 2 ใบ
+        let stolen=0;
+        for(let i=0;i<2&&t.hand.length>0;i++){
+          const idx=~~(Math.random()*t.hand.length);
+          const c=t.hand.splice(idx,1)[0];
+          p.hand.push(c);stolen++;
+        }
+        addLog(`${t.name} ไม่มีอุปกรณ์ → ขโมยการ์ด ${stolen} ใบ`,'imp');
+      }
+      break;
+    }
     case'aoe_hammer':doAOE(pi,'hammer');break;
     case'aoe_scissors':doAOE(pi,'scissors');break;
     case'aoe_paper':doAOE(pi,'paper');break;
     case'duel':if(tPi!==null)doDuel(pi,tPi);break;
-    case'share':doShare(pi);break;
+    case'share':doShare(pi);return; // doShare handles renderAll
     case'counter':addLog('สวนกลับ: ใช้ตอนถูกโจมตี');break;
     case'cancel':addLog('ยกเลิก: ใช้ตอนถูกโจมตี');break;
     case'equip':doInstall(pi,card);playEquip();return;
@@ -2413,39 +2894,122 @@ function applyCardEffect(pi,card,tPi){
 }
 
 function doAOE(pi,sym){
+  const dmgTargets=[];
   for(const q of G.players){
     if(q.dead||q.i===pi)continue;
     const c=q.hand.find(x=>x.sym===sym);
     if(c){q.hand=q.hand.filter(x=>x.id!==c.id);G.discard.push(c);addLog(`${q.name}: ทิ้ง ${SYM_EMOJI[sym]} ปลอดภัย`);}
-    else{q.hp=Math.max(0,q.hp-1);addLog(`${q.name}: ไม่มี ${SYM_EMOJI[sym]} HP-1`,'dmg');playPunch();checkDeath(q.i);}
+    else{dmgTargets.push({pi:q.i,amount:1});addLog(`${q.name}: ไม่มี ${SYM_EMOJI[sym]} HP-1`,'dmg');playPunch();}
   }
+  // damage ทีละคนซ้าย→ขวา
+  fxSeqDamage(dmgTargets,()=>{
+    dmgTargets.forEach(t=>checkDeath(t.pi));
+    renderAll();
+  });
 }
 function doDuel(pi,ti){
   const p=G.players[pi],t=G.players[ti];
   if(!p.hand.length||!t.hand.length){addLog('ดวลไม่ได้ (มือว่าง)');return;}
   const pc=p.hand[~~(Math.random()*p.hand.length)];
   const tc=t.hand[~~(Math.random()*t.hand.length)];
-  addLog(`ดวล: ${p.name}[${SYM_EMOJI[pc.sym]}] vs ${t.name}[${SYM_EMOJI[tc.sym]}]`);
   function beats(a,b){return(a==='hammer'&&b==='scissors')||(a==='scissors'&&b==='paper')||(a==='paper'&&b==='hammer');}
-  if(pc.sym===tc.sym){p.hp=Math.max(0,p.hp-1);t.hp=Math.max(0,t.hp-1);addLog('เสมอ! ทั้งคู่ HP-1','dmg');playPunch();}
-  else if(beats(pc.sym,tc.sym)){t.hp=Math.max(0,t.hp-1);addLog(`${t.name} HP-1`,'dmg');playPunch();}
-  else{p.hp=Math.max(0,p.hp-1);addLog(`${p.name} HP-1`,'dmg');playPunch();}
-  checkDeath(pi);checkDeath(ti);
+
+  let result, loser;
+  if(pc.sym===tc.sym){
+    result='draw';
+  } else if(beats(pc.sym,tc.sym)){
+    result='win'; loser=ti;
+  } else {
+    result='lose'; loser=pi;
+  }
+
+  addLog(`ดวล: ${p.name}[${SYM_EMOJI[pc.sym]}] vs ${t.name}[${SYM_EMOJI[tc.sym]}]`);
+
+  // แสดง modal ผลดวล
+  const resultTxt = result==='draw'
+    ? `<span style="color:#f0c040;font-size:18px;font-weight:700;">⚖ เสมอ! ทั้งคู่ HP-1</span>`
+    : `<span style="color:#f08080;font-size:18px;font-weight:700;">💥 ${G.players[loser].name} แพ้ HP-1</span>`;
+
+  const pIcon=ICON_IMAGES[p.char.id]?`<img src="${ICON_IMAGES[p.char.id]}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;vertical-align:middle;">`:`<span style="font-size:24px;">${p.char.emoji}</span>`;
+  const tIcon=ICON_IMAGES[t.char.id]?`<img src="${ICON_IMAGES[t.char.id]}" style="width:36px;height:36px;object-fit:cover;border-radius:6px;vertical-align:middle;">`:`<span style="font-size:24px;">${t.char.emoji}</span>`;
+
+  const pcCardHtml=renderCardEl(pc).replace(/onclick="[^"]*"/,'');
+  const tcCardHtml=renderCardEl(tc).replace(/onclick="[^"]*"/,'');
+
+  showModal('⚔ ผลการดวล',`
+    <div style="display:flex;align-items:center;justify-content:center;gap:20px;padding:8px 0;">
+      <div style="text-align:center;">
+        <div style="margin-bottom:6px;">${pIcon} <b>${p.name}</b></div>
+        ${pcCardHtml}
+        <div style="font-size:20px;margin-top:6px;">${SYM_IMG[pc.sym]}</div>
+      </div>
+      <div style="font-size:28px;color:var(--dim);">VS</div>
+      <div style="text-align:center;">
+        <div style="margin-bottom:6px;">${tIcon} <b>${t.name}</b></div>
+        ${tcCardHtml}
+        <div style="font-size:20px;margin-top:6px;">${SYM_IMG[tc.sym]}</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:12px;">${resultTxt}</div>
+  `,[{label:'ตกลง',fn:()=>{
+    closeModal();
+    if(result==='draw'){
+      fxSeqDamage([{pi,amount:1},{pi:ti,amount:1}],()=>{checkDeath(pi);checkDeath(ti);renderAll();});
+      playPunch();
+    } else {
+      dealDamage(loser,1);playPunch();checkDeath(loser);renderAll();
+    }
+  }}]);
 }
 function doShare(pi){
+  const alive=G.players.filter(p=>!p.dead);
+  const drawN=alive.length+1;
   const drawn=[];
-  for(let i=0;i<5;i++){
+  for(let i=0;i<drawN;i++){
     if(!G.deck.length){if(G.discard.length)G.deck=shuffle(G.discard.splice(0));else break;}
     const c=G.deck.pop();if(c)drawn.push(c);
   }
-  addLog(`แบ่งปัน: จั่ว ${drawn.length} ใบ`);
-  const alive=G.players.filter(p=>!p.dead).sort((a,b)=>a.i===pi?-1:b.i===pi?1:0);
-  for(const p of alive){
-    if(!drawn.length)break;
-    const c=drawn.splice(~~(Math.random()*drawn.length),1)[0];
-    p.hand.push(c);addLog(`${p.name}: รับ ${c.name}`);
+  addLog(`นมกล่องแบ่งกัน: จั่ว ${drawn.length} ใบ`);
+  // เรียงตามเข็มนาฬิกาเริ่มจาก pi
+  const ordered=[...alive].sort((a,b)=>{
+    const ai=(a.i-pi+5)%5, bi=(b.i-pi+5)%5;
+    return ai-bi;
+  });
+  function giveNext(queue,remaining){
+    if(!queue.length||!remaining.length){
+      // ทิ้งที่เหลือ
+      remaining.forEach(c=>G.discard.push(c));
+      renderAll();
+      return;
+    }
+    const cur=queue[0];
+    if(cur.isBot){
+      // bot สุ่มเอง
+      const idx=~~(Math.random()*remaining.length);
+      const picked=remaining.splice(idx,1)[0];
+      cur.hand.push(picked);
+      addLog(`${cur.name}: รับ ${picked.name}`);
+      renderAll();
+      setTimeout(()=>giveNext(queue.slice(1),remaining),600);
+    } else {
+      // player เลือกเอง
+      showModal(`นมกล่องแบ่งกัน — เลือก 1 ใบ`,
+        `<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">เหลือ ${remaining.length} ใบ เลือก 1 ใบ</div>`+
+        renderCardGrid(remaining,'_sharePick'),
+        []
+      );
+      window._sharePick=function(cid){
+        const idx=remaining.findIndex(c=>c.id===cid);
+        if(idx<0)return;
+        const picked=remaining.splice(idx,1)[0];
+        cur.hand.push(picked);
+        addLog(`${cur.name}: รับ ${picked.name}`);
+        closeModal();
+        giveNext(queue.slice(1),remaining);
+      };
+    }
   }
-  for(const c of drawn)G.discard.push(c);
+  giveNext(ordered,drawn);
 }
 function doInstall(pi,card){
   const p=G.players[pi];const slot=card.slot;if(!slot)return;
@@ -2489,12 +3053,22 @@ function playSelected(){
   if(card.effect==='counter'){addLog('สวนกลับ: เก็บไว้ใช้ตอนถูกโจมตี');return;}
   if(card.effect==='cancel'){addLog('ยกเลิก: เก็บไว้ใช้ตอนถูกโจมตี');return;}
   const pi=G.turn;
-  const needTarget=['heal1','destroy','steal','skipturn','duel'].includes(card.effect);
+  const isHeal=card.effect==='heal1'||card.effect==='healstrong';
+  const needTarget=['heal1','healstrong','destroy','steal','skipturn','duel','eyecurse'].includes(card.effect);
   if(needTarget){
-    const ts=G.players.filter(q=>!q.dead&&q.i!==pi);
+    // heal รวมตัวเองด้วย, อื่นๆ ยกเว้นตัวเอง
+    const ts=isHeal
+      ? G.players.filter(q=>!q.dead)
+      : G.players.filter(q=>!q.dead&&q.i!==pi);
     if(!ts.length){addLog('ไม่มีเป้าหมาย');return;}
     showModal(`เลือกเป้าหมาย: ${card.name}`,
-      ts.map(t=>`<button class="btn" onclick="confirmPlay(${card.id},${t.i})">${t.char.emoji} ${t.name} HP:${t.hp}</button>`).join(''),
+      ts.map(t=>{
+        const icon=ICON_IMAGES[t.char.id]
+          ?`<img src="${ICON_IMAGES[t.char.id]}" style="width:28px;height:28px;object-fit:cover;object-position:top;border-radius:4px;margin-right:8px;vertical-align:middle;">`
+          :`<span style="margin-right:6px;">${t.char.emoji}</span>`;
+        const selfTag=t.i===pi?` <span style="font-size:10px;color:var(--dim);">(ตัวเอง)</span>`:'';
+        return`<button class="btn" onclick="confirmPlay(${card.id},${t.i})" style="display:flex;align-items:center;">${icon}${t.name} HP:${t.hp}${selfTag}</button>`;
+      }).join(''),
       [{label:'ยกเลิก',fn:closeModal}]);return;
   }
   commitPlay(card,null);
@@ -2510,6 +3084,7 @@ function commitPlay(card,ti){
   G.ap=Math.max(0,G.ap-card.ap);
   p.hand=p.hand.filter(c=>c.id!==card.id);G.discard.push(card);
   G.selectedCard=null;
+  if(G._stats) G._stats.cardsPlayed[pi]=(G._stats.cardsPlayed[pi]||0)+1;
   showCardOverlay(p.name,card,()=>{applyCardEffect(pi,card,ti);renderAll();});
 }
 function installSelected(){
@@ -2538,9 +3113,39 @@ function activateItemSkill(pi,eq){
   const p=G.players[pi];
   if(eq.skill==='necklace'){if(p.hp<=1){addLog('HP ไม่พอ');return;}p.hp--;drawCards(pi,2);addLog(`สร้อยคอ: HP-1→จั่ว2`);}
   else if(eq.skill==='bag'){if(!spendMP(p,1)){addLog('MP ไม่พอ');return;}drawCards(pi,1);addLog(`กระเป๋า: -1MP→จั่ว1`);}
-  else if(eq.skill==='watch'){if(!spendMP(p,2)){addLog('MP ไม่พอ (ต้องการ2)');return;}drawCards(pi,3);addLog(`นาฬิกา: -2MP→จั่ว3`);}
-  else if(eq.skill==='dog'){if(p.mp<3){addLog('MP ไม่พอ (3)');return;}pickTarget(pi,'หมาน้อย: เป้าหมาย',t=>{p.mp-=3;t.hp=Math.max(0,t.hp-1);addLog(`หมาน้อย! ${t.name} HP-1`,'dmg');checkDeath(t.i);renderAll();});return;}
-  else if(eq.skill==='cat'){if(p.mp<2){addLog('MP ไม่พอ (2)');return;}pickTarget(pi,'แมวน้อย: เป้าหมาย',t=>{p.mp-=2;t.hp=Math.min(t.maxHp,t.hp+1);addLog(`แมวน้อย! ${t.name} HP+1`,'hl');renderAll();});return;}
+  else if(eq.skill==='watch'){
+    if(!spendMP(p,2)){addLog('MP ไม่พอ (ต้องการ 2)');return;}
+    const drawn=[];
+    for(let i=0;i<3;i++){
+      if(!G.deck.length)G.deck=shuffle(G.discard.splice(0));
+      const c=G.deck.pop();if(c)drawn.push(c);
+    }
+    if(drawn.length===0){addLog('กองการ์ดหมด');return;}
+    if(pi===getActivePi()){
+      showModal('⌛ นาฬิกาทรายเวทมน — เลือกเก็บ 1 ใบ ทิ้ง 2',
+        `<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">กดการ์ดที่ต้องการเก็บ</div>`+
+        renderCardGrid(drawn,'_watchPick'),
+        []
+      );
+      window._watchPick=function(cid){
+        const kept=drawn.find(c=>c.id===cid);
+        if(!kept)return;
+        p.hand.push(kept);
+        drawn.filter(c=>c.id!==cid).forEach(c=>G.discard.push(c));
+        addLog(`นาฬิกา: เก็บ ${kept.name} ทิ้ง ${drawn.length-1} ใบ`);
+        closeModal();renderAll();
+      };
+    } else {
+      // bot เลือกสุ่ม
+      const idx=~~(Math.random()*drawn.length);
+      p.hand.push(drawn[idx]);
+      drawn.filter((_,i)=>i!==idx).forEach(c=>G.discard.push(c));
+      addLog(`${p.name}: นาฬิกา เก็บ 1 ทิ้ง 2`);
+    }
+    return;
+  }
+  else if(eq.skill==='dog'){if(p.mp<3){addLog('MP ไม่พอ (3)');return;}pickTarget(pi,'หมาไฟ: เป้าหมาย',t=>{p.mp-=3;dealDamage(t.i,2);addLog(`🔥 หมาไฟ! ${t.name} HP-2`,'dmg');checkDeath(t.i);renderAll();});return;}
+  else if(eq.skill==='cat'){if(p.mp<2){addLog('MP ไม่พอ (2)');return;}pickTarget(pi,'แมวเทวดา: เป้าหมาย (รวมตัวเอง)',t=>{p.mp-=2;const heal=2;t.hp=Math.min(t.maxHp,t.hp+heal);if(G.eyeCurse&&G.eyeCurse[t.i]){delete G.eyeCurse[t.i];recalcStats(t.i);addLog(`${t.name}: คำสาปดวงตาหาย!`,'imp');}addLog(`😇 แมวเทวดา! ${t.name} HP+2`,'hl');fxHealPulse(t.i);renderAll();});return;}
   renderAll();
 }
 function hermesDestroy(ti){closeModal();const t=G.players[ti];const sl=Object.keys(t.equip);if(!sl.length){addLog('ไม่มีอุปกรณ์');return;}const s=sl[~~(Math.random()*sl.length)];G.discard.push(t.equip[s]);delete t.equip[s];recalcStats(ti);addLog(`🪶 Hermes: ทำลาย ${s} ของ ${t.name}`,'dmg');renderAll();}
@@ -2558,6 +3163,30 @@ function renderAll(){
   const cp=G.players[G.turn];
   document.getElementById('turn-info').textContent=cp?`เทิร์น: ${cp.char.emoji} ${cp.name}`:'';
   document.getElementById('deck-count').textContent=`กอง: ${G.deck.length} | ทิ้ง: ${G.discard.length}`;
+  // อัพ stat strip ของ player
+  const myPi=getActivePi();
+  if(G.players[myPi]){
+    const mp=G.players[myPi];
+    const sa=document.getElementById('pss-atk');
+    const sd=document.getElementById('pss-def');
+    const sr=document.getElementById('pss-rng');
+    if(sa)sa.textContent=mp.atk;
+    if(sd)sd.textContent=mp.def;
+    if(sr)sr.textContent=mp.range;
+    // แดงถ้าถูก debuff
+    const cursed=G.eyeCurse&&G.eyeCurse[myPi];
+    if(sa)sa.style.color=cursed?'#f08080':'#eee';
+    if(sr)sr.style.color=cursed?'#f08080':'#eee';
+    // status badges ของ player
+    const strip=document.getElementById('player-stat-strip');
+    if(strip){
+      // ลบ badge เก่าออกก่อน
+      strip.querySelectorAll('.status-badge').forEach(b=>b.remove());
+      if(G.skipCurse&&G.skipCurse[myPi])strip.insertAdjacentHTML('beforeend',`<span class="status-badge sb-skip">💤 หลับ</span>`);
+      if(cursed)strip.insertAdjacentHTML('beforeend',`<span class="status-badge sb-eye">👁 ดวงตาปีศาจ ${G.eyeCurse[myPi].rounds}รอบ</span>`);
+      if(G.burnCurse&&G.burnCurse[myPi])strip.insertAdjacentHTML('beforeend',`<span class="status-badge sb-burn">🔥 เผาไหม้ ${G.burnCurse[myPi].rounds}รอบ</span>`);
+    }
+  }
 }
 function getActivePi(){
   // Online mode: show yourself at bottom
@@ -2639,6 +3268,14 @@ function renderBotSeat(pi){
         <div class="bot-mana-row">${manaDots}</div>
       </div>
       ${swordHtml}
+    </div>
+    <div class="bot-bar-stat">
+      <span class="bbs-item"><span class="bbs-l">⚔</span><span class="bbs-v ${G.eyeCurse&&G.eyeCurse[pi]?'bbs-debuff':''}">${p.atk}</span></span>
+      <span class="bbs-item"><span class="bbs-l">🛡</span><span class="bbs-v">${p.def}</span></span>
+      <span class="bbs-item"><span class="bbs-l">📏</span><span class="bbs-v ${G.eyeCurse&&G.eyeCurse[pi]?'bbs-debuff':''}">${p.range}</span></span>
+      ${G.skipCurse&&G.skipCurse[pi]?`<span class="status-badge sb-skip">💤 หลับ</span>`:''}
+      ${G.eyeCurse&&G.eyeCurse[pi]?`<span class="status-badge sb-eye">👁 ดวงตาปีศาจ ${G.eyeCurse[pi].rounds}รอบ</span>`:''}
+      ${G.burnCurse&&G.burnCurse[pi]?`<span class="status-badge sb-burn">🔥 เผาไหม้ ${G.burnCurse[pi].rounds}รอบ</span>`:''}
     </div>
   </div>`;
 }
@@ -2736,10 +3373,29 @@ function renderEquipSlots(pi){
 }
 
 function eqSlotClick(sl){
+  if(!G||G.gameOver)return;
   const activePi=getActivePi();
   const p=G.players[activePi];
   if(!p||!p.equip?.[sl]) return;
-  showTip(null, p.equip[sl].desc||p.equip[sl].name);
+  const eq=p.equip[sl];
+  // ถ้า slot มี skill และเป็นเทิร์นของเรา → ใช้ skill เลย
+  if(eq.skill && isMyTurnToAct()){
+    activateItemSkill(activePi, eq);
+    return;
+  }
+  // ไม่มี skill → แสดง tooltip ปกติ
+  const t=document.getElementById('tooltip');
+  if(t){
+    t.textContent=eq.desc||eq.name;
+    t.style.display='block';
+    const slotEl=document.getElementById('eq-'+sl);
+    if(slotEl){
+      const r=slotEl.getBoundingClientRect();
+      t.style.left=(r.right+8)+'px';
+      t.style.top=r.top+'px';
+    }
+    setTimeout(()=>t.style.display='none',2000);
+  }
 }
 function renderSeat(pi){
   const p=G.players[pi];
@@ -2977,7 +3633,14 @@ function renderCardEl(card){
   </div>`;
 }
 function renderCardGrid(cards,cb){
-  return`<div style="display:flex;flex-wrap:wrap;gap:5px;">${cards.map(c=>`<div class="card" onclick="${cb}(${c.id})" style="cursor:pointer;"><div class="sym sym-${c.sym}">${SYM_EMOJI[c.sym]}</div><div class="cname">${c.name}</div><div class="cnum">${c.num}</div></div>`).join('')}</div>`;
+  return`<div style="display:flex;flex-wrap:wrap;gap:8px;padding:4px 0;">${
+    cards.map(c=>{
+      const inner=renderCardEl(c);
+      // inject onclick into the outermost .card div
+      return inner.replace(/^<div class="card ([^"]*)"/, `<div class="card $1" onclick="${cb}(${c.id})"`)
+                  .replace(/^<div class="card"/, `<div class="card" onclick="${cb}(${c.id})"`)
+    }).join('')
+  }</div>`;
 }
 function renderActionPanel(){
   const myTurn=isMyTurnToAct();
@@ -2994,7 +3657,15 @@ function renderActionPanel(){
   setBtn('btn-iskill',myTurn&&Object.values(p.equip).some(e=>e.skill));
   setBtn('btn-end',myTurn);
 }
-function setBtn(id,en){const el=document.getElementById(id);if(el)el.disabled=!en;}
+function setBtn(id,en){
+  const el=document.getElementById(id);
+  if(!el)return;
+  el.disabled=!en;
+  // cskill และ iskill ซ่อนด้วย display:none — ต้อง show เมื่อ enable
+  if(id==='btn-cskill'||id==='btn-iskill'){
+    el.style.display=en?'':'none';
+  }
+}
 function selCard(cid){
   if(!isMyTurnToAct())return;
   const activePi=getActivePi();
@@ -3013,7 +3684,7 @@ function showModal(title,body,actions){
   document.getElementById('modal-wrap').classList.add('show');
 }
 function closeModal(){document.getElementById('modal-wrap').classList.remove('show');}
-function showTip(e,text){const t=document.getElementById('tooltip');t.textContent=text;t.style.display='block';t.style.left=(e.clientX+12)+'px';t.style.top=(e.clientY-30)+'px';}
+function showTip(e,text){const t=document.getElementById('tooltip');t.textContent=text;t.style.display='block';t.style.left=(e.clientX+28)+'px';t.style.top=(e.clientY-90)+'px';}
 function showCardTip(e,cid){
   const activePi=getActivePi();
   const card=G.players[activePi].hand.find(c=>c.id===cid);if(!card)return;
@@ -3023,7 +3694,7 @@ function showCardTip(e,cid){
   if(card.effect==='counter')txt+='\n[ใช้ตอนถูกโจมตี→สวนกลับ]';
   if(card.effect==='cancel')txt+='\n[ใช้ตอนถูกโจมตี→ยกเลิก]';
   if(card.desc)txt+=`\n${card.desc}`;
-  const t=document.getElementById('tooltip');t.textContent=txt;t.style.display='block';t.style.left=(e.clientX+12)+'px';t.style.top=(e.clientY-70)+'px';
+  const t=document.getElementById('tooltip');t.textContent=txt;t.style.display='block';t.style.left=(e.clientX+28)+'px';t.style.top=(e.clientY-110)+'px';
 }
 function hideTip(){document.getElementById('tooltip').style.display='none';}
 
@@ -3468,6 +4139,7 @@ buildCharGrid();
 
 </script>
 <!-- Firebase SDK (loaded last so all game functions are ready first) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>try{_initFirebase();}catch(e){console.warn('Firebase init skipped:',e);}
@@ -4153,7 +4825,572 @@ window.beginTurn=function(pi){
   }
 };
 
-console.log('🎬 FX Engine ready!');
+/* ══════════════════════════════════════════
+   💥 dealDamage — central damage handler
+   ใช้แทน p.hp=Math.max(0,p.hp-X) ทุกที่
+   จะแสดง fxNum + fxShake + HP bar update
+══════════════════════════════════════════ */
+function dealDamage(pi, amount, label){
+  if(!G||!G.players||!G.players[pi]) return;
+  const p = G.players[pi];
+  if(p.dead) return;
+  const actual = Math.min(amount, p.hp);
+  p.hp = Math.max(0, p.hp - amount);
+
+  // stat tracking — attacker = G.turn
+  if(G._stats && actual > 0){
+    const atk = G.turn;
+    G._stats.dmgDealt[atk] = (G._stats.dmgDealt[atk]||0) + actual;
+    G._stats.dmgTaken[pi]  = (G._stats.dmgTaken[pi] ||0) + actual;
+  }
+
+  // เอฟเฟกต์ตัวเลข
+  const el = pi === getActivePi()
+    ? document.getElementById('my-seat-area')
+    : document.getElementById('bot-seat-'+pi);
+  let nx = window.innerWidth * 0.5, ny = window.innerHeight * 0.38;
+  if(el){
+    const r = el.getBoundingClientRect();
+    nx = r.left + r.width * 0.5 + (Math.random()-.5)*20;
+    ny = r.top  + r.height * 0.3;
+    fxShake(el);
+  }
+  fxNum(amount, 'dmg', nx, ny);
+  fxFlash('red');
+  playPunch();
+
+  // อัพ HP bar
+  setTimeout(()=>fxUpdateBotHp(pi), 60);
+}
+
+/* ══════════════════════════════════════════
+   ⏱ fxSeqDamage — damage ทีละคน ซ้าย→ขวา
+   targets = [{pi, amount}]
+   cb = callback หลังทุกคนโดนแล้ว
+══════════════════════════════════════════ */
+function fxSeqDamage(targets, cb, delay=320){
+  if(!targets||!targets.length){ if(cb)cb(); return; }
+  // เรียงซ้าย→ขวาตาม seat position
+  const sorted = [...targets].sort((a,b)=>{
+    const ea = document.getElementById('bot-seat-'+a.pi)||document.getElementById('my-seat-area');
+    const eb = document.getElementById('bot-seat-'+b.pi)||document.getElementById('my-seat-area');
+    if(!ea||!eb) return 0;
+    return ea.getBoundingClientRect().left - eb.getBoundingClientRect().left;
+  });
+  function step(i){
+    if(i >= sorted.length){ setTimeout(()=>{ if(cb)cb(); }, delay); return; }
+    const {pi, amount} = sorted[i];
+    dealDamage(pi, amount);
+    setTimeout(()=>step(i+1), delay);
+  }
+  step(0);
+}
+
+/* ══════════════════════════════════════════
+   🥊 GSAP ATTACK SEQUENCE
+══════════════════════════════════════════ */
+function fxGsapAttack(atkEl, defEl, onImpact){
+  if(!atkEl || !defEl || typeof gsap === 'undefined'){
+    if(onImpact) onImpact();
+    return;
+  }
+
+  // คำนวณทิศทาง lunge
+  const ar = atkEl.getBoundingClientRect();
+  const dr = defEl.getBoundingClientRect();
+  const dx = dr.left - ar.left, dy = dr.top - ar.top;
+  const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+  // normalize และ clamp ระยะ lunge ไม่เกิน 55px
+  const maxLunge = 55;
+  const lx = (dx / dist) * Math.min(maxLunge, Math.abs(dx) * 0.55) * Math.sign(dx);
+  const ly = (dy / dist) * Math.min(maxLunge, Math.abs(dy) * 0.55) * Math.sign(dy);
+
+  const tl = gsap.timeline({
+    onComplete(){
+      gsap.set(atkEl, { x:0, y:0, scale:1 });
+      gsap.set(defEl, { x:0, y:0, scale:1, filter:'none' });
+    }
+  });
+
+  tl
+    // ── ผู้โจมตีพุ่งเข้า ──
+    .to(atkEl, {
+      x: lx * 0.6, y: ly * 0.6,
+      scale: 1.15,
+      duration: 0.18,
+      ease: 'power3.out'
+    })
+    // ── จุดสูงสุด → กระแทก ──
+    .to(atkEl, {
+      x: lx, y: ly,
+      duration: 0.10,
+      ease: 'power4.in',
+      onComplete: onImpact   // ← trigger damage ตรงนี้
+    })
+    // ── เป้าถูกกระแทก (พร้อมกับ atk ถอย) ──
+    .to(defEl, {
+      x: -lx * 0.25, y: -ly * 0.25,
+      scale: 0.93,
+      filter: 'brightness(2) saturate(0)',
+      duration: 0.07,
+      ease: 'power4.out'
+    }, '<')
+    // ── ผู้โจมตีถอยกลับ ──
+    .to(atkEl, {
+      x: 0, y: 0, scale: 1,
+      duration: 0.32,
+      ease: 'elastic.out(1, 0.55)'
+    })
+    // ── เป้ากลับที่ ──
+    .to(defEl, {
+      x: 0, y: 0,
+      scale: 1,
+      filter: 'brightness(1) saturate(1)',
+      duration: 0.28,
+      ease: 'elastic.out(1, 0.5)'
+    }, '-=0.25');
+
+  return tl;
+}
+
+/* ══════════════════════════════════════════
+   💀 GSAP DEATH SEQUENCE
+══════════════════════════════════════════ */
+function fxDeath(pi){
+  const el = pi === getActivePi()
+    ? document.getElementById('char-avatar-wrap') || document.getElementById('char-avatar')
+    : document.getElementById('bot-seat-'+pi);
+  if(!el || typeof gsap === 'undefined'){
+    if(el){ el.classList.add('death-shake'); setTimeout(()=>el.classList.add('death-fade'),650); }
+    return;
+  }
+  gsap.timeline()
+    // สั่นรัว
+    .to(el, {x:-9, rotation:-3, duration:0.07, ease:'power2.out'})
+    .to(el, {x: 8, rotation: 2, duration:0.06})
+    .to(el, {x:-7, rotation:-2, duration:0.06})
+    .to(el, {x: 5, rotation: 1, duration:0.06})
+    .to(el, {x:-3, duration:0.05})
+    .to(el, {x: 0, rotation:0, duration:0.08, ease:'power2.inOut'})
+    // fade เป็น grayscale
+    .to(el, {
+      opacity: 0.28,
+      filter: 'grayscale(1) brightness(0.6)',
+      duration: 0.85,
+      ease: 'power2.inOut'
+    }, '+=0.05');
+}
+
+/* ══════════════════════════════════════════
+   ❤️ HP BAR UPDATE (in-place, no rebuild)
+══════════════════════════════════════════ */
+const _lastHp = {};
+function fxUpdateBotHp(pi){
+  if(!G||!G.players||!G.players[pi]) return;
+  const p = G.players[pi];
+  const img = document.querySelector(`#bot-seat-${pi} .bot-hp-img`);
+  if(!img) return;
+  const newIdx = Math.max(0, Math.min(10, p.hp));
+  const newSrc = HP_BAR_IMAGES[newIdx];
+  if(img.getAttribute('src') !== newSrc){
+    if(_lastHp[pi] !== undefined && p.hp < _lastHp[pi] && typeof gsap !== 'undefined'){
+      gsap.fromTo(img, { filter:'brightness(2.5) saturate(0)' }, { filter:'brightness(1) saturate(1)', duration:0.4, ease:'power2.out' });
+    }
+    img.src = newSrc;
+  }
+  _lastHp[pi] = p.hp;
+}
+
+/* ══════════════════════════════════════════
+   💚 HEAL PULSE
+══════════════════════════════════════════ */
+function fxHealPulse(pi){
+  const el = pi === getActivePi()
+    ? document.getElementById('my-seat-area')
+    : document.getElementById('bot-seat-'+pi);
+  if(!el) return;
+  if(typeof gsap !== 'undefined'){
+    gsap.fromTo(el,
+      { boxShadow:'0 0 0 0 rgba(80,200,120,0.7)' },
+      { boxShadow:'0 0 0 0 rgba(80,200,120,0)', duration:0.7, ease:'power2.out' }
+    );
+    gsap.fromTo(el, { scale:1.04 }, { scale:1, duration:0.5, ease:'elastic.out(1,0.5)' });
+  } else {
+    el.classList.remove('heal-pulse'); void el.offsetWidth; el.classList.add('heal-pulse');
+    setTimeout(()=>el.classList.remove('heal-pulse'), 700);
+  }
+}
+
+/* ══════════════════════════════════════════
+   🔗 HOOK: showAtkBanner → GSAP sequence
+══════════════════════════════════════════ */
+const _origShowAtkBanner = window.showAtkBanner || showAtkBanner;
+window.showAtkBanner = function(atk, def, card){
+  _origShowAtkBanner(atk, def, card);
+  setTimeout(()=>{
+    const activePi = getActivePi();
+    const atkEl = atk.i === activePi
+      ? document.getElementById('char-avatar-wrap') || document.getElementById('char-avatar')
+      : document.getElementById('bot-seat-'+atk.i);
+    const defEl = def.i === activePi
+      ? document.getElementById('my-seat-area')
+      : document.getElementById('bot-seat-'+def.i);
+    // GSAP sequence — onImpact เรียก damage effects
+    fxGsapAttack(atkEl, defEl, ()=>{
+      fxShake(); fxFlash('red');
+    });
+  }, 180);
+};
+
+/* ══════════════════════════════════════════
+   🔗 HOOK: applyHit → hp flash update
+══════════════════════════════════════════ */
+const _origApplyHit2 = window.applyHit;
+window.applyHit = function(atkI, defI, atkCard){
+  _origApplyHit2(atkI, defI, atkCard);
+  setTimeout(()=>{ fxUpdateBotHp(defI); fxUpdateBotHp(atkI); }, 80);
+};
+
+/* ══════════════════════════════════════════
+   🔗 HOOK: checkDeath → GSAP death
+══════════════════════════════════════════ */
+const _origCheckDeath2 = checkDeath;
+window.checkDeath = function(pi){
+  const wasDead = G.players[pi]?.dead;
+  _origCheckDeath2(pi);
+  if(!wasDead && G.players[pi]?.dead) fxDeath(pi);
+};
+
+/* ══════════════════════════════════════════
+   🔗 HOOK: applyCardEffect → heal pulse
+══════════════════════════════════════════ */
+const _origApplyCardEffect2 = window.applyCardEffect;
+window.applyCardEffect = function(pi, card, ti){
+  _origApplyCardEffect2(pi, card, ti);
+  if(card.effect==='heal1'||card.effect==='healstrong'){
+    const target = (ti !== null && ti !== undefined) ? ti : pi;
+    fxHealPulse(target);
+    setTimeout(()=>fxUpdateBotHp(target), 100);
+  }
+};
+
+/* ══════════════════════════════════════════
+   ⏸ PAUSE MENU
+══════════════════════════════════════════ */
+window._bgmMuted = false;
+window._sfxMuted = false;
+let _bgmMuted = window._bgmMuted;
+let _sfxMuted = window._sfxMuted;
+let _gamePaused = false;
+
+function openPauseMenu(){
+  _gamePaused = true;
+  // pause BGM
+  if(window._bgmEl) try{ window._bgmEl.pause(); }catch(e){}
+  document.getElementById('pause-wrap').style.display='flex';
+  // sync button labels
+  document.getElementById('pause-bgm-btn').textContent = `🎵 ดนตรี: ${_bgmMuted?'ปิด':'เปิด'}`;
+  document.getElementById('pause-sfx-btn').textContent = `🔊 เอฟเฟค: ${_sfxMuted?'ปิด':'เปิด'}`;
+}
+function closePauseMenu(){
+  _gamePaused = false;
+  document.getElementById('pause-wrap').style.display='none';
+  // resume BGM if not muted
+  if(!_bgmMuted && window._bgmEl) try{ window._bgmEl.play(); }catch(e){}
+}
+function togglePauseBGM(){
+  window._bgmMuted = !window._bgmMuted;
+  if(window._bgmEl){
+    if(window._bgmMuted){
+      window._bgmEl.volume=0;
+      try{window._bgmEl.pause();}catch(e){}
+    } else {
+      window._bgmEl.volume=0.35;
+      if(!_gamePaused)try{window._bgmEl.play();}catch(e){}
+    }
+  }
+  const btn=document.getElementById('pause-bgm-btn');
+  if(btn){btn.textContent=`🎵 ดนตรี: ${window._bgmMuted?'ปิด':'เปิด'}`;btn.style.color=window._bgmMuted?'#f08080':'#ccc';}
+}
+function togglePauseSFX(){
+  window._sfxMuted = !window._sfxMuted;
+  const btn=document.getElementById('pause-sfx-btn');
+  if(btn){btn.textContent=`🔊 เอฟเฟค: ${window._sfxMuted?'ปิด':'เปิด'}`;btn.style.color=window._sfxMuted?'#f08080':'#ccc';}
+}
+function pauseGoLobby(){
+  closePauseMenu();
+  if(G){ G.gameOver=true; }
+  goLobby();
+}
+
+/* ══════════════════════════════════════════
+   ⚔ NEW ATTACK MODE — ปุ่มขวามือ + highlight เหลือง
+══════════════════════════════════════════ */
+let _attackMode = false;
+
+function enterAttackMode(){
+  if(!isMyTurnToAct()||G.gameOver) return;
+  const p = G.players[G.turn];
+  if(G.ap < 1){ addLog('AP ไม่พอ'); return; }
+  if(G.attackUsed && !p.multiAtk){ addLog('โจมตีได้แค่ 1 ครั้ง'); return; }
+  if(!p.hand.length){ addLog('ไม่มีการ์ดในมือ'); return; }
+  const nb = getNeighbors(G.turn);
+  if(!nb.length){ addLog('ไม่มีเป้าหมายในระยะ'); return; }
+
+  if(_attackMode){
+    // กดอีกครั้ง = ยกเลิก
+    _exitAttackMode();
+    return;
+  }
+  _attackMode = true;
+  const btn = document.getElementById('btn-atk-main');
+  if(btn) btn.classList.add('active');
+  // highlight ทุก seat ที่โจมตีได้ เป็นสีเหลือง
+  nb.forEach(pi=>{
+    const seat = document.getElementById('bot-seat-'+pi);
+    if(seat) seat.classList.add('atk-reachable');
+  });
+  addLog('เลือกเป้าหมายที่ไฮไลท์สีเหลือง');
+}
+
+function _exitAttackMode(){
+  _attackMode = false;
+  const btn = document.getElementById('btn-atk-main');
+  if(btn) btn.classList.remove('active');
+  document.querySelectorAll('.bot-seat.atk-reachable').forEach(s=>s.classList.remove('atk-reachable'));
+}
+
+// Override onBotSeatClick to use new attack mode
+const _origOnBotSeatClick = onBotSeatClick;
+window.onBotSeatClick = function(pi){
+  if(!G||G.gameOver) return;
+  if(_attackMode){
+    // ต้องเป็น neighbor ด้วย
+    const nb = getNeighbors(G.turn);
+    if(!nb.includes(pi)){ addLog('นอกระยะ'); return; }
+    _exitAttackMode();
+    // เปิด modal เลือกการ์ด
+    const p = G.players[G.turn];
+    showModal('⚔ เลือกการ์ดโจมตี',
+      '<div style="font-size:11px;color:var(--dim);margin-bottom:6px;">สัญลักษณ์จะถูกเปิดเผย</div>'+
+      renderCardGrid(p.hand, '_atkCardMode'),
+      [{label:'ยกเลิก',fn:closeModal}]
+    );
+    window._atkModeTarget = pi;
+    return;
+  }
+  // ไม่ได้อยู่ใน attack mode — ทำงานปกติ (เช่น tooltip)
+};
+
+function _atkCardMode(cid){
+  const pi = G.turn;
+  const ti = window._atkModeTarget;
+  window._atkModeTarget = null;
+  const card = G.players[pi].hand.find(c=>c.id===cid);
+  if(!card||ti===undefined||ti===null) return;
+  closeModal();
+  doAttack(pi, ti, cid);
+}
+
+/* ── อัพ AP inline ทุกครั้งที่ renderActionPanel ── */
+const _origRenderAP = renderActionPanel;
+window.renderActionPanel = function(){
+  _origRenderAP();
+  const ap = isMyTurnToAct() ? G.ap : 0;
+  const el = document.getElementById('ap-inline');
+  if(el){
+    el.innerHTML = [0,1,2].map(i=>
+      `<div class="ap-pip ${i<ap?'full':''}"></div>`
+    ).join('') + `<span style="font-size:10px;color:var(--dim);margin-left:5px;">${ap}/3 AP</span>`;
+  }
+  // enable/disable atk btn
+  const p = G&&G.players&&G.players[G.turn];
+  const atkBtn = document.getElementById('btn-atk-main');
+  if(atkBtn){
+    const canAtk = isMyTurnToAct()&&G.ap>=1&&p&&(!G.attackUsed||p.multiAtk)&&p.hand.length&&getNeighbors(G.turn).length;
+    atkBtn.disabled = !canAtk;
+  }
+};
+
+/* ══════════════════════════════════════════
+   📖 HOW TO PLAY
+══════════════════════════════════════════ */
+const HTP_PAGES = [
+  // Page 1: Roles
+  {title:'หน้า 1 — Role ของผู้เล่น', html:`
+<div style="margin-bottom:14px;font-size:12px;color:var(--dim);">ทุกคนได้รับ Role ลับที่ไม่มีใครรู้ ยกเว้น LEADER ที่ทุกคนเห็น</div>
+<div style="display:flex;flex-direction:column;gap:10px;">
+  <div style="background:rgba(192,144,224,.1);border-left:3px solid #c090e0;border-radius:6px;padding:10px 14px;">
+    <div style="font-weight:700;color:#c090e0;margin-bottom:3px;">👑 LEADER</div>
+    <div>ทุกคนรู้ว่าใครคือ LEADER — ได้ HP+1 พิเศษ ถ้าตายเกมจบทันที</div>
+    <div style="color:var(--dim);font-size:11px;margin-top:4px;">ชนะเมื่อ: Betrayer และ Watcher ทั้งหมดตาย</div>
+  </div>
+  <div style="background:rgba(112,176,240,.1);border-left:3px solid #70b0f0;border-radius:6px;padding:10px 14px;">
+    <div style="font-weight:700;color:#70b0f0;margin-bottom:3px;">🛡 Guardian</div>
+    <div>พันธมิตรลับของ LEADER ต้องปกป้อง LEADER โดยไม่เปิดเผยตัว</div>
+    <div style="color:var(--dim);font-size:11px;margin-top:4px;">ชนะเมื่อ: LEADER ชนะ — แพ้เมื่อ LEADER ตาย</div>
+  </div>
+  <div style="background:rgba(240,128,128,.1);border-left:3px solid #f08080;border-radius:6px;padding:10px 14px;">
+    <div style="font-weight:700;color:#f08080;margin-bottom:3px;">🗡 Betrayer (2 คน)</div>
+    <div>ซ่อน Role ไว้ ต้องสังหาร LEADER ให้ได้ก่อนใครทำลาย Betrayer หมด</div>
+    <div style="color:var(--dim);font-size:11px;margin-top:4px;">ชนะเมื่อ: LEADER ตาย และ Betrayer ≥ 1 คนยังมีชีวิต</div>
+  </div>
+  <div style="background:rgba(240,192,64,.1);border-left:3px solid #f0c040;border-radius:6px;padding:10px 14px;">
+    <div style="font-weight:700;color:#f0c040;margin-bottom:3px;">👁 Watcher (1 คน)</div>
+    <div>เป้าหมายโดดเดี่ยว ต้องกำจัดทุกคนและเป็นคนสุดท้ายที่รอดชีวิต</div>
+    <div style="color:var(--dim);font-size:11px;margin-top:4px;">ชนะเมื่อ: Betrayer ตายหมด + LEADER ตาย และ Watcher ยังอยู่</div>
+  </div>
+</div>`},
+  // Page 2: AP & Buttons
+  {title:'หน้า 2 — AP และปุ่มในเกม', html:`
+<div style="margin-bottom:10px;font-size:12px;color:var(--dim);">แต่ละเทิร์นมี 3 AP ใช้ได้ทั้งการโจมตีและเล่นการ์ด</div>
+<div style="display:flex;flex-direction:column;gap:10px;">
+  <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 14px;">
+    <div style="font-weight:700;color:var(--gold);margin-bottom:6px;">⚡ AP (Action Point)</div>
+    <div>• เทิร์นละ 3 AP</div>
+    <div>• โจมตี 1 ครั้ง = 1 AP + ต้องมีการ์ดในมือ</div>
+    <div>• เล่นการ์ด AP=1 เสีย 1 AP / AP=0 ฟรี</div>
+    <div>• AP ที่เหลือไม่ข้ามเทิร์น</div>
+  </div>
+  <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 14px;">
+    <div style="font-weight:700;color:var(--gold);margin-bottom:6px;">🎮 ปุ่มในเกม</div>
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:4px 10px;font-size:12px;">
+      <span style="color:#f08080;">⚔ ปุ่มโจมตี</span><span>กดแล้วเลือกเป้าหมายที่ไฮไลท์เหลือง แล้วเลือกการ์ดที่จะโจมตี</span>
+      <span style="color:#70b0f0;">🃏 กองไพ่</span><span>กดเพื่อดูกองทิ้ง / กดตอน Draw Phase เพื่อจั่ว</span>
+      <span style="color:#70f090;">▶ จบเทิร์น</span><span>กดจบเทิร์นของตัวเอง เมื่อพร้อมหรือ AP หมด</span>
+      <span style="color:#c090e0;">⚙ ฟันเฟือง</span><span>Pause เกม ปรับเสียง หรือกลับหน้าเลือกตัวละคร</span>
+    </div>
+  </div>
+  <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 14px;">
+    <div style="font-weight:700;color:var(--gold);margin-bottom:6px;">🛡 การรับมือโจมตี</div>
+    <div style="font-size:12px;display:flex;flex-direction:column;gap:3px;">
+      <div><span style="color:#70f090;">หลบ</span> — ทิ้งการ์ดสัญลักษณ์ที่หลบได้ (กรรไกรสู้ค้อน / กระดาษสู้กรรไกร / ค้อนสู้กระดาษ)</div>
+      <div><span style="color:#f0c040;">สวนกลับ</span> — ใช้การ์ด "ป้ายสวนกลับ" → ผู้โจมตี HP-1 แทน</div>
+      <div><span style="color:#f08080;">รับ</span> — รับดาเมจ = ATK ผู้โจมตี − DEF ตัวเอง (ขั้นต่ำ 1)</div>
+    </div>
+  </div>
+</div>`},
+  // Page 3: Card colors
+  {title:'หน้า 3 — สีของการ์ด', html:`
+<div style="margin-bottom:10px;font-size:12px;color:var(--dim);">การ์ดแต่ละสีมีบทบาทต่างกัน ดูจากกรอบการ์ด</div>
+<div style="display:flex;flex-direction:column;gap:10px;">
+  <div style="background:rgba(200,80,80,.1);border-left:3px solid #e05050;border-radius:6px;padding:10px 14px;">
+    <div style="font-weight:700;color:#f08080;margin-bottom:4px;">🔴 กรอบแดง — Action (AP=1)</div>
+    <div style="font-size:12px;">การ์ดโจมตีและรบกวน เสีย 1 AP ต่อใบ</div>
+    <div style="color:var(--dim);font-size:11px;margin-top:4px;">ค้อนทุบ · ขโมย · ระเบิด · ท้าต่อย · หมอนนอนนุ่ม · ดวงตาคำสาป · crystal ดำ/ขาว</div>
+  </div>
+  <div style="background:rgba(80,200,120,.1);border-left:3px solid #50c878;border-radius:6px;padding:10px 14px;">
+    <div style="font-weight:700;color:#70d090;margin-bottom:4px;">🟢 กรอบเขียว — Action (AP=0 ฟรี)</div>
+    <div style="font-size:12px;">การ์ดสนับสนุนและยูทิลิตี้ ใช้ฟรีไม่เสีย AP</div>
+    <div style="color:var(--dim);font-size:11px;margin-top:4px;">อ่านหนังสือ · เบอเก้อ · พิซซ่า · ป้ายสวนกลับ · นมกล่องแบ่งกัน · เอเนอจี้ ดิ้ง · หินดำ/ขาว</div>
+  </div>
+  <div style="background:rgba(200,168,80,.1);border-left:3px solid #c8a850;border-radius:6px;padding:10px 14px;">
+    <div style="font-weight:700;color:var(--gold);margin-bottom:4px;">🟡 กรอบทอง — Equipment</div>
+    <div style="font-size:12px;">ติดตั้งฟรี เพิ่ม Stat หรือมี Passive/Skill พิเศษ</div>
+    <div style="color:var(--dim);font-size:11px;margin-top:4px;">Weapon · Armor · Trinket · Pet — กดที่ slot ซ้ายมือเพื่อใช้ Skill</div>
+  </div>
+  <div style="background:rgba(160,80,160,.1);border-left:3px solid #a050a0;border-radius:6px;padding:10px 14px;">
+    <div style="font-weight:700;color:#e080c0;margin-bottom:4px;">🟣 กรอบม่วง — Curse</div>
+    <div style="font-size:12px;">การ์ดคำสาป ใส่ debuff ให้ผู้เล่นอื่น AP=1</div>
+    <div style="color:var(--dim);font-size:11px;margin-top:4px;">หมอนนอนนุ่ม (ข้ามเทิร์น) · ดวงตาคำสาป (ATK-1 ระยะ-1 สามรอบ)</div>
+  </div>
+</div>`},
+  // Page 4: Card abilities
+  {title:'หน้า 4 — ความสามารถของการ์ด', html:`
+<div style="display:flex;flex-direction:column;gap:8px;font-size:12px;">
+  <div style="color:var(--dim);margin-bottom:2px;">รายละเอียดการ์ดที่ควรรู้</div>
+  <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:8px 12px;"><span style="color:#f0c040;font-weight:700;">ท้าต่อย</span> — สุ่มการ์ดจากกองให้ทั้งคู่ เปรียบสัญลักษณ์ ผู้แพ้ HP-1 เสมอ = ทั้งคู่ HP-1 การ์ดที่สุ่มทิ้ง</div>
+  <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:8px 12px;"><span style="color:#f0c040;font-weight:700;">ระเบิด🔨/✂️/📄</span> — ทุกคนต้องทิ้งการ์ดสัญลักษณ์นั้น ถ้าไม่มี HP-1</div>
+  <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:8px 12px;"><span style="color:#f0c040;font-weight:700;">นมกล่องแบ่งกัน</span> — จั่วการ์ดตามจำนวนผู้รอด+1 ผู้ใช้เลือกก่อน บอทสุ่มตามเข็มนาฬิกา</div>
+  <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:8px 12px;"><span style="color:#f0c040;font-weight:700;">ดวงตาคำสาป</span> — เป้า ATK-1 ระยะ-1 นาน 3 รอบ ฮีลถอดได้</div>
+  <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:8px 12px;"><span style="color:#f0c040;font-weight:700;">ค้อนทุบ</span> — เลือกทำลายอุปกรณ์ถ้าเป้ามี ถ้าไม่มี = ทิ้งการ์ดในมือ 2 ใบ</div>
+  <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:8px 12px;"><span style="color:#f0c040;font-weight:700;">ขโมย</span> — เลือกขโมยอุปกรณ์ถ้าเป้ามี ถ้าไม่มี = ขโมยการ์ดในมือ 2 ใบ</div>
+  <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:8px 12px;"><span style="color:#f0c040;font-weight:700;">ผ้าพันคอ / เสื้อหนา</span> — ต้นเทิร์นเปิดกองการ์ด ถ้าได้ 📄 = สะท้อน / ✂️ = บล็อก</div>
+  <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:8px 12px;"><span style="color:#f0c040;font-weight:700;">ฝาหม้อ</span> — DEF+2 โดนครบ 3 ครั้งการ์ดหายไปเอง</div>
+  <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:8px 12px;"><span style="color:#f0c040;font-weight:700;">นาฬิกาทรายเวทมน</span> — จ่าย 2MP จั่ว 3 ใบ เลือกเก็บ 1 ทิ้ง 2</div>
+  <div style="background:rgba(255,255,255,.04);border-radius:6px;padding:8px 12px;"><span style="color:#f0c040;font-weight:700;">หมาไฟ / แมวเทวดา</span> — ATK+1 ให้เจ้าของ + Skill ใช้ MP โจมตี/ฮีล 2 HP</div>
+</div>`}
+];
+
+let _htpPage = 0;
+
+function openHowToPlay(){
+  _htpPage = 0;
+  let wrap = document.getElementById('htp-wrap');
+  if(!wrap) return;
+  // ย้าย htp-wrap ไปเป็น child ของ body โดยตรง เพื่อหลีก stacking context
+  if(wrap.parentNode !== document.body) document.body.appendChild(wrap);
+  wrap.style.cssText = 'display:flex;position:fixed;inset:0;z-index:999999;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;';
+  htpRender();
+}
+function closeHowToPlay(){
+  const wrap = document.getElementById('htp-wrap');
+  if(wrap) wrap.style.cssText = 'display:none;position:fixed;inset:0;z-index:9800;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;';
+}
+function htpGo(n){
+  _htpPage = Math.max(0, Math.min(3, n));
+  htpRender();
+}
+function htpNext(){
+  if(_htpPage<3){ _htpPage++; htpRender(); }
+  else closeHowToPlay();
+}
+function htpPrev(){
+  if(_htpPage>0){ _htpPage--; htpRender(); }
+}
+function htpRender(){
+  const p = HTP_PAGES[_htpPage];
+  document.getElementById('htp-content').innerHTML =
+    `<div style="font-family:'Cinzel',serif;font-size:13px;color:var(--gold2);margin-bottom:12px;">${p.title}</div>`+p.html;
+  document.getElementById('htp-page-lbl').textContent = `${_htpPage+1} / 4`;
+  document.getElementById('htp-next-btn').textContent = _htpPage<3 ? 'ถัดไป ▶' : '✕ ปิด';
+  [0,1,2,3].forEach(i=>{
+    const d=document.getElementById('htp-d'+i);
+    if(d) d.className='htp-dot'+(_htpPage===i?' active':'');
+  });
+}
+
+console.log('📖 How to Play ready!');
+
+
+
 </script>
+<!-- HOW TO PLAY MODAL (inside body) -->
+<div id="htp-wrap" style="display:none;position:fixed;inset:0;z-index:9800;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+  <div style="background:rgba(10,8,22,.97);border:1.5px solid rgba(200,168,80,.5);border-radius:18px;width:min(520px,94vw);max-height:88vh;display:flex;flex-direction:column;overflow:hidden;box-shadow:0 0 60px rgba(200,168,80,.2);">
+    <div style="padding:18px 24px 12px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+      <div style="font-family:'Cinzel',serif;font-size:16px;color:var(--gold);">📖 How to Play</div>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <span id="htp-page-lbl" style="font-size:11px;color:var(--dim);">1 / 4</span>
+        <button onclick="closeHowToPlay()" style="background:none;border:none;color:var(--dim);font-size:18px;cursor:pointer;line-height:1;">✕</button>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:center;gap:8px;padding:10px 0 4px;flex-shrink:0;">
+      <div class="htp-dot" id="htp-d0" onclick="htpGo(0)"></div>
+      <div class="htp-dot" id="htp-d1" onclick="htpGo(1)"></div>
+      <div class="htp-dot" id="htp-d2" onclick="htpGo(2)"></div>
+      <div class="htp-dot" id="htp-d3" onclick="htpGo(3)"></div>
+    </div>
+    <div id="htp-content" style="overflow-y:auto;padding:16px 24px 20px;flex:1;line-height:1.65;font-size:13px;color:#ccc;"></div>
+    <div style="padding:12px 24px;border-top:1px solid rgba(255,255,255,.08);display:flex;gap:8px;flex-shrink:0;">
+      <button onclick="htpPrev()" style="flex:1;padding:9px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#ccc;cursor:pointer;font-size:13px;">◀ ก่อนหน้า</button>
+      <button onclick="htpNext()" id="htp-next-btn" style="flex:1;padding:9px;border-radius:8px;background:rgba(200,168,80,.12);border:1px solid rgba(200,168,80,.4);color:var(--gold);cursor:pointer;font-size:13px;">ถัดไป ▶</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAUSE MENU (inside body) -->
+<div id="pause-wrap" style="display:none;position:fixed;inset:0;z-index:8000;background:rgba(0,0,0,.75);backdrop-filter:blur(8px);align-items:center;justify-content:center;">
+  <div style="background:rgba(10,8,22,.97);border:1.5px solid var(--gold);border-radius:18px;padding:32px 40px;min-width:280px;text-align:center;box-shadow:0 0 60px rgba(200,168,80,.25);">
+    <div style="font-family:'Cinzel',serif;font-size:20px;color:var(--gold);margin-bottom:24px;letter-spacing:2px;">⏸ PAUSED</div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <button onclick="closePauseMenu()" style="padding:12px;border-radius:8px;background:rgba(200,168,80,.12);border:1px solid rgba(200,168,80,.4);color:var(--gold);font-size:14px;cursor:pointer;font-family:'Sarabun',sans-serif;">▶ เล่นต่อ</button>
+      <button id="pause-bgm-btn" onclick="togglePauseBGM()" style="padding:12px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#ccc;font-size:14px;cursor:pointer;font-family:'Sarabun',sans-serif;">🎵 ดนตรี: เปิด</button>
+      <button id="pause-sfx-btn" onclick="togglePauseSFX()" style="padding:12px;border-radius:8px;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);color:#ccc;font-size:14px;cursor:pointer;font-family:'Sarabun',sans-serif;">🔊 เอฟเฟค: เปิด</button>
+      <button onclick="pauseGoLobby()" style="padding:12px;border-radius:8px;background:rgba(240,80,80,.1);border:1px solid rgba(240,80,80,.3);color:#f08080;font-size:14px;cursor:pointer;font-family:'Sarabun',sans-serif;">🚪 กลับเลือกตัวละคร</button>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
