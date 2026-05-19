@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Card Battle">
+  <meta name="theme-color" content="#0d0b1a">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/characters/ICON/1.png">
 <title>Card Battle Arena — Online</title>
 <!-- Firebase SDKs -->
 <!-- Firebase loaded at bottom of body -->
@@ -5843,5 +5848,15 @@ function openPassiveInfo(){
   </div>
 </div>
 
+<!-- PWA Service Worker -->
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('./sw.js')
+      .then(r=>console.log('SW registered'))
+      .catch(e=>console.log('SW error:',e));
+  });
+}
+</script>
 </body>
 </html>
