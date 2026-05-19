@@ -358,7 +358,7 @@ h1,h2{font-family:'Cinzel',serif;}
 /* Fan layout applied via JS */
 
 /* card */
-.card{width:81px;height:104px;border-radius:6px;border:none;background:none!important;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0;transition:transform .15s,box-shadow .15s;position:relative;user-select:none;overflow:hidden;flex-shrink:0;}
+.card{width:86px;height:104px;border-radius:6px;border:none;background:none!important;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;padding:0;transition:transform .15s,box-shadow .15s;position:relative;user-select:none;overflow:hidden;flex-shrink:0;}
 /* clip content inside card but let frame bleed slightly */
 .card-bottom{border-radius:0 0 6px 6px;}
 .card:hover{transform:translateY(-10px) scale(1.08)!important;box-shadow:0 12px 28px rgba(200,168,80,.35);z-index:50!important;}
@@ -366,7 +366,7 @@ h1,h2{font-family:'Cinzel',serif;}
 /* card frame overlay */
 .card-frame{position:absolute;inset:0;width:100%;height:100%;background-size:100% 100%;background-repeat:no-repeat;z-index:4;pointer-events:none;}
 /* sym corner — shifted down 1px, right 1px */
-.card-sym-corner{position:absolute;bottom:1px;left:5px;z-index:5;width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:none;border-radius:4px;}
+.card-sym-corner{position:absolute;top:3px;left:3px;z-index:5;width:20px;height:20px;display:flex;align-items:center;justify-content:center;background:none;border-radius:4px;}
 .card-sym-corner img{width:16px!important;height:16px!important;object-fit:contain;}
 /* art inside card */
 .card-art-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden;z-index:1;background:transparent;}
@@ -376,14 +376,14 @@ h1,h2{font-family:'Cinzel',serif;}
 .sym-bg-scissors{background:transparent;}
 .sym-bg-paper{background:transparent;}
 /* card bottom info — hidden */
-.card-bottom{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:2px 4px 3px;background:none;display:none;flex-direction:column;gap:1px;}
+.card-bottom{position:absolute;bottom:0;left:0;right:0;z-index:5;padding:0;background:none;display:flex;flex-direction:column;gap:0;}
 .card.sel{border-color:var(--gold2);transform:translateY(-8px);box-shadow:0 4px 12px rgba(200,168,80,.4);}
 .card .sym{font-size:17px;}.sym-hammer{color:#e08030;}.sym-scissors{color:#5080e0;}.sym-paper{color:#50c060;}
 /* sym images */
 .sym img{width:32px!important;height:32px!important;object-fit:contain;display:block;margin:auto;filter:drop-shadow(0 0 4px rgba(255,255,255,.3));}
 .cpo-card-sym img{width:36px!important;height:36px!important;}
 .card .sym img{width:28px!important;height:28px!important;}
-.card .cname{font-size:7px;text-align:center;color:var(--dim);line-height:1.2;}
+.card .cname{font-size:8px;text-align:center;color:#eee;line-height:1.2;padding:2px 2px 1px;background:rgba(0,0,0,.6);border-radius:0 0 4px 4px;width:100%;position:absolute;bottom:0;left:0;}
 .card .cnum{font-size:10px;font-weight:600;color:var(--gold);}
 .card .ctype{font-size:6px;padding:1px 3px;border-radius:2px;}
 .type-action{background:#203050;color:#80b0e0;}.type-curse{background:#400020;color:#e080a0;}.type-equipment{background:#302000;color:#e0b050;}
@@ -727,8 +727,8 @@ h1,h2{font-family:'Cinzel',serif;}
 @keyframes healGlow{0%{box-shadow:0 0 0 0 rgba(80,200,120,0);}40%{box-shadow:0 0 0 14px rgba(80,200,120,.55);}100%{box-shadow:0 0 0 0 rgba(80,200,120,0);}}
 .heal-pulse{animation:healGlow .65s ease;}
 /* ── ATTACK BUTTON ── */
-#atk-btn-fixed{position:fixed;right:110px;bottom:100px;z-index:50;}
-#btn-atk-main{width:68px;height:68px;border-radius:50%;background:rgba(200,50,50,.15);border:2px solid rgba(200,80,80,.5);cursor:pointer;padding:0;transition:all .2s;box-shadow:0 0 12px rgba(200,50,50,.25);}
+#atk-btn-fixed{position:fixed;right:110px;bottom:90px;z-index:50;}
+#btn-atk-main{width:90px;height:90px;border-radius:50%;background:rgba(200,50,50,.15);border:2px solid rgba(200,80,80,.5);cursor:pointer;padding:0;transition:all .2s;box-shadow:0 0 12px rgba(200,50,50,.25);}
 #btn-atk-main:hover{background:rgba(200,50,50,.3);box-shadow:0 0 24px rgba(200,80,80,.6);}
 #btn-atk-main.active{background:rgba(200,168,80,.2);border-color:var(--gold);box-shadow:0 0 28px rgba(200,168,80,.7);animation:atkBtnPulse .7s ease-in-out infinite;}
 #btn-atk-main:disabled{opacity:.35;cursor:not-allowed;}
@@ -752,8 +752,16 @@ h1,h2{font-family:'Cinzel',serif;}
 .htp-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.2);cursor:pointer;transition:.2s;}
 .htp-dot.active{background:var(--gold);transform:scale(1.3);}
 
-/* ── BOT STAT BAR ── */
-.bot-bar-stat{display:flex;flex-wrap:nowrap;gap:5px;padding:2px 4px;background:rgba(0,0,0,.45);border-radius:4px;margin:-3px 0 0 4px;align-items:center;overflow:hidden;white-space:nowrap;}
+/* ── BOT EQUIP ROW ── */
+.bot-equip-row{display:flex;flex-wrap:wrap;gap:3px;padding:2px 4px;margin-top:-8px;}
+.bot-eq-badge{display:inline-flex;align-items:center;gap:2px;padding:1px 5px;border-radius:4px;font-size:8px;background:rgba(200,168,80,.12);border:1px solid rgba(200,168,80,.25);color:rgba(200,168,80,.9);white-space:nowrap;cursor:default;}
+.bot-eq-name{max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+/* ── PASSIVE CIRCLE ── */
+#passive-circle{position:fixed;right:158px;bottom:35px;width:44px;height:44px;border-radius:50%;background:rgba(0,0,0,.82);border:2px solid rgba(200,168,80,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:55;font-size:18px;color:rgba(200,168,80,.8);}
+#passive-circle::after{content:'📜';}
+@keyframes fadeUp{0%{opacity:1;transform:translate(-50%,-50%);}100%{opacity:0;transform:translate(-50%,-120%);}}
+.bot-bar-stat{display:flex;flex-wrap:nowrap;gap:5px;padding:2px 4px;background:rgba(0,0,0,.45);border-radius:4px;margin:-13px 0 0 4px;align-items:center;overflow:hidden;white-space:nowrap;}
 .bbs-item{display:flex;align-items:center;gap:2px;}
 .bbs-l{font-size:8px;color:var(--dim);}
 .bbs-v{font-size:10px;font-weight:700;color:#eee;}
@@ -811,7 +819,7 @@ h1,h2{font-family:'Cinzel',serif;}
 #main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-height:0;}
 
 /* Bot seats top */
-#bot-area{display:flex;gap:6px;padding:5px 8px;background:rgba(10,10,22,.45);flex-shrink:0;justify-content:center;border-bottom:1px solid rgba(255,255,255,.08);}
+#bot-area{display:flex;gap:6px;padding:5px 8px;background:rgba(10,10,22,.45);flex-shrink:0;justify-content:center;}
 
 /* Center area */
 
@@ -942,7 +950,7 @@ h1,h2{font-family:'Cinzel',serif;}
 .drag-clone-el{position:fixed;z-index:9999;pointer-events:none;transform:rotate(-6deg) scale(1.08);box-shadow:0 12px 32px rgba(0,0,0,.7);transition:none;width:54px;height:80px;}
 
 /* Bot area override */
-#bot-area{display:flex;gap:6px;padding:5px 8px;background:rgba(10,10,22,.45);flex-shrink:0;justify-content:center;border-bottom:1px solid rgba(255,255,255,.08);width:100%;}
+#bot-area{display:flex;gap:6px;padding:5px 8px;background:rgba(10,10,22,.45);flex-shrink:0;justify-content:center;width:100%;}
 
 
 
@@ -955,7 +963,7 @@ h1,h2{font-family:'Cinzel',serif;}
 
 /* center-area with drop zone */
 #center-area{width:400px;max-width:400px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;position:relative;overflow:hidden;padding:4px;background:transparent;margin:0 auto;}
-#drop-zone{width:60%;max-width:360px;height:110px;border-radius:14px;border:2px dashed rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center;transition:.25s;cursor:default;background:rgba(255,255,255,.02);flex-shrink:0;}
+#drop-zone{width:60%;max-width:360px;height:110px;border-radius:14px;border:none;display:flex;align-items:center;justify-content:center;transition:.25s;cursor:default;background:transparent;flex-shrink:0;}
 #drop-zone.drag-active{
   border-color:#50e080;background:rgba(80,224,128,.1);
   box-shadow:0 0 24px rgba(80,224,128,.2);
@@ -1052,12 +1060,15 @@ h1,h2{font-family:'Cinzel',serif;}
 
 
 /* ════ BOTTOM LAYOUT FINAL ════ */
-#bottom-area{display:flex;align-items:stretch;flex-shrink:0;height:200px;background:rgba(8,8,18,.5);border-top:1px solid rgba(255,255,255,.08);width:100%;}
+#bottom-area{display:flex;align-items:stretch;flex-shrink:0;height:200px;background:rgba(8,8,18,.5);width:100%;}
 
 /* LEFT */
-#left-panel{width:140px;flex-shrink:0;display:flex;flex-direction:column;gap:3px;padding:5px;border-right:1px solid rgba(255,255,255,.08);background:rgba(10,10,22,.45);overflow:visible;}
+#left-panel{width:140px;flex-shrink:0;display:flex;flex-direction:column;gap:3px;padding:5px;background:rgba(10,10,22,.45);overflow:visible;}
 #equip-col{display:grid;grid-template-columns:45px 45px;gap:4px;width:94px;flex-shrink:0;}
 .eq-slot{border:1.5px dashed rgba(255,255,255,.22);border-radius:8px;width:45px;height:45px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:.15s;background:rgba(255,255,255,.03);position:relative;overflow:visible;}
+.eq-slot:hover{border-color:rgba(200,168,80,.6);background:rgba(200,168,80,.08);}
+.eq-slot.has-skill{border-color:rgba(200,168,80,.4);box-shadow:0 0 6px rgba(200,168,80,.25);}
+.eq-slot.has-skill:hover{box-shadow:0 0 12px rgba(200,168,80,.55);}
 .eq-slot:hover{border-color:var(--gold);}
 .eq-slot.has-item{border-color:rgba(200,168,80,.55);border-style:solid;}
 .eq-slot.drag-over{border-color:#50e080!important;background:rgba(80,224,128,.15)!important;}
@@ -1065,7 +1076,9 @@ h1,h2{font-family:'Cinzel',serif;}
 .eq-item{font-size:8px;color:var(--gold2);text-align:center;position:absolute;inset:0;top:-3px;display:flex;align-items:center;justify-content:center;z-index:2;}
 .eq-item img{width:100%;height:100%;object-fit:contain;border-radius:4px;}
 #player-hp-row{position:relative;display:flex;align-items:center;height:111px;margin-top:-10px;overflow:visible;width:94px;}
-#player-icon-wrap{position:relative;z-index:2;flex-shrink:0;width:108px;height:107px;margin-right:-12px;margin-top:-25px;cursor:pointer;border-radius:6px;overflow:hidden;}
+#player-icon-wrap{position:relative;z-index:2;flex-shrink:0;width:108px;height:107px;margin-right:-12px;margin-top:-25px;cursor:pointer;border-radius:6px;overflow:hidden;transition:filter .15s;}
+#player-icon-wrap:hover{filter:brightness(1.18) drop-shadow(0 0 6px rgba(200,168,80,.6));}
+#player-icon-wrap:active{filter:brightness(1.4);}
 #player-icon-wrap:active{border-color:var(--gold);}
 #char-avatar{width:100%;height:100%;}
 #char-avatar img,#char-avatar svg{width:100%;height:100%;object-fit:cover;object-position:top;display:block;}
@@ -1096,10 +1109,10 @@ h1,h2{font-family:'Cinzel',serif;}
 #deck-fixed{position:fixed;right:-7px;bottom:-5px;z-index:50;display:flex;align-items:center;justify-content:center;}
 
 /* END fixed top-right */
-#end-fixed{position:fixed;right:-7px;bottom:165px;z-index:50;display:flex;align-items:center;justify-content:center;}
+#end-fixed{position:fixed;right:-7px;bottom:145px;z-index:50;display:flex;align-items:center;justify-content:center;}
 
 /* RIGHT - buttons only */
-#right-panel{width:80px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-right:4px;border-left:1px solid rgba(255,255,255,.1);background:transparent;}
+#right-panel{width:80px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding-right:4px;background:transparent;}
 #action-btns{display:flex;flex-direction:column;align-items:flex-end;gap:8px;width:100%;}
 .ab-row{display:flex;gap:6px;justify-content:center;}
 .ab-btn{width:62px;height:50px;border:none;border-radius:8px;cursor:pointer;
@@ -1327,11 +1340,10 @@ h1,h2{font-family:'Cinzel',serif;}
 <div id="app">
   <!-- TOP BAR -->
   <div id="header">
-    <div id="turn-banner">TURN <span id="turn-num">1</span></div>
+    <div id="turn-banner">TURN <span id="turn-num">1</span> &nbsp;<span style="font-size:10px;opacity:.7;">รอบ <span id="round-num">1</span></span></div>
     <div id="phase-tag">—</div>
     <div id="turn-info">รอเริ่มเกม</div>
     <div id="deck-count">🂠 <span id="deck-num">0</span></div>
-    <button id="btn-back" onclick="goBack()" title="กลับหน้าเลือกตัวละคร" style="margin-left:4px;padding:3px 10px;border-radius:4px;border:1px solid rgba(200,168,80,.4);background:rgba(200,168,80,.08);color:var(--gold2);cursor:pointer;font-size:11px;font-family:'Sarabun',sans-serif;">◀ Back</button>
     <button id="btn-settings" onclick="openPauseMenu()">⚙</button>
   </div>
 
@@ -1344,9 +1356,9 @@ h1,h2{font-family:'Cinzel',serif;}
     <div id="center-area">
         <!-- DROP ZONE — drag card here to play -->
         <div id="drop-zone">
-          <div id="drop-zone-hint" onclick="if(G.selectedCard){playSelected()}">🃏 ลากการ์ดมาที่นี่เพื่อเล่น</div>
+          <div id="drop-zone-hint" onclick="if(G.selectedCard){playSelected()}" style="display:none;"></div>
         </div>
-        <div id="center-piles">
+        <div id="center-piles" style="display:none;">
           <div id="deck-pile"><span>🂠</span><small id="deck-pile-num">0</small></div>
           <div id="center-lbl">⚔</div>
           <div id="disc-pile"><small>ทิ้ง</small><small id="disc-num">0</small></div>
@@ -1363,7 +1375,7 @@ h1,h2{font-family:'Cinzel',serif;}
         <div id="equip-col">
           <div class="eq-slot" id="eq-weapon" onclick="eqSlotClick('weapon')"><span class="eq-label">weapon</span><div class="eq-item" id="eq-weapon-item"></div></div>
           <div class="eq-slot" id="eq-armor"  onclick="eqSlotClick('armor')"><span class="eq-label">armor</span><div class="eq-item" id="eq-armor-item"></div></div>
-          <div class="eq-slot" id="eq-charm"  onclick="eqSlotClick('charm')"><span class="eq-label">cham</span><div class="eq-item" id="eq-charm-item"></div></div>
+          <div class="eq-slot" id="eq-trinket" onclick="eqSlotClick('trinket')"><span class="eq-label">trinket</span><div class="eq-item" id="eq-trinket-item"></div></div>
           <div class="eq-slot" id="eq-pet"    onclick="eqSlotClick('pet')"><span class="eq-label">Pet</span><div class="eq-item" id="eq-pet-item"></div></div>
         </div>
         <div id="player-hp-row">
@@ -1371,8 +1383,6 @@ h1,h2{font-family:'Cinzel',serif;}
             <div id="char-avatar"></div>
           </div>
           <div id="hp-bar-wrap">
-            <div id="char-name-lbl"></div>
-            <div id="char-role-lbl"></div>
           </div>
           <div id="player-mana-row"></div>
           <!-- Stat strip ทับบน icon มุมล่างซ้าย -->
@@ -1409,7 +1419,7 @@ h1,h2{font-family:'Cinzel',serif;}
 
       <!-- END button: fixed far right top -->
       <div id="end-fixed">
-        <button class="ab-btn ab-end" id="btn-end" onclick="endTurn()" style="background:transparent;border:none;box-shadow:none;padding:0;width:80px;height:80px;">
+        <button class="ab-btn ab-end" id="btn-end" onclick="endTurn()" style="background:transparent;border:none;box-shadow:none;padding:0;width:100px;height:100px;">
           <img src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/END.png" style="width:100%;height:100%;object-fit:contain;transform:rotate(-45deg);" onerror="this.style.display='none';this.nextSibling.style.display='block'">
           <span style="display:none;transform:rotate(-45deg);font-family:'Cinzel',serif;font-weight:700;font-size:11px;">END</span>
         </button>
@@ -1427,10 +1437,13 @@ h1,h2{font-family:'Cinzel',serif;}
 
       <!-- DECK: fixed far right -->
       <div id="deck-fixed">
-        <div id="deck-btn" onclick="onDeckClick()" style="cursor:pointer;width:110px;height:110px;display:flex;align-items:center;justify-content:center;">
+        <div id="deck-btn" onclick="onDeckClick()" style="cursor:pointer;width:130px;height:130px;display:flex;align-items:center;justify-content:center;position:relative;">
+          <span style="position:absolute;top:50%;left:50%;transform:translate(-54%,-30%);font-family:'Cinzel',serif;font-size:15px;font-weight:700;color:#fff;text-shadow:0 0 8px rgba(0,0,0,.9),0 2px 4px rgba(0,0,0,.8);letter-spacing:2px;z-index:2;pointer-events:none;">DRAW</span>
           <img id="deck-img" src="https://raw.githubusercontent.com/dekster00/card-battle/main/assets/CARDS%20ASSET/deck.png" style="width:100%;height:100%;object-fit:contain;" onerror="this.src=''">
         </div>
       </div>
+      <!-- Passive Info Circle: fixed position independent -->
+      <div id="passive-circle" onclick="openPassiveInfo()" title="Passive Info"></div>
 
     </div>
 
@@ -1664,8 +1677,27 @@ function playWink(){if(_sfxBuffers[SFX_WINK])_playBuf(_sfxBuffers[SFX_WINK]);els
 function playItemGet(){if(_sfxBuffers[SFX_ITEM_GET])_playBuf(_sfxBuffers[SFX_ITEM_GET]);else playSound(SFX_ITEM_GET);}
 function playBattleStart(){if(_sfxBuffers[SFX_BATTLE_START])_playBuf(_sfxBuffers[SFX_BATTLE_START]);else playSound(SFX_BATTLE_START);}
 
+const SFX_SKILL_BASE=SFX_BASE+'Skill/';
+const SFX_SKILL={
+  zizeus:    SFX_SKILL_BASE+'Nesta%20Skill.mp3',      // Nesta
+  pluto:     SFX_SKILL_BASE+'Jannis%20Skill.mp3',     // Jannis
+  hades:     SFX_SKILL_BASE+'Zeni%20Skill.mp3',       // Zeni
+  arez:      SFX_SKILL_BASE+'Sun%20woo%20Skill.mp3',  // Sun Woo
+  hermes:    SFX_SKILL_BASE+'Ren%20Skill.mp3',        // Ren
+  aphrodite: SFX_SKILL_BASE+'Hana%20Skill.mp3',       // Hana
+  hephaestus:SFX_SKILL_BASE+'Bradford%20skill.mp3',   // Bradford
+  athena:    null,                                     // Kuromi — ยังไม่มีไฟล์
+  artemis:   SFX_SKILL_BASE+'Xenoze%20Skill.mp3',     // XENOZE
+  apollonius:SFX_SKILL_BASE+'Kim%20Skill.mp3',        // Kim Han
+};
+function playSkillSfx(charId){
+  const url=SFX_SKILL[charId];
+  if(!url)return;
+  if(_sfxBuffers[url])_playBuf(_sfxBuffers[url],0.75);
+  else _loadBuf(url).then(b=>{if(b)_playBuf(b,0.75);});
+}
 async function preloadAllSounds(){
-  const all=[...SFX_PUNCH,...SFX_EQUIP,SFX_VICTORY,SFX_CURSOR,SFX_START,SFX_DRAW,SFX_ROLE_REVEAL,SFX_WINK,SFX_ITEM_GET,SFX_BATTLE_START];
+  const all=[...SFX_PUNCH,...SFX_EQUIP,SFX_VICTORY,SFX_CURSOR,SFX_START,SFX_DRAW,SFX_ROLE_REVEAL,SFX_WINK,SFX_ITEM_GET,SFX_BATTLE_START,...Object.values(SFX_SKILL).filter(Boolean)];
   await Promise.all(all.map(url=>_loadBuf(url)));
 }
 
@@ -1709,35 +1741,182 @@ const ROLE_COLOR={LEADER:'#c090e0',Guardian:'#70b0f0',Betrayer:'#f08080',Watcher
 
 /* ═══ CHARACTERS ═══ */
 const CHARACTERS=[
-  {id:'zizeus',name:'Nesta',emoji:'⚡',color:'#d4a020',passive:'—',skillDesc:'จ่าย 3 MP → เลือก 1 คน HP-2',hasSkill:true,
+  // ── NESTA (zizeus) ── Phoenix Guard + Rising Wing
+  {id:'zizeus',name:'Nesta',emoji:'⚡',color:'#d4a020',
+   passiveName:'Phoenix Guard',
+   passive:'HP=3→จั่ว+1 / HP=2→จั่ว+2 / HP=1→จั่ว+2,ATK+1 (ตรวจตอน HP ถึง threshold)',
+   skillName:'Rising Wing',
+   skillDesc:'จ่าย 3 MP → เลือก 1 คน HP-3',hasSkill:true,
+   // passive thresholds: tracked per-player
    onSkill(pi){const p=G.players[pi];if(!spendMP(p,3)){addLog('MP ไม่พอ (3)');return;}
-     pickTarget(pi,'Zizeus: เลือกเป้าหมาย',t=>{dealDamage(t.i,2);addLog(`⚡ Zizeus! ${t.name} HP-2`,'dmg');checkDeath(t.i);renderAll();})}},
-  {id:'pluto',name:'Jannis',emoji:'💀',color:'#9060d0',passive:'—',skillDesc:'จ่าย 2 MP → ทุกคนทิ้งการ์ด 1 ใบ',hasSkill:true,
+     pickTarget(pi,'Rising Wing: เลือกเป้าหมาย',t=>{dealDamage(t.i,3);addLog(`⚡ Rising Wing! ${t.name} HP-3`,'dmg');checkDeath(t.i);renderAll();})}},
+
+  // ── JANNIS (pluto) ── Shadow Archive + Shadow Release
+  {id:'pluto',name:'Jannis',emoji:'💀',color:'#9060d0',
+   passiveName:'Shadow Archive',
+   passive:'มือการ์ด >4 ใบ → +1 MP อัตโนมัติ Standby phase',
+   skillName:'Shadow Release',
+   skillDesc:'จ่าย 2 MP → ทุกคน (ยกเว้นตัวเอง) สุ่มทิ้ง 1 ใบ + Jannis จั่ว 1',hasSkill:true,
    onSkill(pi){const p=G.players[pi];if(!spendMP(p,2)){addLog('MP ไม่พอ (2)');return;}
-     for(const q of G.players){if(q.dead||q.i===pi||q.isBot&&q.hand.length){if(q.isBot&&!q.dead&&q.i!==pi){const c=q.hand.splice(~~(Math.random()*q.hand.length),1)[0];G.discard.push(c);addLog(`${q.name}: ทิ้ง ${c.name}`);}}}
-     // human players must pick — queue them
-     G._plutoVictims=G.players.filter(q=>!q.dead&&q.i!==pi&&!q.isBot&&q.hand.length).map(q=>q.i);
-     plutoNextVictim();}},
-  {id:'hades',name:'Zeni',emoji:'🌑',color:'#5050a0',passive:'—',skillDesc:'เสีย 1 HP → จั่ว 2 ใบ',hasSkill:true,
-   onSkill(pi){const p=G.players[pi];if(p.hp<=1){addLog('HP ไม่พอ');return;}p.hp--;drawCards(pi,2);addLog(`🌑 Hades: HP-1 → จั่ว 2 ใบ`,'dmg');renderAll();}},
-  {id:'arez',name:'Sun Woo',emoji:'⚔️',color:'#e05050',passive:'Multi-Atk: โจมตีได้ไม่จำกัดครั้ง',skillDesc:'(Passive) Multi-Atk',hasSkill:false,
-   onSetup(p){p.multiAtk=true;}},
-  {id:'hermes',name:'Ren',emoji:'🪶',color:'#40d090',passive:'—',skillDesc:'จ่าย 1 MP → ทำลายอุปกรณ์เป้าหมาย',hasSkill:true,
-   onSkill(pi){const p=G.players[pi];if(!spendMP(p,1)){addLog('MP ไม่พอ');return;}
-     const ts=G.players.filter(q=>!q.dead&&q.i!==pi&&Object.keys(q.equip).length>0);
-     if(!ts.length){addLog('ไม่มีเป้าหมายที่มีอุปกรณ์');return;}
-     showModal('Hermes: เลือกเป้าหมาย',ts.map(t=>`<button class="btn" onclick="hermesDestroy(${t.i})">${t.char.emoji} ${t.name}</button>`).join(''),[{label:'ยกเลิก',fn:closeModal}]);}},
-  {id:'aphrodite',name:'Hana',emoji:'💕',color:'#e050a0',passive:'—',skillDesc:'จ่าย 2 MP → เลือก 2 คนท้าดวล',hasSkill:true,
-   onSkill(pi){const p=G.players[pi];if(!spendMP(p,2)){addLog('MP ไม่พอ');return;}
-     const ts=G.players.filter(q=>!q.dead&&q.i!==pi);if(ts.length<2){addLog('ผู้เล่นไม่พอ');return;}
-     G._aphSel=[];
-     showModal('Aphrodite Skill','<div style="margin-bottom:6px;font-size:11px;color:var(--dim);">เลือก 2 คน</div>'+ts.map(t=>`<button class="btn" id="aph${t.i}" onclick="aphToggle(${t.i})">${t.char.emoji} ${t.name}</button>`).join(''),[{label:'ยืนยัน',fn:aphConfirm},{label:'ยกเลิก',fn:closeModal}]);}},
-  {id:'hephaestus',name:'Bradford',emoji:'🔥',color:'#e07030',passive:'ติดตั้งอุปกรณ์ → จั่ว +1',skillDesc:'(Passive) Equip→Draw 1',hasSkill:false,
-   onEquip(pi){drawCards(pi,1);}},
-  {id:'athena',name:'Kuromi',emoji:'🦉',color:'#6090e0',passive:'ติดตั้งอุปกรณ์ → ATK+1 ชั่วคราว',skillDesc:'(Passive) Equip→ATK+1 till End',hasSkill:false,
+     let drew=0;
+     for(const q of G.players){
+       if(q.dead||q.i===pi||!q.hand.length)continue;
+       const c=q.hand.splice(~~(Math.random()*q.hand.length),1)[0];
+       G.discard.push(c);addLog(`${q.name}: ทิ้ง ${c.name}`);
+     }
+     drawCards(pi,1);addLog(`👤 Shadow Release: ทุกคนทิ้ง 1 ใบ Jannis จั่ว 1`);renderAll();}},
+
+  // ── ZENI (hades) ── Protect Order + Gut Feeling
+  {id:'hades',name:'Zeni',emoji:'🌑',color:'#5050a0',
+   passiveName:'Protect Order',
+   passive:'Standby phase: เด้งให้เลือกฮีล ผู้เล่น 1 คน HP+1',
+   skillName:'Gut Feeling',
+   skillDesc:'จ่าย 3 MP → เลือก 1 คน ป้องกันการโจมตีปกติจนถึงเทิร์นถัดไป + Zeni HP+1',hasSkill:true,
+   onSkill(pi){const p=G.players[pi];if(!spendMP(p,3)){addLog('MP ไม่พอ (3)');return;}
+     pickTarget(pi,'Gut Feeling: เลือกผู้เล่นที่จะปกป้อง',t=>{
+       if(!G.gutShield)G.gutShield={};
+       G.gutShield[t.i]=true;
+       p.hp=Math.min(p.maxHp,p.hp+1);
+       addLog(`🌑 Gut Feeling! ${t.name} ปกป้อง 1 รอบ + Zeni HP+1`,'hl');
+       fxHealPulse(pi);renderAll();
+     },true);}},
+
+  // ── SUN WOO (arez) ── Big Talk + Street Brawler
+  {id:'arez',name:'Sun Woo',emoji:'⚔️',color:'#e05050',
+   passiveName:'Big Talk',
+   passive:'Standby phase: เด้งให้เลือก 1 คน ถ้าโจมตีคนนั้นในเทิร์นนี้ ATK+1',
+   skillName:'Street Brawler',
+   skillDesc:'เสีย 2 MP → โจมตีเป้าหมายในระยะโดยสุ่มสัญลักษณ์ใหม่ ไม่ต้องทิ้งการ์ด',hasSkill:true,
+   onSetup(p){p.multiAtk=true;},
+   onSkill(pi){const p=G.players[pi];if(!spendMP(p,2)){addLog('MP ไม่พอ (2)');return;}
+     const nb=getNeighbors(pi);if(!nb.length){addLog('ไม่มีเป้าหมายในระยะ');return;}
+     const syms=['hammer','scissors','paper'];
+     const fakeSym=syms[~~(Math.random()*3)];
+     const fakeCard={id:-99,sym:fakeSym,num:~~(Math.random()*7)+1,name:'Street Brawler',type:'action',ap:0,effect:'none',color:'A'};
+     showModal('⚔ Street Brawler — เลือกเป้าหมาย',
+       nb.map(ni=>{const t=G.players[ni];
+         const icon=ICON_IMAGES[t.char.id]?`<img src="${ICON_IMAGES[t.char.id]}" style="width:28px;height:28px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle;">`:t.char.emoji;
+         return`<button class="btn" onclick="closeModal();doAttack(${pi},${ni},-99,true)" style="display:flex;align-items:center;">${icon}${t.name} HP:${t.hp}</button>`;
+       }).join(''),[{label:'ยกเลิก',fn:closeModal}]);
+     G._streetBrawlerCard=fakeCard;}},
+
+  // ── REN (hermes) ── Spear Discipline + Disarm Strike
+  {id:'hermes',name:'Ren',emoji:'🪶',color:'#40d090',
+   passiveName:'Spear Discipline',
+   passive:'โจมตีเป้าเดิม 2 เทิร์นติดกัน → ATK+1 อัตโนมัติต่อเนื่อง',
+   skillName:'Disarm Strike',
+   skillDesc:'จ่าย 3 MP → เลือกเป้าหมาย ทำลายอุปกรณ์สุ่ม 1 ชิ้น แล้วโจมตีฟรีด้วยสุ่มสัญลักษณ์ (1ครั้ง/เทิร์น)',hasSkill:true,
+   onSkill(pi){const p=G.players[pi];
+     if(G._disarmUsed){addLog('Disarm Strike: ใช้ได้แค่ 1 ครั้ง/เทิร์น');return;}
+     if(!spendMP(p,3)){addLog('MP ไม่พอ (3)');return;}
+     const ts=G.players.filter(q=>!q.dead&&q.i!==pi);
+     if(!ts.length){addLog('ไม่มีเป้าหมาย');return;}
+     pickTarget(pi,'Disarm Strike: เลือกเป้าหมาย',t=>{
+       // ทำลายอุปกรณ์สุ่ม
+       const sl=Object.keys(t.equip);
+       if(sl.length){const s=sl[~~(Math.random()*sl.length)];G.discard.push(t.equip[s]);delete t.equip[s];recalcStats(t.i);addLog(`🪶 Disarm! ทำลาย ${s} ของ ${t.name}`,'dmg');}
+       else addLog(`${t.name} ไม่มีอุปกรณ์`);
+       // โจมตีฟรีด้วยสุ่มสัญลักษณ์
+       const syms=['hammer','scissors','paper'];
+       const fakeSym=syms[~~(Math.random()*3)];
+       const fakeCard={id:-98,sym:fakeSym,num:~~(Math.random()*7)+1,name:'Disarm Strike',type:'action',ap:0,effect:'none',color:'A'};
+       G._disarmUsed=true;
+       addLog(`🪶 Disarm Strike! โจมตี ${t.name} ด้วย ${SYM_EMOJI[fakeSym]}`);
+       if(t.isBot){botDefend(pi,t.i,fakeCard);}
+       else{playerDefend(pi,t.i,fakeCard,()=>{renderAll();});}
+     });}},
+
+  // ── HANA (aphrodite) ── Accidental Charm + Lucky Wrong Note
+  {id:'aphrodite',name:'Hana',emoji:'💕',color:'#e050a0',
+   passiveName:'Accidental Charm',
+   passive:'ถูกโจมตี → ผู้โจมตีเสีย 1 MP อัตโนมัติ',
+   skillName:'Lucky Wrong Note',
+   skillDesc:'จ่าย 2 MP → สุ่ม 1 จาก 3: ฮีลทุกคน HP+1 / เป้าสุ่ม HP-1 / ทุกคนจั่ว 1',hasSkill:true,
+   onSkill(pi){const p=G.players[pi];if(!spendMP(p,2)){addLog('MP ไม่พอ (2)');return;}
+     const roll=~~(Math.random()*3);
+     const alive=G.players.filter(q=>!q.dead);
+     const results=[
+       {label:'🌟 ฮีลทุกคน!',   desc:'ทุกคนรับ HP+1',        color:'#70d090'},
+       {label:'💥 โจมตีสุ่ม!',   desc:'เป้าสุ่ม 1 คน HP-1',   color:'#f08080'},
+       {label:'🃏 จั่วการ์ด!',   desc:'ทุกคนจั่ว 2 ใบ',        color:'#70b0f0'}
+     ];
+     const r=results[roll];
+     showModal(`💕 Lucky Wrong Note — ผลที่ได้`,
+       `<div style="text-align:center;padding:16px 0;">
+         <div style="font-size:36px;margin-bottom:8px;">${r.label}</div>
+         <div style="font-size:14px;color:${r.color};font-weight:600;">${r.desc}</div>
+       </div>`,
+       [{label:'ตกลง',fn:()=>{
+         closeModal();
+         if(roll===0){
+           alive.forEach(q=>{q.hp=Math.min(q.maxHp,q.hp+1);});
+           addLog(`💕 Lucky Wrong Note! ฮีลทุกคน HP+1`,'hl');fxFlash('green');
+         } else if(roll===1){
+           const tgt=alive.filter(q=>q.i!==pi);
+           if(tgt.length){const t=tgt[~~(Math.random()*tgt.length)];dealDamage(t.i,1);addLog(`💕 Lucky Wrong Note! ${t.name} HP-1`,'dmg');checkDeath(t.i);}
+         } else {
+           alive.forEach(q=>drawCards(q.i,2));
+           addLog(`💕 Lucky Wrong Note! ทุกคนจั่ว 2 ใบ`);
+         }
+         renderAll();
+       }}]);
+   }},
+
+  // ── BRADFORD (hephaestus) ── Green Thumb + Harvest Strike
+  {id:'hephaestus',name:'Bradford',emoji:'🔥',color:'#e07030',
+   passiveName:'Green Thumb',
+   passive:'ติดตั้งอุปกรณ์ → จั่วการ์ดเพิ่ม 1 ใบทันที',
+   skillName:'Harvest Strike',
+   skillDesc:'จ่าย 3 MP → เลือก 1 คน ส่งการ์ดอุปกรณ์ให้ 1 ใบ เป้า HP-1 Bradford HP+1',hasSkill:true,
+   onEquip(pi){drawCards(pi,1);},
+   onSkill(pi){const p=G.players[pi];if(!spendMP(p,3)){addLog('MP ไม่พอ (3)');return;}
+     const equipCards=p.hand.filter(c=>c.type==='equipment');
+     if(!equipCards.length){addLog('ไม่มีการ์ดอุปกรณ์ในมือ');return;}
+     pickTarget(pi,'Harvest Strike: เลือกเป้าหมาย',t=>{
+       showModal('🔥 เลือกการ์ดอุปกรณ์ที่จะส่ง',
+         renderCardGrid(equipCards,'_harvestPick'),[{label:'ยกเลิก',fn:closeModal}]);
+       window._harvestPick=function(cid){
+         const card=equipCards.find(c=>c.id===cid);if(!card)return;
+         p.hand=p.hand.filter(c=>c.id!==cid);
+         t.hand.push(card);
+         dealDamage(t.i,1);checkDeath(t.i);
+         p.hp=Math.min(p.maxHp,p.hp+1);fxHealPulse(pi);
+         addLog(`🔥 Harvest Strike! ส่ง ${card.name} ให้ ${t.name} / ${t.name} HP-1 / Bradford HP+1`,'imp');
+         closeModal();renderAll();
+       };
+     });}},
+
+  // ── KUROMI (athena) ── Combat Instinct + Joint Lock
+  {id:'athena',name:'Kuromi',emoji:'🦉',color:'#6090e0',
+   passiveName:'Combat Instinct',
+   passive:'ติดตั้งอุปกรณ์ → ATK+1 ชั่วคราว (จนสิ้นเทิร์น)',
+   skillName:'Joint Lock',
+   skillDesc:'passive: ถ้าแพ้ท้าต่อย และมี MP ≥ 1 → จ่าย 1 MP auto re-roll ผลท้าต่อยทันที',hasSkill:false,
    onEquip(pi){G.players[pi]._athBonus=(G.players[pi]._athBonus||0)+1;recalcStats(pi);}},
-  {id:'artemis',name:'XENOZE',emoji:'🏹',color:'#50c050',passive:'ระยะโจมตีเริ่มต้น +3',skillDesc:'(Passive) ระยะ +3',hasSkill:false,onSetup(p){p.range+=3;}},
-  {id:'apollonius',name:'Kim Han',emoji:'☀️',color:'#f0d040',passive:'Draw Phase: จั่ว 3 ใบแทน 2',skillDesc:'(Passive) จั่ว 3/เทิร์น',hasSkill:false,extraDraw:1}
+
+  // ── XENOZE (artemis) ── Solo Mode + Called Shot
+  {id:'artemis',name:'XENOZE',emoji:'🏹',color:'#50c050',
+   passiveName:'Solo Mode',
+   passive:'ทุก 6 เทิร์น ระยะ+1 / ATK = ระยะปัจจุบัน (base, ไม่นับอุปกรณ์)',
+   skillName:'Called Shot',
+   skillDesc:'จ่าย 2 MP → ATK+2 เทิร์นนี้',hasSkill:true,
+   onSetup(p){p.range=1;p._soloTurnCount=0;},
+   onSkill(pi){const p=G.players[pi];if(!spendMP(p,2)){addLog('MP ไม่พอ (2)');return;}
+     p._calledShot=(p._calledShot||0)+2;recalcStats(pi);
+     addLog(`🏹 Called Shot! XENOZE ATK+2 เทิร์นนี้`,'imp');renderAll();}},
+
+  // ── KIM HAN (apollonius) ── Weather Reading + Raining Storm
+  {id:'apollonius',name:'Kim Han',emoji:'☀️',color:'#f0d040',
+   passiveName:'Weather Reading',
+   passive:'Draw Phase: จั่ว 3 ใบแทน 2 ทุกเทิร์น',
+   skillName:'Raining Storm',
+   skillDesc:'จ่าย 3 MP → เลือก 1 สัญลักษณ์ ทุกคนสุ่มเปิดจาก deck ถ้าตรง HP-1',hasSkill:true,
+   extraDraw:1,
+   onSkill(pi){const p=G.players[pi];if(!spendMP(p,3)){addLog('MP ไม่พอ (3)');return;}
+     const symOpts=['hammer','scissors','paper'];
+     showModal('☁️ Raining Storm — เลือกสัญลักษณ์',
+       symOpts.map(s=>`<button class="btn" onclick="closeModal();rainStorm(${pi},'${s}')" style="font-size:24px;padding:12px 24px;">${SYM_IMG[s]}</button>`).join(''),
+       [{label:'ยกเลิก',fn:closeModal}]);}}
 ];
 
 /* ═══ DECK ═══ */
@@ -1792,16 +1971,16 @@ let selectedCharId=null;
 /* ══ CHARACTER SELECT SYSTEM ══ */
 const FACTION_ICON={olympus:'🔴',underworld:'🟢',chaos:'🟡',nature:'🔵'};
 const CHAR_DATA={
-  zizeus:   {faction:'olympus',   factionLabel:'Pyrewing',   role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:2,range:1},
-  pluto:    {faction:'nature',    factionLabel:'Zephyrwing', role:'utility', roleLabel:'Utility', stars:4,level:28,hp:7,atk:1,range:1},
-  hades:    {faction:'olympus',   factionLabel:'Pyrewing',   role:'attacker',roleLabel:'Attacker',stars:4,level:30,hp:8,atk:2,range:1},
-  arez:     {faction:'underworld',factionLabel:'Verdrath',   role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:2,range:1},
-  hermes:   {faction:'underworld',factionLabel:'Verdrath',   role:'utility', roleLabel:'Utility', stars:3,level:24,hp:7,atk:1,range:1},
-  aphrodite:{faction:'olympus',   factionLabel:'Pyrewing',   role:'support', roleLabel:'Support', stars:4,level:26,hp:7,atk:1,range:1},
-  hephaestus:{faction:'nature',   factionLabel:'Zephyrwing', role:'utility', roleLabel:'Utility', stars:3,level:22,hp:7,atk:1,range:1},
-  athena:   {faction:'chaos',     factionLabel:'Aurelion',   role:'tank',    roleLabel:'Tank',    stars:4,level:30,hp:9,atk:1,range:1},
-  artemis:  {faction:'chaos',     factionLabel:'Aurelion',   role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:1,range:4},
-  apollonius:{faction:'underworld',factionLabel:'Verdrath',  role:'support', roleLabel:'Support', stars:3,level:20,hp:7,atk:1,range:1}
+  zizeus:   {faction:'olympus',   factionLabel:'Pyrewing',   role:'utility', roleLabel:'Utility', stars:5,level:30,hp:7,atk:1,range:1,gender:'f'},
+  pluto:    {faction:'nature',    factionLabel:'Zephyrwing', role:'utility', roleLabel:'Utility', stars:4,level:28,hp:8,atk:1,range:1,gender:'f'},
+  hades:    {faction:'olympus',   factionLabel:'Pyrewing',   role:'support', roleLabel:'Support', stars:4,level:30,hp:8,atk:1,range:1,gender:'f'},
+  arez:     {faction:'underworld',factionLabel:'Verdrath',   role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:1,range:1,gender:'m'},
+  hermes:   {faction:'underworld',factionLabel:'Verdrath',   role:'attacker',roleLabel:'Attacker',stars:3,level:24,hp:7,atk:1,range:1,gender:'m'},
+  aphrodite:{faction:'olympus',   factionLabel:'Pyrewing',   role:'utility', roleLabel:'Utility', stars:4,level:26,hp:7,atk:1,range:1,gender:'f'},
+  hephaestus:{faction:'nature',   factionLabel:'Zephyrwing', role:'support', roleLabel:'Support', stars:3,level:22,hp:8,atk:1,range:1,gender:'m'},
+  athena:   {faction:'chaos',     factionLabel:'Aurelion',   role:'attacker',roleLabel:'Attacker',stars:4,level:30,hp:7,atk:1,range:1,gender:'f'},
+  artemis:  {faction:'chaos',     factionLabel:'Aurelion',   role:'attacker',roleLabel:'Attacker',stars:5,level:30,hp:7,atk:0,range:1,gender:'m'},
+  apollonius:{faction:'underworld',factionLabel:'Verdrath',  role:'utility', roleLabel:'Utility', stars:3,level:20,hp:7,atk:1,range:1,gender:'m'}
 };
 function starsStr(n){return'★★★★★';}
 
@@ -1832,7 +2011,10 @@ function buildCharGrid(){
       <div class="card-art">${CHAR_IMAGES&&CHAR_IMAGES[ch.id]?`<img src="${CHAR_IMAGES[ch.id]}" style="width:100%;height:100%;object-fit:cover;object-position:top center;">`:`<div class="svg-wrap">${charSVG(ch.id,90)}</div>`}</div>
       <div class="card-top">
         <span class="role-badge rb-${d.role||''}">${d.roleLabel||''}</span>
-        <span class="faction-icon">${FACTION_ICON[d.faction]||ch.emoji}</span>
+        <div style="display:flex;align-items:center;gap:3px;">
+          <span style="font-size:10px;font-weight:700;color:${d.gender==='f'?'#f080c0':'#80b0f0'};background:${d.gender==='f'?'rgba(240,128,192,.15)':'rgba(128,176,240,.15)'};border:1px solid ${d.gender==='f'?'rgba(240,128,192,.4)':'rgba(128,176,240,.4)'};border-radius:4px;padding:1px 4px;">${d.gender==='f'?'♀':'♂'}</span>
+          <span class="faction-icon">${FACTION_ICON[d.faction]||ch.emoji}</span>
+        </div>
       </div>
       <div class="card-info">
         <div class="card-stars">${starsStr(d.stars||3)}</div>
@@ -1951,6 +2133,9 @@ function startGame(){
   setTimeout(()=>{
     document.getElementById('title-screen').style.display='none';
     document.getElementById('splash').style.display='none';
+    // แสดง app กลับ (อาจถูกซ่อนจาก goLobby)
+    const appEl2=document.getElementById('app');
+    if(appEl2) appEl2.style.display='flex';
     if(window._stopParticles) window._stopParticles();
     window._dragInited=false;
     const bgOv=document.querySelector('.bg-overlay');
@@ -1968,6 +2153,8 @@ function startGame(){
   G={deck:makeDeck(),discard:[],players:[],turn:0,phase:'standby',ap:3,
      attackUsed:false,selectedCard:null,log:[],gameOver:false,
      skipCurse:Array(5).fill(false),curseCard:Array(5).fill(null),eyeCurse:{},
+     gutShield:{},burnCurse:{},
+     totalTurn:1,round:1,
      _aphSel:[],_deathQueue:[],_deathCb:null,_plutoVictims:[],
      humanCount:1,
      _stats:{dmgDealt:{},dmgTaken:{},kills:{},cardsPlayed:{}}};
@@ -1996,6 +2183,11 @@ function startGame(){
     startBg.style.opacity='0';
     setTimeout(()=>{
       startBg.remove();
+      // ── ตั้ง BG ทันทีที่ overlay หายไป ──
+      const _bgV=BG_VARIANTS[~~(Math.random()*BG_VARIANTS.length)];
+      const _bgUrl=`https://raw.githubusercontent.com/dekster00/card-battle/main/assets/BG/battle-ground-${_bgV}.png`;
+      const _appEl=document.getElementById('app');
+      if(_appEl) _appEl.style.setProperty('--bg-battle',`url("${_bgUrl}")`);
       // ── Animated deal: ทีละใบ round-robin 5 rounds x 5 players ──
       const DEAL_DELAY = 120; // ms ระหว่างใบ
       const totalCards = 5; // ใบต่อคน (แจกแค่ของผู้เล่น animate)
@@ -2003,15 +2195,9 @@ function startGame(){
       // แจกการ์ดจริงทีละ round-robin
       function dealNext(){
         if(dealIdx >= 5 * 5){
-          // แจกครบแล้ว → แสดง role reveal
-          // แจกครบแล้ว → ตั้ง BG ทันที แต่ BGM ค่อยมา
-          const bgV=BG_VARIANTS[~~(Math.random()*BG_VARIANTS.length)];
-          const bgUrl=`https://raw.githubusercontent.com/dekster00/card-battle/main/assets/BG/battle-ground-${bgV}.png`;
-          const appEl=document.getElementById('app');
-          if(appEl) appEl.style.setProperty('--bg-battle',`url("${bgUrl}")`);
+          // แจกครบแล้ว → role reveal (BG ถูก set ไว้แล้วตอน startBg.remove())
           showRoleReveal(()=>{
-            // BGM เริ่มหลัง role reveal dismiss 2 วิ
-            setTimeout(()=>{ stopBGM(); playBattleBGM(bgV); }, 2000);
+            setTimeout(()=>{ stopBGM(); playBattleBGM(_bgV); }, 2000);
             beginTurn(0);
           });
           return;
@@ -2138,7 +2324,76 @@ function beginTurn(pi){
   if(p.dead){nextTurn();return;}
   if(p._athBonus){p._athBonus=0;recalcStats(pi);}
   setPhase('standby');
-  addLog(`— เทิร์น ${p.char.emoji} ${p.name} —`);
+  // อัพ turn banner และ round
+  const turnEl=document.getElementById('turn-num');
+  if(turnEl)turnEl.textContent=G.totalTurn;
+  const roundEl=document.getElementById('round-num');
+  if(roundEl)roundEl.textContent=G.round;
+  addLog(`— เทิร์น ${G.totalTurn} (รอบ ${G.round}) ${p.char.emoji} ${p.name} —`);
+  // ── XENOZE Solo Mode: ทุก 2 round ระยะ+1
+  if(p.char.id==='artemis'){
+    const curRound=G.round||1;
+    if(curRound>1&&curRound%(2)===1&&p._soloLastRound!==curRound){
+      // ทุก 2 round (round 3, 5, 7...) range+1
+      p._soloLastRound=curRound;
+      p._soloRangeBonus=(p._soloRangeBonus||0)+1;
+      recalcStats(pi);
+      addLog(`🏹 Solo Mode! XENOZE ระยะ+1 (รอบ ${curRound})`,'imp');
+    } else if(!p._soloLastRound){
+      p._soloLastRound=0;
+      recalcStats(pi);
+    }
+  }
+  // ── Reset per-turn flags
+  G._disarmUsed=false;
+  if(p._calledShot){p._calledShot=0;recalcStats(pi);}
+  if(p._athBonus&&G.turn===pi){p._athBonus=0;recalcStats(pi);}
+  if(p._bigTalkTarget!==undefined){p._bigTalkTarget=undefined;}
+  if(p._bigTalkBonus){p._bigTalkBonus=0;recalcStats(pi);}
+  // spearBonus ไม่ reset ต้นเทิร์น — reset เมื่อเปลี่ยนเป้า
+  // ── Jannis Shadow Archive: มือ >4 ใบ → +1 MP
+  if(p.char.id==='pluto'&&p.hand.length>4){
+    p.mp=Math.min(6,p.mp+1);addLog(`👤 Shadow Archive: มือ ${p.hand.length} ใบ → +1 MP`);
+  }
+  // ── Zeni Protect Order: ก่อน draw phase จั่ว-1 แต่เด้งเลือกฮีล HP+1
+  if(p.char.id==='hades'){
+    if(pi===getActivePi()){
+      const healTargets=G.players.filter(q=>!q.dead);
+      showModal('🌑 Protect Order — เลือกผู้เล่นที่จะฮีล HP+1 (จั่วลดลง 1 ใบ)',
+        `<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">เทิร์นนี้จั่วได้ ${Math.max(0,2+(p.char.extraDraw||0)-1)} ใบ แต่ฮีลได้ 1 คน</div>`+
+        healTargets.map(t=>{
+          const icon=ICON_IMAGES[t.char.id]?`<img src="${ICON_IMAGES[t.char.id]}" style="width:28px;height:28px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle;">`:t.char.emoji;
+          const selfTag=t.i===pi?` (ตัวเอง)`:'';
+          return`<button class="btn" onclick="closeModal();_protectHeal(${t.i})" style="display:flex;align-items:center;">${icon}${t.name} HP:${t.hp}${selfTag}</button>`;
+        }).join(''),[{label:'ข้าม (จั่วปกติ)',fn:closeModal}]);
+      window._protectHeal=function(ti){
+        G.players[ti].hp=Math.min(G.players[ti].maxHp,G.players[ti].hp+1);
+        addLog(`🌑 Protect Order: ${G.players[ti].name} HP+1 (จั่ว-1)`,'hl');
+        fxHealPulse(ti);
+        // จั่วลดลง 1 ใบ
+        p._protectOrderUsed=true;
+        renderAll();
+      };
+    } else if(p.isBot){
+      const lowest=G.players.filter(q=>!q.dead).sort((a,b)=>a.hp-b.hp)[0];
+      if(lowest){lowest.hp=Math.min(lowest.maxHp,lowest.hp+1);addLog(`🌑 Protect Order (bot): ${lowest.name} HP+1`,'hl');p._protectOrderUsed=true;}
+    }
+  }
+  // ── Sun Woo Big Talk: เด้งให้เลือก 1 คน
+  if(p.char.id==='arez'&&pi===getActivePi()){
+    const ts=G.players.filter(q=>!q.dead&&q.i!==pi);
+    if(ts.length){
+      showModal('⚔️ Big Talk — เลือกเป้าหมายที่จะ ATK+1 ถ้าโจมตีเทิร์นนี้',
+        ts.map(t=>{
+          const icon=ICON_IMAGES[t.char.id]?`<img src="${ICON_IMAGES[t.char.id]}" style="width:28px;height:28px;object-fit:cover;border-radius:4px;margin-right:8px;vertical-align:middle;">`:t.char.emoji;
+          return`<button class="btn" onclick="closeModal();_bigTalkSet(${pi},${t.i})" style="display:flex;align-items:center;">${icon}${t.name}</button>`;
+        }).join(''),[{label:'ข้าม',fn:closeModal}]);
+      window._bigTalkSet=function(myPi,ti){G.players[myPi]._bigTalkTarget=ti;addLog(`⚔️ Big Talk! ถ้าโจมตี ${G.players[ti].name} → ATK+1`);};
+    }
+  } else if(p.char.id==='arez'&&p.isBot){
+    const ts=G.players.filter(q=>!q.dead&&q.i!==pi);
+    if(ts.length)p._bigTalkTarget=ts[~~(Math.random()*ts.length)].i;
+  }
   if(p.equip.trinket?.skill==='charger'){p.mp=Math.min(6,p.mp+1);addLog(`${p.name}: ชาร์จไฟ +1 MP`);}
   // eyecurse countdown
   if(G.eyeCurse&&G.eyeCurse[pi]){
@@ -2168,11 +2423,22 @@ function beginTurn(pi){
     olSchedulePush();
     setTimeout(()=>endPhase(pi),p.isBot?600:800);return;
   }
-  setPhase('draw');drawCards(pi,2+(p.char.extraDraw||0));
+  setPhase('draw');
+  // ── Nesta Phoenix Guard: ตรวจ HP ก่อนจั่ว
+  let extraDraw=p.char.extraDraw||0;
+  if(p.char.id==='zizeus'){
+    const nd=nestaDraw(pi);
+    extraDraw+=nd;
+    if(p.hp<=1&&!p._nestaAtkApplied){p._nestaAtkApplied=true;p._nestaAtk=1;recalcStats(pi);addLog(`⚡ Phoenix Guard! HP=1 → ATK+1`,'imp');}
+    if(nd>0)addLog(`⚡ Phoenix Guard! HP=${p.hp} → จั่ว+${nd}`,'imp');
+  }
+  // ── Zeni Protect Order: จั่ว-1 ถ้าใช้ heal
+  if(p.char.id==='hades'&&p._protectOrderUsed){extraDraw-=1;p._protectOrderUsed=false;}
+  drawCards(pi,Math.max(0,2+extraDraw));
   setPhase('action');renderAll();
   olSchedulePush(); // push state ทันทีเมื่อเริ่มเทิร์นใหม่
 
-  if(p.isBot)setTimeout(()=>botTurn(pi),1400);
+  if(p.isBot)setTimeout(()=>botTurn(pi),2000);
 }
 
 function endPhase(pi){
@@ -2190,6 +2456,13 @@ function nextTurn(){
   let nxt=(G.turn+1)%5,t=0;
   while(G.players[nxt].dead&&t<5){nxt=(nxt+1)%5;t++;}
   if(t>=5){checkWin();return;}
+  // นับ turn ต่อเนื่อง
+  G.totalTurn=(G.totalTurn||1)+1;
+  // นับ round: เมื่อวนกลับมาที่ผู้เล่นที่ยังมีชีวิต pi ต่ำสุด (pi=0 หรือ alive ต่ำสุด)
+  const firstAlive=G.players.find(q=>!q.dead);
+  if(firstAlive&&nxt===firstAlive.i){
+    G.round=(G.round||1)+1;
+  }
   beginTurn(nxt);
 }
 
@@ -2418,19 +2691,28 @@ function spendMP(p,n){
 }
 function recalcStats(pi){
   const p=G.players[pi],ch=p.char;
-  p.atk=1;p.def=0;p.range=1;p.multiAtk=false;p.ignoreArmor=false;p.drawAfterAtk=false;
+  p.atk=CHAR_DATA[ch.id]?.atk??1;
+  p.def=0;p.range=1;p.multiAtk=false;p.ignoreArmor=false;p.drawAfterAtk=false;
   if(ch.id==='arez')p.multiAtk=true;
-  if(ch.id==='artemis')p.range+=3;
+  if(ch.id==='artemis'){
+    const bonus=p._soloRangeBonus||0;
+    p.range=1+bonus;
+    p.atk=p.range; // ATK base = range (Solo Mode passive 2)
+  }
   for(const eq of Object.values(p.equip)){
     if(!eq.stats)continue;
     if(eq.stats.atk)p.atk+=eq.stats.atk;
     if(eq.stats.def)p.def+=eq.stats.def;
-    if(eq.stats.range)p.range+=eq.stats.range;
+    if(ch.id!=='artemis'&&eq.stats.range)p.range+=eq.stats.range; // artemis range handled above
     if(eq.stats.multiAtk)p.multiAtk=true;
     if(eq.stats.ignoreArmor)p.ignoreArmor=true;
     if(eq.stats.drawAfterAtk)p.drawAfterAtk=true;
   }
   if(p._athBonus)p.atk+=p._athBonus;
+  if(p._calledShot)p.atk+=p._calledShot;
+  if(p._nestaAtk)p.atk+=p._nestaAtk;
+  if(p._spearBonus)p.atk+=p._spearBonus;
+  if(p._bigTalkBonus)p.atk+=p._bigTalkBonus;
   // eyecurse penalty
   if(G.eyeCurse&&G.eyeCurse[pi]){
     const ec=G.eyeCurse[pi];
@@ -2438,13 +2720,14 @@ function recalcStats(pi){
     p.range=Math.max(1,p.range-ec.rangePen);
   }
 }
-function pickTarget(pi,title,cb){
-  const ts=G.players.filter(q=>!q.dead&&q.i!==pi);
+function pickTarget(pi,title,cb,includeSelf=false){
+  const ts=G.players.filter(q=>!q.dead&&(includeSelf||q.i!==pi));
   showModal(title,ts.map(t=>{
     const icon=ICON_IMAGES[t.char.id]
       ?`<img src="${ICON_IMAGES[t.char.id]}" style="width:28px;height:28px;object-fit:cover;object-position:top;border-radius:4px;margin-right:8px;vertical-align:middle;">`
       :`<span style="margin-right:6px;">${t.char.emoji}</span>`;
-    return`<button class="btn" onclick="closeModal();_pcb(${t.i})" style="display:flex;align-items:center;">${icon}${t.name} HP:${t.hp}</button>`;
+    const selfTag=t.i===pi?` <span style="font-size:10px;color:var(--dim);">(ตัวเอง)</span>`:'';
+    return`<button class="btn" onclick="closeModal();_pcb(${t.i})" style="display:flex;align-items:center;">${icon}${t.name} HP:${t.hp}${selfTag}</button>`;
   }).join(''),[{label:'ยกเลิก',fn:closeModal}]);
   window._pcb=(ti)=>cb(G.players[ti]);
 }
@@ -2499,14 +2782,34 @@ function atkPickCard(cid){
 function doAttack(atkI,defI,cid){
   closeModal();
   const atk=G.players[atkI],def=G.players[defI];
-  const card=atk.hand.find(c=>c.id===cid);if(!card)return;
-  atk.hand=atk.hand.filter(c=>c.id!==cid);G.discard.push(card);
+  // ใช้ fake card จาก Street Brawler/Disarm ถ้ามี
+  let card;
+  if(cid===-99&&G._streetBrawlerCard){card=G._streetBrawlerCard;G._streetBrawlerCard=null;}
+  else if(cid===-98&&G._disarmCard){card=G._disarmCard;G._disarmCard=null;}
+  else{card=atk.hand.find(c=>c.id===cid);if(!card)return;
+    atk.hand=atk.hand.filter(c=>c.id!==cid);G.discard.push(card);}
   if(!atk.isBot){G.ap--;G.attackUsed=true;}
+
+  // ── Passive checks ──
+  // 1. Ren Spear Discipline: โจมตีเป้าเดิม 2 รอบ → ATK+1
+  spearDisciplineCheck(atkI,defI);
+  // 2. Sun Woo Big Talk: ถ้าโจมตีเป้าที่ Big Talk ไว้ → ATK+1
+  bigTalkCheck(atkI,defI);
+  // 3. Gut Shield: ถ้าผู้ถูกโจมตีมี gut shield → skip damage
+  if(G.gutShield&&G.gutShield[defI]){
+    delete G.gutShield[defI];
+    addLog(`🌑 Gut Shield! ${def.name} ป้องกันการโจมตีนี้`,'imp');
+    fxFlash('blue');
+    // คืน AP/card กลับถ้าเป็น player
+    if(!atk.isBot){G.ap++;G.attackUsed=false;atk.hand.push(card);G.discard.pop();}
+    renderAll();return;
+  }
+
   showAtkBanner(atk,def,card);
   setTimeout(()=>{
     if(def.isBot)botDefend(atkI,defI,card);
     else playerDefend(atkI,defI,card);
-  },1600);
+  },2000);
 }
 function showAtkBanner(atk,def,card){
   const b=document.getElementById('banner-atk');
@@ -2515,8 +2818,10 @@ function showAtkBanner(atk,def,card){
   b.innerHTML=`
     <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:6px;">
       <div style="text-align:center;">${atkIcon}<div style="font-size:9px;color:var(--gold);margin-top:2px;">${atk.name}</div></div>
-      <div style="font-size:18px;color:var(--red);">⚔️</div>
-      <div style="font-size:13px;color:var(--dim);">${SYM_IMG[card.sym]}</div>
+      <div style="text-align:center;">
+        <div style="font-size:14px;color:var(--red);font-weight:700;">โจมตี</div>
+        <div style="font-size:12px;color:var(--dim);margin-top:2px;">${SYM_IMG[card.sym]}</div>
+      </div>
       <div style="font-size:18px;color:rgba(255,255,255,.4);">→</div>
       <div style="text-align:center;">${defIcon}<div style="font-size:9px;color:var(--dim);margin-top:2px;">${def.name}</div></div>
     </div>
@@ -2711,24 +3016,55 @@ function botTurn(pi){
   if(G.gameOver)return;
   const p=G.players[pi];
 
-  // Helper: show card overlay then run callback after 1.2s
+  // Helper: show card overlay then run callback
   function botPlayCard(card,cb){
     p.hand=p.hand.filter(c=>c.id!==card.id);G.discard.push(card);
     addLog(`${p.name} เล่น: ${card.name}`);
     showCardOverlay(p.name,card,null);
     renderAll();
-    setTimeout(cb,1400); // wait for card overlay
+    setTimeout(cb,2000);  // แสดงค้าง 2 วิ
   }
 
-  // Step 1: install equipment
+  // Step 1: install equipment with card overlay
   const eqs=p.hand.filter(c=>c.type==='equipment');
   if(eqs.length){
     const eq=eqs[~~(Math.random()*eqs.length)];
-    doInstall(pi,eq);
+    p.hand=p.hand.filter(c=>c.id!==eq.id);
+    addLog(`${p.name} ติดตั้ง: ${eq.name}`);
+    showCardOverlay(p.name,eq,null);
     renderAll();
+    setTimeout(()=>{
+      doInstall(pi,eq);
+      renderAll();
+      _botPlayAction(pi);
+    },2000);  // แสดงค้าง 2 วิ
+    return;
+  }
+  _botPlayAction(pi);
+}
+
+function _botPlayAction(pi){
+  if(G.gameOver)return;
+  const p=G.players[pi];
+  function botPlayCard(card,cb){
+    p.hand=p.hand.filter(c=>c.id!==card.id);G.discard.push(card);
+    addLog(`${p.name} เล่น: ${card.name}`);
+    showCardOverlay(p.name,card,null);
+    // แสดงสัญลักบน bot seat ถ้าเป็น action card
+    if(card.type==='action'){
+      const seat=document.getElementById('bot-seat-'+pi);
+      if(seat){
+        const fx=document.createElement('div');
+        fx.style.cssText='position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:28px;z-index:20;pointer-events:none;animation:fadeUp 1.4s ease forwards;';
+        fx.innerHTML=SYM_IMG[card.sym]||SYM_EMOJI[card.sym]||'';
+        seat.appendChild(fx);
+        setTimeout(()=>fx.remove(),1400);
+      }
+    }
+    renderAll();
+    setTimeout(cb,2000);  // แสดงค้าง 2 วิ
   }
 
-  // Step 2: play action card (with overlay delay)
   const acts=p.hand.filter(c=>c.type==='action'&&G.ap>=c.ap&&c.effect!=='counter'&&c.effect!=='cancel');
   if(acts.length&&G.ap>0){
     const card=acts[~~(Math.random()*acts.length)];
@@ -2742,14 +3078,12 @@ function botTurn(pi){
       const tPi=needsTarget&&pool.length?pool[~~(Math.random()*pool.length)].i:null;
       applyCardEffect(pi,card,tPi);
       renderAll();
-      // Step 3: attack after card resolved
-      setTimeout(()=>_botAttack(pi),1200);
+      setTimeout(()=>_botAttack(pi),1500);
     });
     return;
   }
-
-  // No card to play — go straight to attack
-  setTimeout(()=>_botAttack(pi),1000);
+  // No action card — attack
+  setTimeout(()=>_botAttack(pi),1200);
 }
 
 function _botAttack(pi){
@@ -2782,18 +3116,14 @@ function applyCardEffect(pi,card,tPi){
     case'heal1':{
       const t=tPi!==null?G.players[tPi]:p;
       t.hp=Math.min(t.maxHp,t.hp+1);
-      // ถ้าเป้าหมายมี eyecurse → ฮีลถอดคำสาปออก
-      if(G.eyeCurse&&G.eyeCurse[t.i]){
-        delete G.eyeCurse[t.i];
-        recalcStats(t.i);
-        addLog(`${t.name}: คำสาปดวงตาหาย! (ฮีล)`,'imp');
-      }
-      addLog(`${t.name} HP+1`,'hl');
-      break;
-    }
+      // reset Nesta atk bonus ถ้า HP ขึ้นมาเหนือ threshold
+      if(t.char.id==='zizeus'&&t.hp>1&&t._nestaAtkApplied){t._nestaAtkApplied=false;t._nestaAtk=0;recalcStats(t.i);}
+      if(G.eyeCurse&&G.eyeCurse[t.i]){delete G.eyeCurse[t.i];recalcStats(t.i);addLog(`${t.name}: คำสาปดวงตาหาย! (ฮีล)`,'imp');}
+      addLog(`${t.name} HP+1`,'hl');break;}
     case'healstrong':{
       const t=tPi!==null?G.players[tPi]:p;
       t.hp=Math.min(t.maxHp,t.hp+2);
+      if(t.char.id==='zizeus'&&t.hp>1&&t._nestaAtkApplied){t._nestaAtkApplied=false;t._nestaAtk=0;recalcStats(t.i);}
       if(G.eyeCurse&&G.eyeCurse[t.i]){
         delete G.eyeCurse[t.i];recalcStats(t.i);
         addLog(`${t.name}: คำสาปดวงตาหาย!`,'imp');
@@ -2820,65 +3150,16 @@ function applyCardEffect(pi,card,tPi){
     }
     case'destroy':{
       if(tPi===null)break;
-      const t=G.players[tPi];
-      const sl=Object.keys(t.equip);
-      if(sl.length){
-        // มีอุปกรณ์ → เปิดให้เลือกว่าจะทำลายชิ้นไหน
-        const opts=sl.map(s=>({
-          label:`🗑 ${t.equip[s].name} (${s})`,
-          fn:()=>{
-            closeModal();
-            const eq=t.equip[s];
-            G.discard.push(eq);delete t.equip[s];recalcStats(tPi);
-            addLog(`${p.name}: ทำลาย ${eq.name} ของ ${t.name}`,'dmg');
-            renderAll();
-          }
-        }));
-        showModal(`🔨 ค้อนทุบ — เลือกทำลายอุปกรณ์ของ ${t.name}`,
-          `<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">เลือก 1 ชิ้นที่จะทำลาย</div>`,
-          [...opts,{label:'ยกเลิก',fn:closeModal}]);
-      } else {
-        // ไม่มีอุปกรณ์ → สุ่มทิ้งการ์ดในมือ 2 ใบ
-        let discarded=0;
-        for(let i=0;i<2&&t.hand.length>0;i++){
-          const idx=~~(Math.random()*t.hand.length);
-          const c=t.hand.splice(idx,1)[0];
-          G.discard.push(c);discarded++;
-        }
-        addLog(`${t.name} ไม่มีอุปกรณ์ → ทิ้งการ์ด ${discarded} ใบ`,'dmg');
-      }
+      const t=G.players[tPi];const sl=Object.keys(t.equip);
+      if(sl.length){const s=sl[~~(Math.random()*sl.length)];const eq=t.equip[s];G.discard.push(eq);delete t.equip[s];recalcStats(tPi);addLog(`${p.name}: ค้อนทุบ ${eq.name} ของ ${t.name} หาย!`,'dmg');}
+      else{let d=0;for(let i=0;i<2&&t.hand.length>0;i++){const c=t.hand.splice(~~(Math.random()*t.hand.length),1)[0];G.discard.push(c);d++;}addLog(`${t.name} ไม่มีอุปกรณ์ → ทิ้งการ์ด ${d} ใบ`,'dmg');}
       break;
     }
     case'steal':{
       if(tPi===null)break;
-      const t=G.players[tPi];
-      const sl=Object.keys(t.equip);
-      if(sl.length){
-        // มีอุปกรณ์ → เปิดให้เลือกว่าจะขโมยชิ้นไหน
-        const opts=sl.map(s=>({
-          label:`💰 ${t.equip[s].name} (${s})`,
-          fn:()=>{
-            closeModal();
-            const eq=t.equip[s];
-            delete t.equip[s];recalcStats(tPi);
-            doInstall(pi,eq);
-            addLog(`${p.name}: ขโมย ${eq.name} จาก ${t.name}!`,'imp');
-            renderAll();
-          }
-        }));
-        showModal(`💰 ขโมย — เลือกอุปกรณ์ของ ${t.name}`,
-          `<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">เลือก 1 ชิ้นที่จะขโมย</div>`,
-          [...opts,{label:'ยกเลิก',fn:closeModal}]);
-      } else {
-        // ไม่มีอุปกรณ์ → สุ่มขโมยการ์ดในมือ 2 ใบ
-        let stolen=0;
-        for(let i=0;i<2&&t.hand.length>0;i++){
-          const idx=~~(Math.random()*t.hand.length);
-          const c=t.hand.splice(idx,1)[0];
-          p.hand.push(c);stolen++;
-        }
-        addLog(`${t.name} ไม่มีอุปกรณ์ → ขโมยการ์ด ${stolen} ใบ`,'imp');
-      }
+      const t=G.players[tPi];const sl=Object.keys(t.equip);
+      if(sl.length){const s=sl[~~(Math.random()*sl.length)];const eq=t.equip[s];delete t.equip[s];recalcStats(tPi);doInstall(pi,eq);addLog(`${p.name}: ขโมย ${eq.name} จาก ${t.name}!`,'imp');}
+      else{let s=0;for(let i=0;i<2&&t.hand.length>0;i++){const c=t.hand.splice(~~(Math.random()*t.hand.length),1)[0];p.hand.push(c);s++;}addLog(`${t.name} ไม่มีอุปกรณ์ → ขโมยการ์ด ${s} ใบ`,'imp');}
       break;
     }
     case'aoe_hammer':doAOE(pi,'hammer');break;
@@ -2957,7 +3238,13 @@ function doDuel(pi,ti){
       fxSeqDamage([{pi,amount:1},{pi:ti,amount:1}],()=>{checkDeath(pi);checkDeath(ti);renderAll();});
       playPunch();
     } else {
-      dealDamage(loser,1);playPunch();checkDeath(loser);renderAll();
+      // ตรวจ Joint Lock ของผู้แพ้
+      if(jointLockCheck(loser)){
+        addLog(`🦉 Joint Lock re-roll!`,'imp');
+        setTimeout(()=>doDuel(pi,ti),600);
+      } else {
+        dealDamage(loser,1);playPunch();checkDeath(loser);renderAll();
+      }
     }
   }}]);
 }
@@ -3098,6 +3385,7 @@ function useCharSkill(){
   if(!isMyTurnToAct())return;
   const ch=G.players[G.turn].char;
   if(!ch.hasSkill){addLog(`${ch.name}: Passive Skill ใช้อัตโนมัติ`);return;}
+  playSkillSfx(ch.id);
   ch.onSkill(G.turn);renderAll();
 }
 function useItemSkill(){
@@ -3111,9 +3399,18 @@ function useItemSkill(){
 }
 function activateItemSkill(pi,eq){
   const p=G.players[pi];
-  if(eq.skill==='necklace'){if(p.hp<=1){addLog('HP ไม่พอ');return;}p.hp--;drawCards(pi,2);addLog(`สร้อยคอ: HP-1→จั่ว2`);}
-  else if(eq.skill==='bag'){if(!spendMP(p,1)){addLog('MP ไม่พอ');return;}drawCards(pi,1);addLog(`กระเป๋า: -1MP→จั่ว1`);}
-  else if(eq.skill==='watch'){
+  if(eq.skill==='necklace'){
+    if(p.hp<=1){addLog('HP ไม่พอ');return;}
+    p.hp--;drawCards(pi,2);addLog(`สร้อยผนึกวิญญาณ: HP-1→จั่ว2`);renderAll();return;
+  }
+  if(eq.skill==='bag'){
+    if(!spendMP(p,1)){addLog('MP ไม่พอ');return;}
+    drawCards(pi,1);addLog(`กระเป๋าเป้: -1MP→จั่ว1`);renderAll();return;
+  }
+  if(eq.skill==='charger'){
+    addLog(`เครื่องชาร์จไฟ: ทำงานอัตโนมัติต้นเทิร์น`);renderAll();return;
+  }
+  if(eq.skill==='watch'){
     if(!spendMP(p,2)){addLog('MP ไม่พอ (ต้องการ 2)');return;}
     const drawn=[];
     for(let i=0;i<3;i++){
@@ -3124,31 +3421,124 @@ function activateItemSkill(pi,eq){
     if(pi===getActivePi()){
       showModal('⌛ นาฬิกาทรายเวทมน — เลือกเก็บ 1 ใบ ทิ้ง 2',
         `<div style="font-size:11px;color:var(--dim);margin-bottom:8px;">กดการ์ดที่ต้องการเก็บ</div>`+
-        renderCardGrid(drawn,'_watchPick'),
-        []
+        renderCardGrid(drawn,'_watchPick'),[]
       );
       window._watchPick=function(cid){
-        const kept=drawn.find(c=>c.id===cid);
-        if(!kept)return;
+        const kept=drawn.find(c=>c.id===cid);if(!kept)return;
         p.hand.push(kept);
         drawn.filter(c=>c.id!==cid).forEach(c=>G.discard.push(c));
         addLog(`นาฬิกา: เก็บ ${kept.name} ทิ้ง ${drawn.length-1} ใบ`);
         closeModal();renderAll();
       };
     } else {
-      // bot เลือกสุ่ม
       const idx=~~(Math.random()*drawn.length);
       p.hand.push(drawn[idx]);
       drawn.filter((_,i)=>i!==idx).forEach(c=>G.discard.push(c));
-      addLog(`${p.name}: นาฬิกา เก็บ 1 ทิ้ง 2`);
+      addLog(`${p.name}: นาฬิกา เก็บ 1 ทิ้ง 2`);renderAll();
     }
     return;
   }
-  else if(eq.skill==='dog'){if(p.mp<3){addLog('MP ไม่พอ (3)');return;}pickTarget(pi,'หมาไฟ: เป้าหมาย',t=>{p.mp-=3;dealDamage(t.i,2);addLog(`🔥 หมาไฟ! ${t.name} HP-2`,'dmg');checkDeath(t.i);renderAll();});return;}
-  else if(eq.skill==='cat'){if(p.mp<2){addLog('MP ไม่พอ (2)');return;}pickTarget(pi,'แมวเทวดา: เป้าหมาย (รวมตัวเอง)',t=>{p.mp-=2;const heal=2;t.hp=Math.min(t.maxHp,t.hp+heal);if(G.eyeCurse&&G.eyeCurse[t.i]){delete G.eyeCurse[t.i];recalcStats(t.i);addLog(`${t.name}: คำสาปดวงตาหาย!`,'imp');}addLog(`😇 แมวเทวดา! ${t.name} HP+2`,'hl');fxHealPulse(t.i);renderAll();});return;}
+  if(eq.skill==='dog'){
+    if(p.mp<3){addLog('MP ไม่พอ (3)');return;}
+    pickTarget(pi,'หมาไฟ: เป้าหมาย',t=>{
+      p.mp-=3;dealDamage(t.i,2);
+      addLog(`🔥 หมาไฟ! ${t.name} HP-2`,'dmg');
+      checkDeath(t.i);renderAll();
+    });return;
+  }
+  if(eq.skill==='cat'){
+    if(p.mp<2){addLog('MP ไม่พอ (2)');return;}
+    const alive=G.players.filter(q=>!q.dead);
+    pickTarget(pi,'แมวเทวดา: เป้าหมาย (รวมตัวเอง)',t=>{
+      p.mp-=2;t.hp=Math.min(t.maxHp,t.hp+2);
+      if(G.eyeCurse&&G.eyeCurse[t.i]){delete G.eyeCurse[t.i];recalcStats(t.i);addLog(`${t.name}: คำสาปดวงตาหาย!`,'imp');}
+      addLog(`😇 แมวเทวดา! ${t.name} HP+2`,'hl');fxHealPulse(t.i);renderAll();
+    },true);return; // true = include self
+  }
   renderAll();
 }
-function hermesDestroy(ti){closeModal();const t=G.players[ti];const sl=Object.keys(t.equip);if(!sl.length){addLog('ไม่มีอุปกรณ์');return;}const s=sl[~~(Math.random()*sl.length)];G.discard.push(t.equip[s]);delete t.equip[s];recalcStats(ti);addLog(`🪶 Hermes: ทำลาย ${s} ของ ${t.name}`,'dmg');renderAll();}
+/* ── Kim Han Raining Storm ── */
+function rainStorm(pi,sym){
+  addLog(`☁️ Raining Storm! เลือก ${SYM_EMOJI[sym]}`,'imp');
+  const targets=G.players.filter(q=>!q.dead&&q.i!==pi);
+  fxSeqDamage(
+    targets.filter(t=>{
+      if(!G.deck.length)G.deck=shuffle(G.discard.splice(0));
+      const c=G.deck.pop();
+      addLog(`${t.name}: เปิด ${c?SYM_EMOJI[c.sym]:'ไม่มีไพ่'}`);
+      if(c)G.discard.push(c);
+      return c&&c.sym===sym;
+    }).map(t=>{addLog(`${t.name}: ตรง! HP-1`,'dmg');return{pi:t.i,amount:1};}),
+    ()=>{targets.forEach(t=>checkDeath(t.i));renderAll;}
+  );
+}
+
+/* ── Hana Accidental Charm: ผู้โจมตีเสีย 1 MP ── */
+// hooked in applyHit
+const _origApplyHitHana = window.applyHit;
+window.applyHit = function(atkI,defI,atkCard){
+  _origApplyHitHana(atkI,defI,atkCard);
+  const def=G&&G.players&&G.players[defI];
+  if(def&&def.char&&def.char.id==='aphrodite'&&!def.dead){
+    const atk=G.players[atkI];
+    if(atk&&atk.mp>0){atk.mp=Math.max(0,atk.mp-1);addLog(`💕 Accidental Charm! ${atk.name} เสีย 1 MP`);}
+  }
+};
+
+/* ── Nesta Phoenix Guard: draw threshold ── */
+// applied in drawCards via extraDraw check
+function nestaDraw(pi){
+  const p=G.players[pi];if(!p||p.char.id!=='zizeus')return 0;
+  if(p.hp<=1)return 2;
+  if(p.hp<=2)return 2;
+  if(p.hp<=3)return 1;
+  return 0;
+}
+// ATK bonus at HP=1
+function nestaAtkBonus(pi){
+  const p=G.players[pi];if(!p||p.char.id!=='zizeus')return 0;
+  return p.hp<=1?1:0;
+}
+
+/* ── Sun Woo Big Talk: ATK+1 ถ้าโจมตีเป้าที่เลือก ── */
+// applied in doAttack before calculating dmg
+function bigTalkCheck(atkPi,defPi){
+  const p=G.players[atkPi];
+  if(!p||p.char.id!=='arez')return;
+  if(p._bigTalkTarget===defPi){
+    p._bigTalkBonus=1;recalcStats(atkPi);
+    addLog(`⚔️ Big Talk! โจมตีเป้าที่เลือก ATK+1`,'imp');
+  } else {
+    p._bigTalkBonus=0;recalcStats(atkPi);
+  }
+}
+
+function jointLockCheck(loserPi){
+  const p=G.players[loserPi];
+  if(!p||p.char.id!=='athena')return false;
+  if(p.mp>=1){p.mp-=1;addLog(`🦉 Joint Lock! เสีย 1 MP re-roll ท้าต่อย`,'imp');return true;}
+  return false;
+}
+
+function spearDisciplineCheck(atkPi,defPi){
+  const p=G.players[atkPi];
+  if(!p||p.char.id!=='hermes')return;
+  if(p._spearLastTarget===defPi){
+    p._spearStreak=(p._spearStreak||1)+1;
+    if(p._spearStreak>=2){
+      p._spearBonus=(p._spearBonus||0)+1;
+      recalcStats(atkPi);
+      addLog(`🪶 Spear Discipline! ATK+1 (โจมตีเป้าเดิม ${p._spearStreak} รอบ)`,'imp');
+    }
+  } else {
+    p._spearStreak=1;p._spearBonus=0;recalcStats(atkPi);
+  }
+  p._spearLastTarget=defPi;
+}
+
+/* ── Gut Shield: ป้องกันการโจมตีปกติ ── */
+// checked in applyHit
+
 function aphToggle(ti){if(!G._aphSel)G._aphSel=[];const b=document.getElementById('aph'+ti);if(G._aphSel.includes(ti)){G._aphSel=G._aphSel.filter(x=>x!==ti);if(b)b.style.borderColor='var(--border)';}else if(G._aphSel.length<2){G._aphSel.push(ti);if(b)b.style.borderColor='var(--gold)';}}
 function aphConfirm(){if(!G._aphSel||G._aphSel.length!==2){addLog('เลือก 2 คน');return;}closeModal();doDuel(G._aphSel[0],G._aphSel[1]);G._aphSel=[];renderAll();}
 function endTurn(){
@@ -3277,6 +3667,12 @@ function renderBotSeat(pi){
       ${G.eyeCurse&&G.eyeCurse[pi]?`<span class="status-badge sb-eye">👁 ดวงตาปีศาจ ${G.eyeCurse[pi].rounds}รอบ</span>`:''}
       ${G.burnCurse&&G.burnCurse[pi]?`<span class="status-badge sb-burn">🔥 เผาไหม้ ${G.burnCurse[pi].rounds}รอบ</span>`:''}
     </div>
+    ${Object.keys(p.equip).length?`<div class="bot-equip-row">${
+      Object.entries(p.equip).map(([sl,eq])=>{
+        const slotIcon={weapon:'⚔',armor:'🛡',trinket:'💎',pet:'🐾'}[sl]||'📦';
+        return`<span class="bot-eq-badge" title="${eq.name}: ${eq.desc||''}">${slotIcon}<span class="bot-eq-name">${eq.name}</span></span>`;
+      }).join('')
+    }</div>`:''}
   </div>`;
 }
 
@@ -3340,9 +3736,9 @@ function renderEquipSlots(pi){
   if(!G||!G.players) return;
   const p=G.players[pi];
   if(!p) return;
-  const SLOT_MAP={weapon:'weapon',armor:'armor',trinket:'charm',pet:'pet'};
+  const SLOT_MAP={weapon:'weapon',armor:'armor',trinket:'trinket',pet:'pet'};
   // clear all slots first
-  ['weapon','armor','charm','pet'].forEach(sl=>{
+  ['weapon','armor','trinket','pet'].forEach(sl=>{
     const el=document.getElementById('eq-'+sl+'-item');
     if(!el) return;
     el.innerHTML='';
@@ -3369,6 +3765,8 @@ function renderEquipSlots(pi){
       :`<span title="${e.desc||e.name}" style="font-size:7px;word-break:break-all;">${e.name}</span>`;
     el.parentElement.title=e.desc||e.name;
     el.parentElement.classList.add('has-item');
+    if(e.skill) el.parentElement.classList.add('has-skill');
+    else el.parentElement.classList.remove('has-skill');
   });
 }
 
@@ -3484,6 +3882,10 @@ function renderHand(){
     }
     cardEl.addEventListener('mouseenter',e=>showCardTip(e,cid));
     cardEl.addEventListener('mouseleave',hideTip);
+    // Long-press for mobile tooltip
+    cardEl.addEventListener('touchstart',e=>cardLongPressStart(e,cid),{passive:true});
+    cardEl.addEventListener('touchend',cardLongPressEnd,{passive:true});
+    cardEl.addEventListener('touchmove',()=>{clearTimeout(_longPressTimer);_longPressTimer=null;},{passive:true});
   });
 }
 
@@ -3625,10 +4027,6 @@ function renderCardEl(card){
     ${frameHtml}
     <div class="card-bottom">
       <div class="cname">${card.name}</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;width:100%;">
-        <div class="cnum">${card.num}</div>
-        <div class="ctype type-${card.type}">${card.type==='equipment'?'⚙':card.type==='curse'?'☠':'▶'}</div>
-      </div>
     </div>
   </div>`;
 }
@@ -3685,18 +4083,54 @@ function showModal(title,body,actions){
 }
 function closeModal(){document.getElementById('modal-wrap').classList.remove('show');}
 function showTip(e,text){const t=document.getElementById('tooltip');t.textContent=text;t.style.display='block';t.style.left=(e.clientX+28)+'px';t.style.top=(e.clientY-90)+'px';}
+function getCardDesc(card){
+  const EDESC={
+    destroy:'สุ่มทำลาย Equipment ของเป้าหมาย 1 ชิ้น\nถ้าไม่มีอุปกรณ์ → ทิ้งการ์ดในมือ 2 ใบ',
+    steal:'สุ่มขโมย Equipment จากเป้าหมาย\nถ้าไม่มีอุปกรณ์ → ขโมยการ์ดในมือ 2 ใบ',
+    skipturn:'เป้าหมายถูกข้ามเทิร์นถัดไป ทำอะไรไม่ได้เลย',
+    eyecurse:'เป้าหมาย ATK-1 ระยะ-1 นาน 3 รอบ\nฮีลถอดคำสาปได้',
+    draw2:'จั่วการ์ด 2 ใบทันที (ฟรี ไม่เสีย AP)',
+    heal1:'ฮีล HP+1 ให้เป้าหมายที่เลือก (รวมตัวเอง)',
+    healstrong:'ฮีล HP+2 ให้เป้าหมายที่เลือก (รวมตัวเอง)',
+    share:'จั่ว N+1 ใบ แจกตามเข็มนาฬิกา\nผู้เล่นเลือกก่อน bot สุ่ม',
+    duel:'สุ่มการ์ดของทั้งคู่ เปรียบสัญลักษณ์\nผู้แพ้ HP-1 / เสมอทั้งคู่ HP-1',
+    counter:'ใช้ตอนถูกโจมตี → ผู้โจมตี HP-1 แทน',
+    cancel:'ใช้ตอนถูกโจมตี → ยกเลิกการโจมตีนั้น',
+    aoe_hammer:'ทุกคน (ยกเว้นตัวเอง): ทิ้งการ์ด 🔨 หรือ HP-1',
+    aoe_scissors:'ทุกคน (ยกเว้นตัวเอง): ทิ้งการ์ด ✂️ หรือ HP-1',
+    aoe_paper:'ทุกคน (ยกเว้นตัวเอง): ทิ้งการ์ด 📄 หรือ HP-1',
+    mp_black1:'+1 MP ดำ (ฟรี)',mp_white1:'+1 MP ขาว (ฟรี)',
+    mp_black2:'+2 MP ดำ',mp_white2:'+2 MP ขาว',
+    ap_plus1:'+1 AP ในเทิร์นนี้ทันที',
+  };
+  if(card.type==='equipment')return `[${card.slot}] ${card.desc||''}`;
+  return EDESC[card.effect]||card.desc||card.effect;
+}
+
 function showCardTip(e,cid){
   const activePi=getActivePi();
   const card=G.players[activePi].hand.find(c=>c.id===cid);if(!card)return;
   const ds=DODGE_SYM[card.sym];
-  let txt=`${card.name}\n${SYM_EMOJI[card.sym]} · เลข ${card.num} · AP:${card.ap}`;
-  if(card.effect!=='counter'&&card.effect!=='cancel'&&card.type!=='equipment')txt+=`\n[โจมตีด้วยนี้→หลบด้วย ${SYM_EMOJI[ds]}]`;
-  if(card.effect==='counter')txt+='\n[ใช้ตอนถูกโจมตี→สวนกลับ]';
-  if(card.effect==='cancel')txt+='\n[ใช้ตอนถูกโจมตี→ยกเลิก]';
-  if(card.desc)txt+=`\n${card.desc}`;
+  const desc=getCardDesc(card);
+  let txt=`${card.name}`;
+  txt+=`\nAP: ${card.ap===0?'ฟรี':card.ap}`;
+  if(card.type!=='equipment')txt+=`\n[หลบด้วย: ${SYM_EMOJI[ds]}]`;
+  txt+=`\n\n${desc}`;
   const t=document.getElementById('tooltip');t.textContent=txt;t.style.display='block';t.style.left=(e.clientX+28)+'px';t.style.top=(e.clientY-110)+'px';
 }
 function hideTip(){document.getElementById('tooltip').style.display='none';}
+
+/* ── Long-press tooltip for mobile ── */
+let _longPressTimer=null;
+function cardLongPressStart(e,cid){
+  _longPressTimer=setTimeout(()=>{
+    showCardTip({clientX:e.touches[0].clientX,clientY:e.touches[0].clientY},cid);
+  },600);
+}
+function cardLongPressEnd(){
+  clearTimeout(_longPressTimer);_longPressTimer=null;
+  setTimeout(hideTip,2000);
+}
 
 /* ── Firebase init (runs after all game functions are defined) ── */
 function _initFirebase(){
@@ -4733,9 +5167,11 @@ window.applyHit=function(atkI,defI,atkCard){
   const isCrit = dmg>=4;
   const activePi=getActivePi();
 
-  /* shake + flash */
-  fxShake();
-  fxFlash('red');
+  /* HP ลดแล้ว → shake + flash หลัง 80ms */
+  setTimeout(()=>{
+    fxShake();
+    fxFlash('red');
+  }, 80);
 
   /* find where to put the number */
   const defSeat=document.getElementById('bot-seat-'+defI);
@@ -4835,32 +5271,33 @@ function dealDamage(pi, amount, label){
   const p = G.players[pi];
   if(p.dead) return;
   const actual = Math.min(amount, p.hp);
+  // ลด HP และอัพ bar ก่อน
   p.hp = Math.max(0, p.hp - amount);
+  fxUpdateBotHp(pi);
 
-  // stat tracking — attacker = G.turn
+  // stat tracking
   if(G._stats && actual > 0){
     const atk = G.turn;
     G._stats.dmgDealt[atk] = (G._stats.dmgDealt[atk]||0) + actual;
     G._stats.dmgTaken[pi]  = (G._stats.dmgTaken[pi] ||0) + actual;
   }
 
-  // เอฟเฟกต์ตัวเลข
-  const el = pi === getActivePi()
-    ? document.getElementById('my-seat-area')
-    : document.getElementById('bot-seat-'+pi);
-  let nx = window.innerWidth * 0.5, ny = window.innerHeight * 0.38;
-  if(el){
-    const r = el.getBoundingClientRect();
-    nx = r.left + r.width * 0.5 + (Math.random()-.5)*20;
-    ny = r.top  + r.height * 0.3;
-    fxShake(el);
-  }
-  fxNum(amount, 'dmg', nx, ny);
-  fxFlash('red');
-  playPunch();
-
-  // อัพ HP bar
-  setTimeout(()=>fxUpdateBotHp(pi), 60);
+  // เอฟเฟกต์ shake + ตัวเลข หลัง HP ลดแล้ว (80ms)
+  setTimeout(()=>{
+    const el = pi === getActivePi()
+      ? document.getElementById('my-seat-area')
+      : document.getElementById('bot-seat-'+pi);
+    let nx = window.innerWidth * 0.5, ny = window.innerHeight * 0.38;
+    if(el){
+      const r = el.getBoundingClientRect();
+      nx = r.left + r.width * 0.5 + (Math.random()-.5)*20;
+      ny = r.top  + r.height * 0.3;
+      fxShake(el);
+    }
+    fxNum(amount, 'dmg', nx, ny);
+    fxFlash('red');
+    playPunch();
+  }, 80);
 }
 
 /* ══════════════════════════════════════════
@@ -5063,16 +5500,9 @@ window.checkDeath = function(pi){
 
 /* ══════════════════════════════════════════
    🔗 HOOK: applyCardEffect → heal pulse
+   (handled by FX engine hook at line ~4766)
 ══════════════════════════════════════════ */
-const _origApplyCardEffect2 = window.applyCardEffect;
-window.applyCardEffect = function(pi, card, ti){
-  _origApplyCardEffect2(pi, card, ti);
-  if(card.effect==='heal1'||card.effect==='healstrong'){
-    const target = (ti !== null && ti !== undefined) ? ti : pi;
-    fxHealPulse(target);
-    setTimeout(()=>fxUpdateBotHp(target), 100);
-  }
-};
+// heal pulse และ fxUpdateBotHp ถูก handle โดย FX engine hook แล้ว ไม่ต้อง hook ซ้ำ
 
 /* ══════════════════════════════════════════
    ⏸ PAUSE MENU
@@ -5222,7 +5652,7 @@ const HTP_PAGES = [
 <div style="display:flex;flex-direction:column;gap:10px;">
   <div style="background:rgba(192,144,224,.1);border-left:3px solid #c090e0;border-radius:6px;padding:10px 14px;">
     <div style="font-weight:700;color:#c090e0;margin-bottom:3px;">👑 LEADER</div>
-    <div>ทุกคนรู้ว่าใครคือ LEADER — ได้ HP+1 พิเศษ ถ้าตายเกมจบทันที</div>
+    <div>ทุกคนรู้ว่าใครคือ LEADER — ได้ <b>MAX HP+1</b> พิเศษ (HP สูงสุดเพิ่ม 1 ถาวร) ถ้าตายเกมจบทันที</div>
     <div style="color:var(--dim);font-size:11px;margin-top:4px;">ชนะเมื่อ: Betrayer และ Watcher ทั้งหมดตาย</div>
   </div>
   <div style="background:rgba(112,176,240,.1);border-left:3px solid #70b0f0;border-radius:6px;padding:10px 14px;">
@@ -5259,6 +5689,8 @@ const HTP_PAGES = [
       <span style="color:#70b0f0;">🃏 กองไพ่</span><span>กดเพื่อดูกองทิ้ง / กดตอน Draw Phase เพื่อจั่ว</span>
       <span style="color:#70f090;">▶ จบเทิร์น</span><span>กดจบเทิร์นของตัวเอง เมื่อพร้อมหรือ AP หมด</span>
       <span style="color:#c090e0;">⚙ ฟันเฟือง</span><span>Pause เกม ปรับเสียง หรือกลับหน้าเลือกตัวละคร</span>
+      <span style="color:#c8a850;">🧍 Icon ตัวละคร</span><span>กดที่รูปตัวละครซ้ายมือ → ใช้ <b>Skill ตัวละคร</b></span>
+      <span style="color:#c8a850;">🎒 Slot อุปกรณ์</span><span>กดที่รูป Trinket หรือ Pet ที่ติดตั้งแล้ว → ใช้ <b>Item Skill</b> (สร้อย / กระเป๋า / นาฬิกา / หมาไฟ / แมวเทวดา)</span>
     </div>
   </div>
   <div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 14px;">
@@ -5277,7 +5709,7 @@ const HTP_PAGES = [
   <div style="background:rgba(200,80,80,.1);border-left:3px solid #e05050;border-radius:6px;padding:10px 14px;">
     <div style="font-weight:700;color:#f08080;margin-bottom:4px;">🔴 กรอบแดง — Action (AP=1)</div>
     <div style="font-size:12px;">การ์ดโจมตีและรบกวน เสีย 1 AP ต่อใบ</div>
-    <div style="color:var(--dim);font-size:11px;margin-top:4px;">ค้อนทุบ · ขโมย · ระเบิด · ท้าต่อย · หมอนนอนนุ่ม · ดวงตาคำสาป · crystal ดำ/ขาว</div>
+    <div style="color:var(--dim);font-size:11px;margin-top:4px;">ค้อนทุบ · ขโมย · ระเบิด · ท้าต่อย · crystal ดำ/ขาว</div>
   </div>
   <div style="background:rgba(80,200,120,.1);border-left:3px solid #50c878;border-radius:6px;padding:10px 14px;">
     <div style="font-weight:700;color:#70d090;margin-bottom:4px;">🟢 กรอบเขียว — Action (AP=0 ฟรี)</div>
@@ -5289,10 +5721,15 @@ const HTP_PAGES = [
     <div style="font-size:12px;">ติดตั้งฟรี เพิ่ม Stat หรือมี Passive/Skill พิเศษ</div>
     <div style="color:var(--dim);font-size:11px;margin-top:4px;">Weapon · Armor · Trinket · Pet — กดที่ slot ซ้ายมือเพื่อใช้ Skill</div>
   </div>
-  <div style="background:rgba(160,80,160,.1);border-left:3px solid #a050a0;border-radius:6px;padding:10px 14px;">
-    <div style="font-weight:700;color:#e080c0;margin-bottom:4px;">🟣 กรอบม่วง — Curse</div>
-    <div style="font-size:12px;">การ์ดคำสาป ใส่ debuff ให้ผู้เล่นอื่น AP=1</div>
+  <div style="background:rgba(180,30,30,.15);border-left:3px solid #cc2222;border-radius:6px;padding:10px 14px;">
+    <div style="font-weight:700;color:#ff6060;margin-bottom:4px;">🔴 กรอบแดงเข้ม — Curse (AP=1)</div>
+    <div style="font-size:12px;">การ์ดคำสาปใส่ debuff ให้ผู้เล่นอื่น มีผลข้ามเทิร์น</div>
     <div style="color:var(--dim);font-size:11px;margin-top:4px;">หมอนนอนนุ่ม (ข้ามเทิร์น) · ดวงตาคำสาป (ATK-1 ระยะ-1 สามรอบ)</div>
+  </div>
+  <div style="background:rgba(100,50,180,.15);border-left:3px solid #7040cc;border-radius:6px;padding:10px 14px;">
+    <div style="font-weight:700;color:#b080ff;margin-bottom:4px;">🟣 กรอบม่วง — เวทมน (Magic)</div>
+    <div style="font-size:12px;">การ์ดเวทมนตร์พิเศษ — มีผลแตกต่างกันออกไป (การ์ดกลุ่มนี้จะมาในอนาคต)</div>
+    <div style="color:var(--dim);font-size:11px;margin-top:4px;">เตรียมพบกับ spell, ritual และ effect พิเศษ ที่ไม่เหมือนการ์ดปกติ</div>
   </div>
 </div>`},
   // Page 4: Card abilities
@@ -5351,6 +5788,20 @@ function htpRender(){
 }
 
 console.log('📖 How to Play ready!');
+
+/* ── Passive Info Circle ── */
+function openPassiveInfo(){
+  if(!G||!G.players)return;
+  const myP=G.players[getActivePi()];
+  const ch=myP.char;
+  showModal(`📜 ${ch.name} — Passive`,
+    `<div style="line-height:1.8;font-size:13px;">
+      <div style="color:var(--gold);font-weight:600;margin-bottom:4px;">${ch.passiveName||'Passive'}</div>
+      <div style="color:#ccc;">${ch.passive||'—'}</div>
+      ${ch.skillName?`<div style="color:var(--gold);font-weight:600;margin-top:10px;">${ch.skillName}</div><div style="color:#ccc;">${ch.skillDesc||'—'}</div>`:''}
+    </div>`,
+    [{label:'ปิด',fn:closeModal}]);
+}
 
 
 
